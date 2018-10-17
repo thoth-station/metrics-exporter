@@ -8,6 +8,7 @@ prometheus_client = "*"
 flask = "*"
 thoth-common = {version = "*", extras = ["openshift"]}
 thoth-storages = "*"
+gunicorn = "*"
 
 [dev-packages]
 
