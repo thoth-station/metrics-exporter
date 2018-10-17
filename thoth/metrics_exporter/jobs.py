@@ -18,8 +18,10 @@
 """This is a Promotheus exporter for Thoth."""
 
 
+import asyncio
 import logging
 
+from itertools import chain
 
 from thoth.storages import GraphDatabase
 from thoth.common import init_logging
@@ -29,15 +31,19 @@ from thoth.metrics_exporter import thoth_package_version_total, thoth_package_ve
 init_logging()
 
 
-_LOGGER = logging.getLogger('thoth.metrics.server')
+_LOGGER = logging.getLogger('thoth.metrics_exporter.jobs')
 
 
-async def get_retrieve_unsolved_pypi_packages():
+@thoth_package_version_seconds.time()
+def get_retrieve_unsolved_pypi_packages():
     """This will get the total number of unsolved pypi packages in the graph database."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     graph = GraphDatabase(hosts=['stage.janusgraph.thoth-station.ninja'], port=8182)
     graph.connect()
 
-    thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(len(graph.retrieve_unsolved_pypi_packages()
-                                                                                    .items()))
+    thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
+        len(list(chain(*graph.retrieve_unsolved_pypi_packages().items()))))
 
     _LOGGER.info("done.")

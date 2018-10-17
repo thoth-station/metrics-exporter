@@ -39,7 +39,8 @@ application.config.from_object(config.Config())
 
 init_logging()
 
-_LOGGER = logging.getLogger('thoth.metrics.server')
+_LOGGER = logging.getLogger('thoth.metrics_exporter')
+_DEBUG = os.getenv('DEBUG', False)
 
 
 @application.route('/')
@@ -59,4 +60,4 @@ if __name__ == '__main__':
     scheduler.init_app(application)
     scheduler.start()
 
-    application.run(port=8080)
+    application.run(port=8080, debug=_DEBUG)
