@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: thoth-metrics-exporter-deployment
+  annotations:
+    description: >
+      This is Thoth Metrics Exporter Deployment, this template is meant to be used by
+      Bots, but could also be used by humans...
+    openshift.io/display-name: 'Thoth Metrics Exporter Deployment'
+    version: 0.1.0
+    tags: thoth,thoth-metrics,thoth-metrics-exporter,ai-stacks,aistacks
+    template.openshift.io/documentation-url: https://github.com/Thoth-Station/
+    template.openshift.io/long-description: >
+      This is Thoth Metrics Exporter Deployment, this template is meant to be used
+      by Bots, but could also be used by humans...
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: thoth-metrics-exporter-deployment
+    app: thoth
+    component: metrics-exporter
+
+parameters:
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'
+
+objects:
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: metrics-exporter
+      labels:
+        app: thoth
+        component: metrics-exporter
+    spec:
+      to:
+        kind: Service
+        name: metrics-exporter
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth
+        component: metrics-exporter
+      name: metrics-exporter
+    spec:
+      ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        service: metrics-exporter
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth
+        component: metrics-exporter
+      name: metrics-exporter
+    spec:
+      replicas: 1
+      selector:
+        service: metrics-exporter
+      template:
+        metadata:
+          labels:
+            service: metrics-exporter
+        spec:
+          serviceAccountName: analyzer
+          containers:
+            - name: metrics-exporter
+              env:
+                - name: APP_MODULE
+                  value: 'thoth_metrics:app'
+                - name: RSYSLOG_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      key: rsyslog-host
+                      name: thoth
+                - name: RSYSLOG_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      key: rsyslog-port
+                      name: thoth
+                - name: SENTRY_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: sentry-dsn
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources:
+                requests:
+                  memory: "384Mi"
+                  cpu: "125m"
+                limits:
+                  memory: "384Mi"
+                  cpu: "500m"
+      test: false
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - metrics-exporter
+            from:
+              kind: ImageStreamTag
+              name: 'metrics-exporter:${IMAGE_STREAM_TAG}'
