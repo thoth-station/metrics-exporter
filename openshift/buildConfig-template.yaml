@@ -74,7 +74,7 @@ objects:
             - name: ENABLE_PIPENV
               value: '1'
             - name: UPGRADE_PIP_TO_LATEST
-              value: ''
+              value: '1'
             - name: WEB_CONCURRENCY
               value: '1'
       triggers:
