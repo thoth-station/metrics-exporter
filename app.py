@@ -60,4 +60,4 @@ if __name__ == '__main__':
     scheduler.init_app(application)
     scheduler.start()
 
-    application.run(port=8080, debug=_DEBUG)
+    application.run(host='0.0.0.0', port=8080, debug=_DEBUG)
