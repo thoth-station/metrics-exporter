@@ -24,7 +24,7 @@ parameters:
     displayName: Git Repository
     required: true
     name: GITHUB_URL
-    value: 'https://github.com/thoth-station/thoth-metrics'
+    value: 'https://github.com/thoth-station/metrics-exporter'
 
   - description: Git reference to be used
     displayName: Git Reference

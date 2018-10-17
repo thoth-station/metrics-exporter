@@ -62,3 +62,8 @@ def metrics():
     get_retrieve_unsolved_pypi_packages()
 
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+
+
+if __name__ == '__main__':
+    _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
+    app.run(port=8080)
