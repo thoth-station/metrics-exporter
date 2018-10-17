@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8a05639d2f565568d6a0523c9aa89f9199259c1eb8123863be8e8aa0ad27a12d"
+            "sha256": "7fbb81cecd32781651eaf09397d5e5718f258c4a236a790ff7797cb112592554"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -49,6 +49,14 @@
                 "sha256:f0e2ac69cb709367400008cebccd5d48161dd146096a009a632a132babe5714c"
             ],
             "version": "==2.2.5"
+        },
+        "apscheduler": {
+            "hashes": [
+                "sha256:6599bc78901ee7e9be85cbd073d9cc155c42d2bc867c5cde4d4d1cc339ebfbeb",
+                "sha256:a8fe0c82d1c21bcf4a1b0e00aa35709f1f63fdd36446e406fa56cc0d51d3acc6"
+            ],
+            "index": "pypi",
+            "version": "==3.5.3"
         },
         "async-timeout": {
             "hashes": [
@@ -161,6 +169,13 @@
             ],
             "index": "pypi",
             "version": "==1.0.2"
+        },
+        "flask-apscheduler": {
+            "hashes": [
+                "sha256:6d5939f3be53dfdb2a136c4382f85a6293d50e8664da27f53b607af0b258b69b"
+            ],
+            "index": "pypi",
+            "version": "==1.10.1"
         },
         "goblin": {
             "hashes": [

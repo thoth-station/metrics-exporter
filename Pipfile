@@ -9,6 +9,8 @@ flask = "*"
 thoth-common = {version = "*", extras = ["openshift"]}
 thoth-storages = "*"
 gunicorn = "*"
+apscheduler = "*"
+flask-apscheduler = "*"
 
 [dev-packages]
 

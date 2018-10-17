@@ -19,51 +19,44 @@
 
 
 import os
+import asyncio
+import time
 import logging
+from datetime import datetime
 
 from flask import Flask, Response
-from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST, Gauge, Counter, Summary
+from flask_apscheduler import APScheduler
+
+from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST
 
 from thoth.common import init_logging
-from thoth.storages import GraphDatabase
 
-from thoth.metrics_exporter import __version__
+from thoth.metrics_exporter import __version__, config, thoth_package_version_total, thoth_package_version_seconds
 
 
 application = Flask(__name__)
+application.config.from_object(config.Config())
 
 init_logging()
 
 _LOGGER = logging.getLogger('thoth.metrics.server')
-_LOGGER.info(f"Thoth Metrics Server v{__version__}")
-
-thoth_package_version_total = Gauge('thoth_package_version_total',
-                                    'State of package:version Vertices.', ['ecosystem', 'solver'])
-thoth_package_version_seconds = Summary('thoth_package_version_seconds',
-                                        'Time spent processing requests to JanusGraph Server.')
-
-
-@thoth_package_version_seconds.time()
-def get_retrieve_unsolved_pypi_packages():
-    graph = GraphDatabase(hosts=['stage.janusgraph.thoth-station.ninja'], port=8182)
-    graph.connect()
-
-    thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(len(graph.retrieve_unsolved_pypi_packages()
-                                                                                    .items()))
 
 
 @application.route('/')
 def main():
-    return "ok"  # requests tracked by default
+    return "This service is not for humans!"
 
 
 @application.route('/metrics')
 def metrics():
-    get_retrieve_unsolved_pypi_packages()
-
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 
 if __name__ == '__main__':
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
+
+    scheduler = APScheduler()
+    scheduler.init_app(application)
+    scheduler.start()
+
     application.run(port=8080)

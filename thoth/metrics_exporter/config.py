@@ -15,9 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""This is a Promotheus Metrics exporter for Thoth."""
+"""This is a Promotheus exporter for Thoth."""
 
 
-def worker_exit(server, worker):
-    from prometheus_client import multiprocess
-    multiprocess.mark_process_dead(worker.pid)
+class Config(object):
+    """Configuration for the application."""
+    JOBS = [
+        {
+            'id': 'unsolved_pypi_packages',
+            'func': 'thoth.metrics_exporter.jobs:get_retrieve_unsolved_pypi_packages',
+            'trigger': 'interval',
+            'minutes': 1
+        }
+    ]
+
+    SCHEDULER_API_ENABLED = False
