@@ -18,5 +18,14 @@
 """This is a Promotheus Metrics exporter for Thoth."""
 
 
-__version__ = "0.1.0"
-__author__ = 'Christoph Görn <goern@redhat.com>'
+from prometheus_client import Gauge, Counter, Summary
+
+
+__version__ = "0.2.0"
+__author__ = "Christoph Görn <goern@redhat.com>"
+
+
+thoth_package_version_total = Gauge('thoth_package_version_total',
+                                    'State of package:version Vertices.', ['ecosystem', 'solver'])
+thoth_package_version_seconds = Summary('thoth_package_version_seconds',
+                                        'Time spent processing requests to JanusGraph Server.', [])
