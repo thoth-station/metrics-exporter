@@ -74,8 +74,6 @@ objects:
           containers:
             - name: metrics-exporter
               env:
-                - name: APP_MODULE
-                  value: 'thoth.metrics_exporter.wsgi:app'
                 - name: RSYSLOG_HOST
                   valueFrom:
                     configMapKeyRef:

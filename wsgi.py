@@ -30,7 +30,7 @@ from thoth.storages import GraphDatabase
 from thoth.metrics_exporter import __version__
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 init_logging()
 
@@ -52,12 +52,12 @@ def get_retrieve_unsolved_pypi_packages():
                                                                                     .items()))
 
 
-@app.route('/')
+@application.route('/')
 def main():
     return "ok"  # requests tracked by default
 
 
-@app.route('/metrics')
+@application.route('/metrics')
 def metrics():
     get_retrieve_unsolved_pypi_packages()
 
@@ -66,4 +66,4 @@ def metrics():
 
 if __name__ == '__main__':
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
-    app.run(port=8080)
+    application.run(port=8080)
