@@ -252,7 +252,6 @@
                 "sha256:b370ab4abd925309db69a14a4723487948e9a83de60ca92782ec14992b741c89",
                 "sha256:c80dcf531deca2037105df09c933355c80830ffbf9e496b5e6a3967ac6809ef7"
             ],
-            "markers": "extra == 'openshift'",
             "version": "==6.0.0"
         },
         "markupsafe": {
@@ -306,7 +305,6 @@
             "hashes": [
                 "sha256:aab848277e61ad10446e6187c79781ba65256392ffd13aa874619a588c238dae"
             ],
-            "markers": "extra == 'openshift'",
             "version": "==0.6.2"
         },
         "prometheus-client": {
@@ -441,9 +439,6 @@
             "version": "==1.10.0"
         },
         "thoth-common": {
-            "extras": [
-                "openshift"
-            ],
             "hashes": [
                 "sha256:6e874ee5aff6d9b2b3844cb4140e3ba866e9db85fac4436894e5948f951122f5",
                 "sha256:a1dcb8ade11f014cb9b8e1b2b99efc323e1e16cc3863ccf80495199db6c19e70"
