@@ -24,6 +24,12 @@ class Config(object):
         {
             'id': 'unsolved_pypi_packages',
             'func': 'thoth.metrics_exporter.jobs:get_retrieve_unsolved_pypi_packages',
+                    'trigger': 'interval',
+                    'minutes': 1
+        },
+        {
+            'id': 'thoth_solver_jobs',
+            'func': 'thoth.metrics_exporter.jobs:get_thoth_solver_jobs',
             'trigger': 'interval',
             'minutes': 1
         }

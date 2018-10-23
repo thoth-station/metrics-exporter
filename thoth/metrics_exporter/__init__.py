@@ -18,14 +18,22 @@
 """This is a Promotheus Metrics exporter for Thoth."""
 
 
-from prometheus_client import Gauge, Counter, Summary
+from prometheus_client import Gauge, Summary
 
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __author__ = "Christoph Görn <goern@redhat.com>"
 
+thoth_metrics_exporter_info = Gauge('thoth_metrics_exporter_info',
+                                    'Thoth Metrics Exporter information', ['version'])
+thoth_metrics_exporter_info.labels(__version__).inc()
 
 thoth_package_version_total = Gauge('thoth_package_version_total',
                                     'State of package:version Vertices.', ['ecosystem', 'solver'])
 thoth_package_version_seconds = Summary('thoth_package_version_seconds',
                                         'Time spent processing requests to JanusGraph Server.', [])
+
+thoth_solver_jobs_total = Gauge('thoth_solver_jobs_total',
+                                'Number of Solver Jobs.', ['dist'])
+thoth_solver_jobs_seconds = Gauge('thoth_solver_jobs_seconds',
+                                  'Time spent processing requests to OpenShift to get Solver Jobs', [])

@@ -24,8 +24,9 @@ import logging
 from itertools import chain
 
 from thoth.storages import GraphDatabase
-from thoth.common import init_logging
-from thoth.metrics_exporter import thoth_package_version_total, thoth_package_version_seconds
+from thoth.common import init_logging, OpenShift
+from thoth.metrics_exporter import thoth_package_version_total, thoth_package_version_seconds, \
+    thoth_solver_jobs_total, thoth_solver_jobs_seconds
 
 
 init_logging()
@@ -40,10 +41,16 @@ def get_retrieve_unsolved_pypi_packages():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    graph = GraphDatabase(hosts=['stage.janusgraph.thoth-station.ninja'], port=8182)
+    graph = GraphDatabase(hosts=['janusgraph'], port=8182)
     graph.connect()
 
     thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
         len(list(chain(*graph.retrieve_unsolved_pypi_packages().items()))))
 
-    _LOGGER.info("done.")
+
+@thoth_solver_jobs_seconds.time()
+def get_thoth_solver_jobs():
+    """This will get the total number Solver Jobs."""
+    _OPENSHIFT = OpenShift()
+
+    _LOGGER.debug(_OPENSHIFT.get_thoth_solver_jobs())

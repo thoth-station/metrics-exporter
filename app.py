@@ -32,6 +32,7 @@ from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_L
 from thoth.common import init_logging
 
 from thoth.metrics_exporter import __version__, config, thoth_package_version_total, thoth_package_version_seconds
+from thoth.metrics_exporter.jobs import get_thoth_solver_jobs, get_retrieve_unsolved_pypi_packages
 
 
 application = Flask(__name__)
@@ -56,8 +57,14 @@ def metrics():
 if __name__ == '__main__':
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
 
+    # initialy populating the metrics
+    get_thoth_solver_jobs()
+    get_retrieve_unsolved_pypi_packages()
+
+    # now, let's do it every minute
     scheduler = APScheduler()
     scheduler.init_app(application)
     scheduler.start()
 
+    # and start the application server
     application.run(host='0.0.0.0', port=8080, debug=_DEBUG)
