@@ -18,15 +18,20 @@
 """This is a Promotheus exporter for Thoth."""
 
 
+import os
 import asyncio
 import logging
 
 from itertools import chain
 
+import requests
+
+from openshift.dynamic.exceptions import ResourceNotFoundError
+
 from thoth.storages import GraphDatabase
-from thoth.common import init_logging, OpenShift
-from thoth.metrics_exporter import thoth_package_version_total, thoth_package_version_seconds, \
-    thoth_solver_jobs_total, thoth_solver_jobs_seconds
+from thoth.common import init_logging
+from thoth.common.helpers import get_service_account_token
+from thoth.metrics_exporter import *
 
 
 init_logging()
@@ -49,8 +54,33 @@ def get_retrieve_unsolved_pypi_packages():
 
 
 @thoth_solver_jobs_seconds.time()
-def get_thoth_solver_jobs():
+def get_thoth_solver_jobs(namespace: str = None):
     """This will get the total number Solver Jobs."""
-    _OPENSHIFT = OpenShift()
+    if namespace is None:
+        namespace = os.getenv("MY_NAMESPACE")
 
-    _LOGGER.debug(_OPENSHIFT.get_thoth_solver_jobs())
+    endpoint = "{}/namespaces/{}/jobs".format(
+        "https://paas.upshift.redhat.com:443/apis/batch/v1",
+        namespace
+    )  # FIXME the OpenShift API URL should not be hardcoded
+
+    try:
+        # FIXME we should not hardcode the solver dist names
+        response = requests.get(
+            endpoint,
+            headers={
+                'Authorization': 'Bearer {}'.format(get_service_account_token()),
+                'Content-Type': 'application/json'
+            },
+            params={'labelSelector': 'component=solver-f27'},
+            verify=False
+        ).json()
+
+        thoth_solver_jobs_total.labels('f27', 'created').set(len(response['items']))
+
+        # check if item.status.failed == 1
+        thoth_solver_jobs_total.labels('f27', 'failed').set(-1)
+        thoth_solver_jobs_total.labels('f27', 'succeeded').set(-1)
+
+    except ResourceNotFoundError as excpt:
+        _LOGGER.error(excpt)

@@ -20,8 +20,10 @@
 
 from prometheus_client import Gauge, Summary
 
+from thoth.common import __version__ as __common__version__
+from thoth.storages import __version__ as __storages__version__
 
-__version__ = "0.3.0"
+__version__ = f"0.4.0+storage_{__storages__version__}+common_{__common__version__}"
 __author__ = "Christoph Görn <goern@redhat.com>"
 
 thoth_metrics_exporter_info = Gauge('thoth_metrics_exporter_info',
@@ -34,6 +36,7 @@ thoth_package_version_seconds = Summary('thoth_package_version_seconds',
                                         'Time spent processing requests to JanusGraph Server.', [])
 
 thoth_solver_jobs_total = Gauge('thoth_solver_jobs_total',
-                                'Number of Solver Jobs.', ['dist'])
+                                'Number of Solver Jobs running.', ['dist', 'status'])
+
 thoth_solver_jobs_seconds = Gauge('thoth_solver_jobs_seconds',
                                   'Time spent processing requests to OpenShift to get Solver Jobs', [])
