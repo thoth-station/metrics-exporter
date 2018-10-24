@@ -20,6 +20,7 @@
 
 class Config(object):
     """Configuration for the application."""
+
     JOBS = [
         {
             'id': 'unsolved_pypi_packages',

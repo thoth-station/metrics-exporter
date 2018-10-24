@@ -46,11 +46,13 @@ _DEBUG = os.getenv('DEBUG', False)
 
 @application.route('/')
 def main():
+    """Show this to humans."""
     return "This service is not for humans!"
 
 
 @application.route('/metrics')
 def metrics():
+    """Return the Prometheus Metrics."""
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 

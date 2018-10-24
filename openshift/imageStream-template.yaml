@@ -36,4 +36,3 @@ objects:
       name: metrics-exporter
     spec:
       name: ${IMAGE_STREAM_TAG}
-

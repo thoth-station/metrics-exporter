@@ -42,7 +42,7 @@ _LOGGER = logging.getLogger('thoth.metrics_exporter.jobs')
 
 @thoth_package_version_seconds.time()
 def get_retrieve_unsolved_pypi_packages():
-    """This will get the total number of unsolved pypi packages in the graph database."""
+    """Get the total number of unsolved pypi packages in the graph database."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -55,7 +55,7 @@ def get_retrieve_unsolved_pypi_packages():
 
 @thoth_solver_jobs_seconds.time()
 def get_thoth_solver_jobs(namespace: str = None):
-    """This will get the total number Solver Jobs."""
+    """Get the total number Solver Jobs."""
     if namespace is None:
         namespace = os.getenv("MY_NAMESPACE")
 
