@@ -50,8 +50,8 @@ objects:
     spec:
       resources:
         requests:
-          cpu: 500m
-          memory: 512Mi
+          cpu: 1000m
+          memory: 768Mi
         limits:
           cpu: 1000m
           memory: 768Mi

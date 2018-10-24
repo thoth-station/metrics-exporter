@@ -46,11 +46,32 @@ def get_retrieve_unsolved_pypi_packages():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
     graph = GraphDatabase(hosts=['janusgraph'], port=8182)
     graph.connect()
 
     thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
         len(list(chain(*graph.retrieve_unsolved_pypi_packages().items()))))
+
+
+def countJobStatus(JobListItems: dict) -> (int, int, int):
+    """Count the number of created, failed and succeeded Solver Jobs."""
+    created = 0
+    failed = 0
+    succeeded = 0
+
+    for item in JobListItems:
+        created = created + 1
+
+        try:
+            if 'succeeded' in item['status'].keys():
+                succeeded = succeeded + 1
+            if 'failed' in item['status'].keys():
+                failed = failed + 1
+        except KeyError as excptn:
+            pass
+
+    return (created, failed, succeeded)
 
 
 @thoth_solver_jobs_seconds.time()
@@ -76,11 +97,11 @@ def get_thoth_solver_jobs(namespace: str = None):
             verify=False
         ).json()
 
-        thoth_solver_jobs_total.labels('f27', 'created').set(len(response['items']))
+        created, failed, succeeded = countJobStatus(response['items'])
 
-        # check if item.status.failed == 1
-        thoth_solver_jobs_total.labels('f27', 'failed').set(-1)
-        thoth_solver_jobs_total.labels('f27', 'succeeded').set(-1)
+        thoth_solver_jobs_total.labels('f27', 'created').set(created)
+        thoth_solver_jobs_total.labels('f27', 'failed').set(failed)
+        thoth_solver_jobs_total.labels('f27', 'succeeded').set(succeeded)
 
     except ResourceNotFoundError as excpt:
         _LOGGER.error(excpt)
