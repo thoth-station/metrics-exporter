@@ -101,7 +101,7 @@ objects:
                   memory: "384Mi"
                   cpu: "125m"
                 limits:
-                  memory: "384Mi"
+                  memory: "768Mi"
                   cpu: "500m"
       test: false
       triggers:
