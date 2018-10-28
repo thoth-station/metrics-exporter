@@ -1,0 +1,14 @@
+---
+- name: "Playbook to provision Thoth Metrics Exporter"
+  tags:
+    - openshift
+    - thoth
+    - operations
+
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - role: thoth-station.metrics_exporter
+      project_name: "thoth-test-core"

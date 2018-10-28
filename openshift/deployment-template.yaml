@@ -7,7 +7,7 @@ metadata:
       This is Thoth Metrics Exporter Deployment, this template is meant to be used by
       Bots, but could also be used by humans...
     openshift.io/display-name: 'Thoth Metrics Exporter Deployment'
-    version: 0.1.0
+    version: 0.3.0
     tags: thoth,thoth-metrics,thoth-metrics-exporter,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -70,25 +70,29 @@ objects:
           labels:
             service: metrics-exporter
         spec:
-          serviceAccountName: analyzer
+          serviceAccountName: "thoth-ops"
           containers:
-            - name: metrics-exporter
+            - name: "metrics-exporter"
               env:
-                - name: RSYSLOG_HOST
+                - name: "MY_NAMESPACE"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                - name: "RSYSLOG_HOST"
                   valueFrom:
                     configMapKeyRef:
-                      key: rsyslog-host
-                      name: thoth
-                - name: RSYSLOG_PORT
+                      key: "rsyslog-host"
+                      name: "thoth"
+                - name: "RSYSLOG_PORT"
                   valueFrom:
                     configMapKeyRef:
-                      key: rsyslog-port
-                      name: thoth
-                - name: SENTRY_DSN
+                      key: "rsyslog-port"
+                      name: "thoth"
+                - name: "SENTRY_DSN"
                   valueFrom:
                     secretKeyRef:
-                      name: thoth
-                      key: sentry-dsn
+                      name: "thoth"
+                      key: "sentry-dsn"
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -97,7 +101,7 @@ objects:
                   memory: "384Mi"
                   cpu: "125m"
                 limits:
-                  memory: "384Mi"
+                  memory: "768Mi"
                   cpu: "500m"
       test: false
       triggers:
