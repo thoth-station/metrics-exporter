@@ -105,3 +105,14 @@ def get_thoth_solver_jobs(namespace: str = None):
 
     except ResourceNotFoundError as excpt:
         _LOGGER.error(excpt)
+
+def get_janusgraph_v_and_e_total():
+    """Get the total number of Vertices and Edges stored in JanusGraph Server."""
+    graph_db = GraphDatabase.create('test.janusgraph.thoth-station.ninja', port=8182)
+    graph_db.connect() # FIXME no hardcoded hostnames
+
+    v_total = asyncio.get_event_loop().run_until_complete(graph_db.g.V().count().next())
+    e_total = asyncio.get_event_loop().run_until_complete(graph_db.g.E().count().next())
+
+    thoth_graphdatabase_vertex_total.set(v_total)
+    thoth_graphdatabase_edge_total.set(e_total)
