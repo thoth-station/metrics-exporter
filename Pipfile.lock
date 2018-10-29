@@ -335,7 +335,7 @@
                 "openshift"
             ],
             "git": "https://github.com/thoth-station/common.git",
-            "ref": "98c70114814aa3e9edec573f8268beb8712fda02"
+            "ref": "706d46e326e055d0ca0cb56885bf96524e76c65a"
         },
         "thoth-storages": {
             "hashes": [

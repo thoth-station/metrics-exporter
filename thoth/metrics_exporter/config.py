@@ -33,6 +33,12 @@ class Config(object):
             'func': 'thoth.metrics_exporter.jobs:get_thoth_solver_jobs',
             'trigger': 'interval',
             'minutes': 1
+        },
+        {
+            'id': 'thoth_janusgraph_v_and_e_total',
+            'func': 'thoth.metrics_exporter.jobs:get_janusgraph_v_and_e_total',
+            'trigger': 'interval',
+            'minutes': 1
         }
     ]
 
