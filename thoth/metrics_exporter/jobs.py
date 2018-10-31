@@ -51,7 +51,7 @@ def get_retrieve_unsolved_pypi_packages():
     graph.connect()
 
     thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
-        len(list(chain(*graph.retrieve_unsolved_pypi_packages().items()))))
+        len(list(chain(*graph.retrieve_unsolved_pypi_packages().values()))))
 
 
 def countJobStatus(JobListItems: dict) -> (int, int, int):
