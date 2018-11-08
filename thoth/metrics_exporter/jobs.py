@@ -37,7 +37,7 @@ from thoth.metrics_exporter import *
 init_logging()
 
 
-_LOGGER = logging.getLogger('thoth.metrics_exporter.jobs')
+_LOGGER = logging.getLogger("thoth.metrics_exporter.jobs")
 
 
 @thoth_package_version_seconds.time()
@@ -47,11 +47,12 @@ def get_retrieve_unsolved_pypi_packages():
     asyncio.set_event_loop(loop)
 
     # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
-    graph = GraphDatabase(hosts=['janusgraph'], port=8182)
+    graph = GraphDatabase(hosts=["janusgraph"], port=8182)
     graph.connect()
 
-    thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
-        len(list(chain(*graph.retrieve_unsolved_pypi_packages().values()))))
+    thoth_package_version_total.labels(ecosystem="pypi", solver="unsolved").set(
+        len(list(chain(*graph.retrieve_unsolved_pypi_packages().values())))
+    )
 
 
 def countJobStatus(JobListItems: dict) -> (int, int, int):
@@ -64,9 +65,9 @@ def countJobStatus(JobListItems: dict) -> (int, int, int):
         created = created + 1
 
         try:
-            if 'succeeded' in item['status'].keys():
+            if "succeeded" in item["status"].keys():
                 succeeded = succeeded + 1
-            if 'failed' in item['status'].keys():
+            if "failed" in item["status"].keys():
                 failed = failed + 1
         except KeyError as excptn:
             pass
@@ -81,8 +82,7 @@ def get_thoth_solver_jobs(namespace: str = None):
         namespace = os.getenv("MY_NAMESPACE")
 
     endpoint = "{}/namespaces/{}/jobs".format(
-        "https://paas.upshift.redhat.com:443/apis/batch/v1",
-        namespace
+        "https://paas.upshift.redhat.com:443/apis/batch/v1", namespace
     )  # FIXME the OpenShift API URL should not be hardcoded
 
     try:
@@ -90,18 +90,18 @@ def get_thoth_solver_jobs(namespace: str = None):
         response = requests.get(
             endpoint,
             headers={
-                'Authorization': 'Bearer {}'.format(get_service_account_token()),
-                'Content-Type': 'application/json'
+                "Authorization": "Bearer {}".format(get_service_account_token()),
+                "Content-Type": "application/json",
             },
-            params={'labelSelector': 'component=solver-f27'},
-            verify=False
+            params={"labelSelector": "component=solver-f27"},
+            verify=False,
         ).json()
 
-        created, failed, succeeded = countJobStatus(response['items'])
+        created, failed, succeeded = countJobStatus(response["items"])
 
-        thoth_solver_jobs_total.labels('f27', 'created').set(created)
-        thoth_solver_jobs_total.labels('f27', 'failed').set(failed)
-        thoth_solver_jobs_total.labels('f27', 'succeeded').set(succeeded)
+        thoth_solver_jobs_total.labels("f27", "created").set(created)
+        thoth_solver_jobs_total.labels("f27", "failed").set(failed)
+        thoth_solver_jobs_total.labels("f27", "succeeded").set(succeeded)
 
     except ResourceNotFoundError as excpt:
         _LOGGER.error(excpt)
@@ -109,8 +109,8 @@ def get_thoth_solver_jobs(namespace: str = None):
 
 def get_janusgraph_v_and_e_total():
     """Get the total number of Vertices and Edges stored in JanusGraph Server."""
-    graph_db = GraphDatabase.create('test.janusgraph.thoth-station.ninja', port=8182)
-    graph_db.connect()  # FIXME no hardcoded hostnames
+    graph_db = GraphDatabase.create("janusgraph", port=8182)
+    graph_db.connect()
 
     v_total = asyncio.get_event_loop().run_until_complete(graph_db.g.V().count().next())
     e_total = asyncio.get_event_loop().run_until_complete(graph_db.g.E().count().next())
