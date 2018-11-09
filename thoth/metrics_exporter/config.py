@@ -23,23 +23,33 @@ class Config(object):
 
     JOBS = [
         {
-            'id': 'unsolved_pypi_packages',
-            'func': 'thoth.metrics_exporter.jobs:get_retrieve_unsolved_pypi_packages',
-            'trigger': 'interval',
-            'minutes': 1
+            "id": "unsolved_pypi_packages",
+            "func": "thoth.metrics_exporter.jobs:get_retrieve_unsolved_pypi_packages",
+            "trigger": "interval",
+            "minutes": 1,
         },
         {
-            'id': 'thoth_solver_jobs',
-            'func': 'thoth.metrics_exporter.jobs:get_thoth_solver_jobs',
-            'trigger': 'interval',
-            'minutes': 1
+            "id": "thoth_solver_jobs",
+            "func": "thoth.metrics_exporter.jobs:get_thoth_solver_jobs",
+            "trigger": "interval",
+            "minutes": 1,
         },
         {
-            'id': 'thoth_janusgraph_v_and_e_total',
-            'func': 'thoth.metrics_exporter.jobs:get_janusgraph_v_and_e_total',
-            'trigger': 'interval',
-            'minutes': 1
-        }
+            "id": "thoth_janusgraph_v_and_e_total",
+            "func": "thoth.metrics_exporter.jobs:get_janusgraph_v_and_e_total",
+            "trigger": "interval",
+            "minutes": 1,
+        },
+        {
+            "id": "thoth_get_solver_documents",
+            "func": "thoth.metrics_exporter.jobs:get_solver_documents",
+            "trigger": "interval",
+            "minutes": 1,
+        },
+        {
+            "id": "thoth_get_analyzer_documents",
+            "func": "thoth.metrics_exporter.jobs:get_analyzer_documents",
+            "trigger": "interval",
+            "minutes": 1,
+        },
     ]
-
-    SCHEDULER_API_ENABLED = False

@@ -22,51 +22,50 @@ import os
 import asyncio
 import time
 import logging
+
 from datetime import datetime
 
-from flask import Flask, Response
-from flask_apscheduler import APScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST
 
 from thoth.common import init_logging
 
-from thoth.metrics_exporter import __version__, config, thoth_package_version_total, thoth_package_version_seconds
-from thoth.metrics_exporter.jobs import get_thoth_solver_jobs, get_retrieve_unsolved_pypi_packages
+from thoth.metrics_exporter import __version__, config, package_version_total, package_version_seconds
+from thoth.metrics_exporter.jobs import load_jobs, get_thoth_solver_jobs, get_retrieve_unsolved_pypi_packages
 
-
-application = Flask(__name__)
-application.config.from_object(config.Config())
 
 init_logging()
 
-_LOGGER = logging.getLogger('thoth.metrics_exporter')
-_DEBUG = os.getenv('DEBUG', False)
+_LOGGER = logging.getLogger("thoth.metrics_exporter")
+_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 
 
-@application.route('/')
-def main():
-    """Show this to humans."""
-    return "This service is not for humans!"
+# @application.route("/")
+# def main():
+#    """Show this to humans."""
+#    return "This service is not for humans!"
 
 
-@application.route('/metrics')
-def metrics():
-    """Return the Prometheus Metrics."""
-    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+# @application.route("/metrics")
+# def metrics():
+#    """Return the Prometheus Metrics."""
+#    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    logging.getLogger("thoth").setLevel(logging.DEBUG if _DEBUG else logging.INFO)
+    logging.getLogger("apscheduler").setLevel(logging.DEBUG if _DEBUG else logging.INFO)
+
+    _LOGGER.debug("Debug mode is on")
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
 
-    # initialy populating the metrics
-    get_thoth_solver_jobs()
-    get_retrieve_unsolved_pypi_packages()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-    # now, let's do it every minute
-    scheduler = APScheduler()
-    scheduler.init_app(application)
+    scheduler = AsyncIOScheduler()
+    load_jobs(scheduler)
+    _LOGGER.debug("Starting Scheduler")
     scheduler.start()
 
-    # and start the application server
-    application.run(host='0.0.0.0', port=8080, debug=_DEBUG)
+    loop.run_forever()
