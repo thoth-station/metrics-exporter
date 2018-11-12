@@ -49,7 +49,7 @@ def get_retrieve_unsolved_pypi_packages():
 
     try:
         # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
-        graph = GraphDatabase(hosts=["janusgraph"], port=8182)
+        graph = GraphDatabase()
         graph.connect()
 
         package_version_total.labels(ecosystem="pypi", solver="f27", status="unsolved").set(
@@ -118,7 +118,7 @@ def get_solver_documents(solver_name: str = None):
     asyncio.set_event_loop(loop)
 
     try:
-        graph_db = GraphDatabase.create("janusgraph", port=8182)
+        graph_db = GraphDatabase.create()
         graph_db.connect()
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         _LOGGER.error(excptn)
@@ -135,7 +135,7 @@ def get_analyzer_documents():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    graph_db = GraphDatabase.create("janusgraph", port=8182)
+    graph_db = GraphDatabase.create()
     graph_db.connect()
     analyzer_documents = graph_db.get_solver_documents_count()
 
@@ -147,7 +147,7 @@ def get_janusgraph_v_and_e_total():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    graph_db = GraphDatabase.create("janusgraph", port=8182)
+    graph_db = GraphDatabase.create()
     graph_db.connect()
 
     v_total = asyncio.get_event_loop().run_until_complete(graph_db.g.V().count().next())
