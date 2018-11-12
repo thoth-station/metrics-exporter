@@ -20,6 +20,7 @@
 
 import os
 import asyncio
+import aiohttp
 import logging
 
 from datetime import datetime
@@ -34,11 +35,8 @@ from thoth.common import init_logging
 from thoth.common.helpers import get_service_account_token
 from thoth.metrics_exporter import *
 
-from . import config
-
 
 init_logging()
-
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter.jobs")
 
@@ -49,13 +47,16 @@ def get_retrieve_unsolved_pypi_packages():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
-    graph = GraphDatabase(hosts=["janusgraph"], port=8182)
-    graph.connect()
+    try:
+        # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
+        graph = GraphDatabase(hosts=["janusgraph"], port=8182)
+        graph.connect()
 
-    package_version_total.labels(ecosystem="pypi", solver="f27", state="unsolved").set(
-        len(list(chain(*graph.retrieve_unsolved_pypi_packages().values())))
-    )
+        package_version_total.labels(ecosystem="pypi", solver="f27", status="unsolved").set(
+            len(list(chain(*graph.retrieve_unsolved_pypi_packages().values())))
+        )
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        _LOGGER.error(excptn)
 
 
 def countJobStatus(JobListItems: dict) -> (int, int, int):
@@ -106,17 +107,23 @@ def get_thoth_solver_jobs(namespace: str = None):
         solver_jobs_total.labels("f27", "failed").set(failed)
         solver_jobs_total.labels("f27", "succeeded").set(succeeded)
 
-    except ResourceNotFoundError as excpt:
-        _LOGGER.error(excpt)
+    except ResourceNotFoundError as excptn:
+        _LOGGER.error(excptn)
 
 
 @solver_documents_seconds.time()
 def get_solver_documents(solver_name: str = None):
     """Get the total number Solver Documents in Graph Database."""
-    print("solver_documents=[]")
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-    graph_db = GraphDatabase.create("janusgraph", port=8182)
-    graph_db.connect()
+    try:
+        graph_db = GraphDatabase.create("janusgraph", port=8182)
+        graph_db.connect()
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        _LOGGER.error(excptn)
+        return
+
     solver_documents = graph_db.get_solver_documents_count()
 
     _LOGGER.debug("solver_documents=%r", solver_documents)
@@ -125,6 +132,9 @@ def get_solver_documents(solver_name: str = None):
 @analyzer_documents_seconds.time()
 def get_analyzer_documents():
     """Get the total number Analyzer Documents in Graph Database."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     graph_db = GraphDatabase.create("janusgraph", port=8182)
     graph_db.connect()
     analyzer_documents = graph_db.get_solver_documents_count()
@@ -134,6 +144,9 @@ def get_analyzer_documents():
 
 def get_janusgraph_v_and_e_total():
     """Get the total number of Vertices and Edges stored in JanusGraph Server."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     graph_db = GraphDatabase.create("janusgraph", port=8182)
     graph_db.connect()
 

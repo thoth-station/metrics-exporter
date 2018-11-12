@@ -25,14 +25,21 @@ import logging
 
 from datetime import datetime
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import responder
+import uvicorn
 
 from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST
 
 from thoth.common import init_logging
 
-from thoth.metrics_exporter import __version__, config, package_version_total, package_version_seconds
-from thoth.metrics_exporter.jobs import load_jobs, get_thoth_solver_jobs, get_retrieve_unsolved_pypi_packages
+from thoth.metrics_exporter import __version__
+from thoth.metrics_exporter.jobs import (
+    get_solver_documents,
+    get_analyzer_documents,
+    get_janusgraph_v_and_e_total,
+    get_retrieve_unsolved_pypi_packages,
+    get_thoth_solver_jobs,
+)
 
 
 init_logging()
@@ -40,32 +47,49 @@ init_logging()
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
 _DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 
-
-# @application.route("/")
-# def main():
-#    """Show this to humans."""
-#    return "This service is not for humans!"
+api = responder.API(title="Thoth Metrics Exporter", version=__version__)
+api.debug = _DEBUG
 
 
-# @application.route("/metrics")
-# def metrics():
-#    """Return the Prometheus Metrics."""
-#    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+@api.route(before_request=True)
+def prepare_response(req, resp):
+    """Just add my signature."""
+    resp.headers["X-Thoth-Metrics-Exporter-Version"] = f"v{__version__}"
+
+
+@api.route("/")
+async def main(req, resp):
+    """Show this to humans."""
+    resp.text = "This service is not for humans!"
+
+
+@api.route("/metrics")
+async def metrics(req, resp):
+    """Return the Prometheus Metrics."""
+
+    @api.background.task
+    def update_janusgraph_metrics():
+        _LOGGER.debug("updating JanusGraph metrics")
+        get_solver_documents()
+        get_analyzer_documents()
+        get_janusgraph_v_and_e_total()
+        get_retrieve_unsolved_pypi_packages()
+
+    @api.background.task
+    def update_openshift_metrics():
+        _LOGGER.debug("updating OpenShift metrics")
+
+        get_thoth_solver_jobs()
+
+    update_janusgraph_metrics()
+    update_openshift_metrics()
+    resp.text = generate_latest().decode("utf-8")
 
 
 if __name__ == "__main__":
     logging.getLogger("thoth").setLevel(logging.DEBUG if _DEBUG else logging.INFO)
-    logging.getLogger("apscheduler").setLevel(logging.DEBUG if _DEBUG else logging.INFO)
 
     _LOGGER.debug("Debug mode is on")
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    scheduler = AsyncIOScheduler()
-    load_jobs(scheduler)
-    _LOGGER.debug("Starting Scheduler")
-    scheduler.start()
-
-    loop.run_forever()
+    api.run(address="0.0.0.0", port=8080, debug=_DEBUG)
