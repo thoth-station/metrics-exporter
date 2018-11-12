@@ -60,7 +60,8 @@ def prepare_response(req, resp):
 @api.route("/")
 async def main(req, resp):
     """Show this to humans."""
-    resp.text = "This service is not for humans!"
+    resp.headers["Location"] = "https://url.corp.redhat.com/grafana-thoth-test"
+    resp.status_code = api.status_codes.HTTP_308
 
 
 @api.route("/metrics")
