@@ -66,6 +66,7 @@ async def main(req, resp):
 @api.route("/metrics")
 async def metrics(req, resp):
     """Return the Prometheus Metrics."""
+    _LOGGER.debug("exporting metrics registry...")
 
     @api.background.task
     def update_janusgraph_metrics():
