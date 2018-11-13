@@ -51,7 +51,7 @@ def get_retrieve_unsolved_pypi_packages():
     graph.connect()
 
     thoth_package_version_total.labels(ecosystem='pypi', solver='unsolved').set(
-        len(list(chain(*graph.retrieve_unsolved_pypi_packages().items()))))
+        len(list(chain(*graph.retrieve_unsolved_pypi_packages().values()))))
 
 
 def countJobStatus(JobListItems: dict) -> (int, int, int):
@@ -106,10 +106,11 @@ def get_thoth_solver_jobs(namespace: str = None):
     except ResourceNotFoundError as excpt:
         _LOGGER.error(excpt)
 
+
 def get_janusgraph_v_and_e_total():
     """Get the total number of Vertices and Edges stored in JanusGraph Server."""
     graph_db = GraphDatabase.create('test.janusgraph.thoth-station.ninja', port=8182)
-    graph_db.connect() # FIXME no hardcoded hostnames
+    graph_db.connect()  # FIXME no hardcoded hostnames
 
     v_total = asyncio.get_event_loop().run_until_complete(graph_db.g.V().count().next())
     e_total = asyncio.get_event_loop().run_until_complete(graph_db.g.E().count().next())
