@@ -42,6 +42,6 @@ thoth_solver_jobs_seconds = Gauge('thoth_solver_jobs_seconds',
                                   'Time spent processing requests to OpenShift to get Solver Jobs', [])
 
 thoth_graphdatabase_vertex_total = Gauge('thoth_graphdatabase_vertex_total',
-                                  'Total number of Vertices in JanusGraph Database', [])
+                                         'Total number of Vertices in JanusGraph Database', [])
 thoth_graphdatabase_edge_total = Gauge('thoth_graphdatabase_edge_total',
-                                  'Total number of Edges in JanusGraph Database', [])
+                                       'Total number of Edges in JanusGraph Database', [])
