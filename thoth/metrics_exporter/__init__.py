@@ -62,12 +62,6 @@ analyzer_documents_seconds = Summary(
     [],
 )
 
-<<<<<<< HEAD
-thoth_graphdatabase_vertex_total = Gauge('thoth_graphdatabase_vertex_total',
-                                         'Total number of Vertices in JanusGraph Database', [])
-thoth_graphdatabase_edge_total = Gauge('thoth_graphdatabase_edge_total',
-                                       'Total number of Edges in JanusGraph Database', [])
-=======
 # Solver Jobs
 solver_jobs_total = Gauge("thoth_solver_jobs_total", "Number of Solver Jobs running.", ["dist", "status"])
 
@@ -79,4 +73,3 @@ graphdatabase_vertex_total = Gauge(
     "thoth_graphdatabase_vertex_total", "Total number of Vertices in JanusGraph Database", []
 )
 graphdatabase_edge_total = Gauge("thoth_graphdatabase_edge_total", "Total number of Edges in JanusGraph Database", [])
->>>>>>> this is still borken
