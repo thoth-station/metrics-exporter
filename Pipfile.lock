@@ -93,31 +93,17 @@
         },
         "boto3": {
             "hashes": [
-<<<<<<< HEAD
-                "sha256:6792803663c6e0c29d3137c5e76f7b38cde5f4b6c12f2a0ed0f10dc6f81c5b32",
-                "sha256:dbd1f9d2b27f9f83879f4a6f8b0eef53964da2f09fc75d4a27d23000220b8551"
+                "sha256:205bb45ab209f038d3014a468f9556ea5c7953225a0a57e49edcfd0486ff815a",
+                "sha256:4a1ac4afcb73a701c44fbba44ba7a385612c7ee76baf6f4f26da05928fa56e8a"
             ],
-            "version": "==1.9.43"
+            "version": "==1.9.44"
         },
         "botocore": {
             "hashes": [
-                "sha256:4a4e2e6baf7d7b9904452d93189af79cc4c18d3f6a746d1455bb7c4a1054ddff",
-                "sha256:575a8f23ee29b407f6090d127212150e7725084902dfbdf935f2ce1b22eecfcd"
+                "sha256:0ea8386289f5830af68b0dc4cf7d697f9437ec61a462532e3941477430642cb2",
+                "sha256:44908f329d8ae02394559cb68dd09f5c2965bc5ef0b7b21e41dce017684756cd"
             ],
-            "version": "==1.12.43"
-=======
-                "sha256:02e5c1b85a8b22a92f612daf2d1eea305818076b24ce02878b85e92d9ae0082e",
-                "sha256:0e625e147eafdaf9b6c649391059156517daa579ff231e618bd3372e16dacd41"
-            ],
-            "version": "==1.9.42"
-        },
-        "botocore": {
-            "hashes": [
-                "sha256:0e495bcf2e474b82da7938b35ad2f71e28384c246b47ca131779f736621da504",
-                "sha256:a890509fb7625fc5c86475db58ac7db489539000cecab349d8eabf5e5777e363"
-            ],
-            "version": "==1.12.42"
->>>>>>> rewritten to use responder and not flask, we depend on an external prometheus to trigger updates of metrics, metrics are just updated if someone requests /metrics
+            "version": "==1.12.44"
         },
         "cachetools": {
             "hashes": [
@@ -442,6 +428,7 @@
                 "sha256:063df5763652e21de43de7d9e00ccf239f953a832941e37be541614732cdfc93",
                 "sha256:88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
             ],
+            "markers": "python_version >= '2.7'",
             "version": "==2.7.5"
         },
         "python-multipart": {
@@ -634,6 +621,7 @@
                 "sha256:61bf29cada3fc2fbefad4fdf059ea4bd1b4a86d2b6d15e1c7c0b582b9752fe39",
                 "sha256:de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
             ],
+            "markers": "python_version >= '3.4'",
             "version": "==1.24.1"
         },
         "uvicorn": {
@@ -701,10 +689,10 @@
         },
         "whitenoise": {
             "hashes": [
-                "sha256:133a92ff0ab8fb9509f77d4f7d0de493eca19c6fea973f4195d4184f888f2e02",
-                "sha256:32b57d193478908a48acb66bf73e7a3c18679263e3e64bfebcfac1144a430039"
+                "sha256:b1ddbce083c51a064da5e99dacbfff38b291d8436b6fd75156a3bb2265c55d39",
+                "sha256:d3609f505db173be501e8a5549d396e6013543fe126ee073b435833fc3403306"
             ],
-            "version": "==4.1"
+            "version": "==4.1.1"
         },
         "yarl": {
             "hashes": [
