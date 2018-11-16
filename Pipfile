@@ -5,15 +5,17 @@ name = "pypi"
 
 [packages]
 prometheus_client = "*"
-flask = "*"
-gunicorn = "*"
-apscheduler = "*"
-flask-apscheduler = "*"
 thoth-storages = "*"
 thoth-common = {extras = ["openshift"], version = "*"}
 requests = "*"
+responder = "==1.1.1"
+uvicorn = "*"
+starlette = "<0.8.0"
 
 [dev-packages]
 
 [requires]
 python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

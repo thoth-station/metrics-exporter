@@ -22,51 +22,76 @@ import os
 import asyncio
 import time
 import logging
+
 from datetime import datetime
 
-from flask import Flask, Response
-from flask_apscheduler import APScheduler
+import responder
+import uvicorn
 
 from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST
 
 from thoth.common import init_logging
 
-from thoth.metrics_exporter import __version__, config, thoth_package_version_total, thoth_package_version_seconds
-from thoth.metrics_exporter.jobs import get_thoth_solver_jobs, get_retrieve_unsolved_pypi_packages
+from thoth.metrics_exporter import __version__
+from thoth.metrics_exporter.jobs import (
+    get_solver_documents,
+    get_analyzer_documents,
+    get_janusgraph_v_and_e_total,
+    get_retrieve_unsolved_pypi_packages,
+    get_thoth_solver_jobs,
+)
 
-
-application = Flask(__name__)
-application.config.from_object(config.Config())
 
 init_logging()
 
-_LOGGER = logging.getLogger('thoth.metrics_exporter')
-_DEBUG = os.getenv('DEBUG', False)
+_LOGGER = logging.getLogger("thoth.metrics_exporter")
+_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
+
+api = responder.API(title="Thoth Metrics Exporter", version=__version__)
+api.debug = _DEBUG
 
 
-@application.route('/')
-def main():
+@api.route(before_request=True)
+def prepare_response(req, resp):
+    """Just add my signature."""
+    resp.headers["X-Thoth-Metrics-Exporter-Version"] = f"v{__version__}"
+
+
+@api.route("/")
+async def main(req, resp):
     """Show this to humans."""
-    return "This service is not for humans!"
+    resp.headers["Location"] = "https://url.corp.redhat.com/grafana-thoth-test"
+    resp.status_code = api.status_codes.HTTP_308
 
 
-@application.route('/metrics')
-def metrics():
+@api.route("/metrics")
+async def metrics(req, resp):
     """Return the Prometheus Metrics."""
-    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+    _LOGGER.debug("exporting metrics registry...")
+
+    @api.background.task
+    def update_janusgraph_metrics():
+        _LOGGER.debug("updating JanusGraph metrics")
+        get_solver_documents()
+        get_analyzer_documents()
+        get_janusgraph_v_and_e_total()
+        get_retrieve_unsolved_pypi_packages()
+
+    @api.background.task
+    def update_openshift_metrics():
+        _LOGGER.debug("updating OpenShift metrics")
+
+        get_thoth_solver_jobs()
+
+    update_janusgraph_metrics()
+    update_openshift_metrics()
+    resp.text = generate_latest().decode("utf-8")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    logging.getLogger("thoth").setLevel(logging.DEBUG if _DEBUG else logging.INFO)
+
+    _LOGGER.debug("Debug mode is on")
     _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
 
-    # initialy populating the metrics
-    get_thoth_solver_jobs()
-    get_retrieve_unsolved_pypi_packages()
-
-    # now, let's do it every minute
-    scheduler = APScheduler()
-    scheduler.init_app(application)
-    scheduler.start()
-
-    # and start the application server
-    application.run(host='0.0.0.0', port=8080, debug=_DEBUG)
+    api.run(address="0.0.0.0", port=8080, debug=_DEBUG)
