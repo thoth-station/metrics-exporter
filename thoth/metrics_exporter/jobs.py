@@ -32,7 +32,7 @@ from openshift.dynamic.exceptions import ResourceNotFoundError
 
 from thoth.storages import GraphDatabase
 from thoth.common import init_logging
-from thoth.common.helpers import get_service_account_token
+from thoth.common import OpenShift
 from thoth.metrics_exporter import *
 
 
@@ -89,12 +89,13 @@ def get_thoth_solver_jobs(namespace: str = None):
         "https://paas.upshift.redhat.com:443/apis/batch/v1", namespace
     )  # FIXME the OpenShift API URL should not be hardcoded
 
+    openshift = OpenShift()
     try:
         # FIXME we should not hardcode the solver dist names
         response = requests.get(
             endpoint,
             headers={
-                "Authorization": "Bearer {}".format(get_service_account_token()),
+                "Authorization": "Bearer {}".format(openshift.token),
                 "Content-Type": "application/json",
             },
             params={"labelSelector": "component=solver-f27"},
