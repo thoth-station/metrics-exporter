@@ -48,7 +48,6 @@ def get_retrieve_unsolved_pypi_packages():
     asyncio.set_event_loop(loop)
 
     try:
-        # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
         graph = GraphDatabase.create('janusgraph.test.thoth-station.ninja')
         graph.connect()
 
@@ -123,23 +122,25 @@ def get_solver_documents(solver_name: str = None):
         graph_db.connect()
         graphdb_connection_error_status.set(0)
 
+        # Optimized query
+        #number_solver_documents = graph_db.get_solver_documents_count()
+
+        # Non-Optimized query
+        number_solver_documents = asyncio.get_event_loop().run_until_complete(graph_db.
+        g.E()
+            .has("__label__", "solved")
+            .valueMap()
+            .select("solver_document_id")
+            .dedup()
+            .count()
+            .next())
+
+        solver_documents_total.set(number_solver_documents)
+        _LOGGER.debug("solver_documents_total=%r", number_solver_documents)
+
+
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         _LOGGER.error(excptn)
-        return graphdb_connection_error_status.set(1)
-
-    # Optimimzed query
-    #number_solver_documents = graph_db.get_solver_documents_count()
-
-    # Non-Optimimzed query
-    number_solver_documents = asyncio.get_event_loop().run_until_complete(graph_db.g.E()
-    .has("__label__", "solved")
-    .valueMap()
-    .select("solver_document_id")
-    .dedup()
-    .count()
-    .next())
-
-    _LOGGER.debug("solver_documents_total=%r", number_solver_documents)
 
 
 @analyzer_documents_seconds.time()
@@ -213,3 +214,82 @@ def get_difference_between_v_python_artifact_and_e_has_artifact_instances():
     difference_between_v_python_artifact_and_e_has_artifact_instances.set(graphdb_total_e_has_artifact_instances - graphdb_total_v_python_artifact_instances)
 
     _LOGGER.debug("difference_between_v_python_artifact_and_e_has_artifact_instances=%r", graphdb_total_e_has_artifact_instances - graphdb_total_v_python_artifact_instances)
+
+
+def get_python_packages_solver_error_count():
+    """Get the total numbr of python packages with solver error True and how many are unparsable or unsolvable"""
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    graph_db = GraphDatabase.create('janusgraph.test.thoth-station.ninja')
+    graph_db.connect()
+
+    #Optimized query
+    # total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparsable=True)
+    #Optimized query
+    # total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
+    
+    #Non-optimized query
+    total_python_packages_with_solver_error_unparsable = asyncio.get_event_loop().run_until_complete(graph_db
+    .g.E()
+        .has("__label__", "solved")
+        .has("solver_error", True)
+        .has("solver_error_unparsable", True)
+        .inV()
+        .has("__label__", "python_package_version")
+        .has("__type__", "vertex")
+        .has("ecosystem", "pypi")
+        .has("package_name")
+        .has("package_version")
+        .dedup()
+        .count()
+        .next())
+    
+    #Non-optimized query
+    total_python_packages_with_solver_error_unsolvable = asyncio.get_event_loop().run_until_complete(graph_db
+    .g.E()
+        .has("__label__", "solved")
+        .has("solver_error", True)
+        .has("solver_error_unsolvable", True)
+        .inV()
+        .has("__label__", "python_package_version")
+        .has("__type__", "vertex")
+        .has("ecosystem", "pypi")
+        .has("package_name")
+        .has("package_version")
+        .dedup()
+        .count()
+        .next())
+    
+    
+    graphdb_total_python_packages_with_solver_error_unparsable.set(total_python_packages_with_solver_error_unparsable)
+    graphdb_total_python_packages_with_solver_error_unsolvable.set(total_python_packages_with_solver_error_unsolvable)
+    graphdb_total_python_packages_with_solver_error.set(total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable)
+
+    _LOGGER.debug("graphdb_total_python_packages_with_solver_error=%r", total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable)
+    _LOGGER.debug("graphdb_total_python_packages_with_solver_error_unparsable=%r", total_python_packages_with_solver_error_unparsable)
+    _LOGGER.debug("graphdb_total_python_packages_with_solver_error_unsolvable=%r", total_python_packages_with_solver_error_unsolvable)
+
+
+def get_difference_between_known_urls_and_all_urls():
+    """Get the difference between Thoth known urls and all urls in the packages"""
+
+    graph_db = GraphDatabase.create('janusgraph.test.thoth-station.ninja')
+    graph_db.connect()
+
+    graphdb_known_thoth_urls = graph_db.get_python_package_index_urls()
+
+    #Non-optimized query
+    graphdb_total_n_packages_per_index = asyncio.get_event_loop().run_until_complete(graph_db
+    .g.V()
+        .has("index_url")
+        .groupCount()
+        .by("index_url")
+        .next())
+    
+    graphdb_all_urls = [url_index for url_index in graphdb_total_n_packages_per_index.keys()]
+
+    difference_between_known_urls_and_all_urls.set(len(set(graphdb_all_urls) - set(graphdb_known_thoth_urls)))
+
+    _LOGGER.debug("difference_between_known_urls_and_all_urls=%r", len(set(graphdb_all_urls) - set(graphdb_known_thoth_urls)))
