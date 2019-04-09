@@ -50,7 +50,7 @@ from thoth.metrics_exporter.jobs import (
 init_logging()
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", True)
+_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 
 api = responder.API(title="Thoth Metrics Exporter", version=__version__)
 api.debug = _DEBUG
@@ -85,7 +85,7 @@ async def metrics(req, resp):
         get_difference_between_v_python_artifact_and_e_has_artifact_instances()
         get_python_packages_solver_error_count()
         get_difference_between_known_urls_and_all_urls()
-        #get_retrieve_unsolved_pypi_packages()
+        # get_retrieve_unsolved_pypi_packages()
 
     @api.background.task
     def update_openshift_metrics():
