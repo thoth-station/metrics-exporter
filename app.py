@@ -36,7 +36,12 @@ from thoth.metrics_exporter import __version__
 from thoth.metrics_exporter.jobs import (
     get_solver_documents,
     get_analyzer_documents,
-    get_janusgraph_v_and_e_total,
+    get_tot_vertex_and_edges_instances,
+    get_tot_instances_for_each_vertex,
+    get_tot_instances_for_each_edge,
+    get_difference_between_v_python_artifact_and_e_has_artifact_instances,
+    get_python_packages_solver_error_count,
+    get_difference_between_known_urls_and_all_urls,
     get_retrieve_unsolved_pypi_packages,
     get_thoth_solver_jobs,
 )
@@ -74,14 +79,19 @@ async def metrics(req, resp):
         _LOGGER.debug("updating JanusGraph metrics")
         get_solver_documents()
         get_analyzer_documents()
-        get_janusgraph_v_and_e_total()
-        get_retrieve_unsolved_pypi_packages()
+        get_tot_vertex_and_edges_instances()
+        get_tot_instances_for_each_vertex()
+        get_tot_instances_for_each_edge()
+        get_difference_between_v_python_artifact_and_e_has_artifact_instances()
+        get_python_packages_solver_error_count()
+        get_difference_between_known_urls_and_all_urls()
+        # get_retrieve_unsolved_pypi_packages()
 
     @api.background.task
     def update_openshift_metrics():
         _LOGGER.debug("updating OpenShift metrics")
 
-        get_thoth_solver_jobs()
+        get_thoth_solver_jobs('thoth-test-core')
 
     update_janusgraph_metrics()
     update_openshift_metrics()

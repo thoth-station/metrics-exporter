@@ -30,7 +30,7 @@ __author__ = "Christoph Görn <goern@redhat.com>"
 
 # Info Metric
 metrics_exporter_info = Gauge(
-    "thoth_metrics_exporter_info",  # what promethus ses
+    "thoth_metrics_exporter_info",  # what promethus sees
     "Thoth Metrics Exporter information",  # what the human reads
     ["version"],  # what labels I use
 )
@@ -48,14 +48,16 @@ package_version_seconds = Summary(
 
 # Solver Documents
 solver_documents_total = Gauge(
-    "thoth_solver_documents_total", "Number of Solver Documents", ["ecosystem", "solver", "state"]
+    "thoth_solver_documents_total", "Number of Solver Documents", []
 )
 solver_documents_seconds = Summary(
     "thoth_solver_documents_seconds", "Time spent processing requests about Solver Documents to JanusGraph Server.", []
 )
 
 # Analyzer Documents
-analyzer_documents_total = Gauge("thoth_analyzer_documents_total", "Number of Analyzer Documents", [])
+analyzer_documents_total = Gauge(
+    "thoth_analyzer_documents_total", "Number of Analyzer Documents", [])
+
 analyzer_documents_seconds = Summary(
     "thoth_analyzer_documents_seconds",
     "Time spent processing requests about Analyzer Documents to JanusGraph Server.",
@@ -69,7 +71,50 @@ solver_jobs_seconds = Gauge(
     "thoth_solver_jobs_seconds", "Time spent processing requests to OpenShift to get Solver Jobs", []
 )
 
-graphdatabase_vertex_total = Gauge(
-    "thoth_graphdatabase_vertex_total", "Total number of Vertices in JanusGraph Database", []
+# Graph Structure
+graphdb_total_vertex_instances = Gauge(
+    "thoth_graph_db_total_vertex_instances", "Total number of Vertex Instances in JanusGraph Database", []
 )
-graphdatabase_edge_total = Gauge("thoth_graphdatabase_edge_total", "Total number of Edges in JanusGraph Database", [])
+graphdb_total_edge_instances = Gauge(
+    "thoth_graph_db_total_edge_instances", "Total number of Edges in JanusGraph Database", [])
+
+graphdb_total_instances_per_vertex = Gauge(
+    "thoth_graphdb_total_instances_per_vertex",
+    "Total number of Instances for each Vertex in JanusGraph Database", ["vertex_label"]
+)
+
+graphdb_total_instances_per_edge = Gauge(
+    "thoth_graphdb_total_instances_per_edge",
+    "Total number of Instances for each Edge in JanusGraph Database", ["edge_label"]
+)
+
+# Graph Consistency
+difference_between_v_python_artifact_and_e_has_artifact_instances = Gauge(
+    "thoth_difference_between_v_python_artifact_and_e_has_artifact_instances",
+    "Difference between has_artifact Edge and python_artifact Vertex instances", []
+)
+
+# Python Packages Solver Error
+graphdb_total_python_packages_with_solver_error = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error",
+    "Total numbr of python packages with solver error True", []
+)
+graphdb_total_python_packages_with_solver_error_unparsable = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error_unparsable",
+    "Total numbr of python packages with solver error True and error_unparsable True", []
+)
+
+graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error_unsolvable",
+    "Total numbr of python packages with solver error True and error_unsolvable True", []
+)
+# Thoth Graph Reliability
+difference_between_all_urls_and_known_urls = Gauge(
+    "thoth_difference_between_all_urls_and_known_urls",
+    "Number of urls not in Thoth reliable urls", []
+)
+
+# Graph Connection
+graphdb_connection_error_status = Gauge(
+    "thoth_graphdb_connection_issues", "Connection error status", []
+)

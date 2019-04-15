@@ -50,7 +50,6 @@ def get_retrieve_unsolved_pypi_packages():
     try:
         # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
         graph = GraphDatabase()
-        graph.connect()
 
         package_version_total.labels(ecosystem="pypi", solver="f27", status="unsolved").set(
             len(list(chain(*graph.retrieve_unsolved_pypi_packages().values())))
@@ -94,10 +93,7 @@ def get_thoth_solver_jobs(namespace: str = None):
         # FIXME we should not hardcode the solver dist names
         response = requests.get(
             endpoint,
-            headers={
-                "Authorization": "Bearer {}".format(openshift.token),
-                "Content-Type": "application/json",
-            },
+            headers={"Authorization": "Bearer {}".format(openshift.token), "Content-Type": "application/json"},
             params={"labelSelector": "component=solver-f27"},
             verify=False,
         ).json()
@@ -119,15 +115,16 @@ def get_solver_documents(solver_name: str = None):
     asyncio.set_event_loop(loop)
 
     try:
-        graph_db = GraphDatabase.create()
+        graph_db = GraphDatabase()
         graph_db.connect()
+
+        number_solver_documents = graph_db.get_solver_documents_count()
+
+        solver_documents_total.set(number_solver_documents)
+        _LOGGER.debug("solver_documents_total=%r", number_solver_documents)
+
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         _LOGGER.error(excptn)
-        return
-
-    solver_documents = graph_db.get_solver_documents_count()
-
-    _LOGGER.debug("solver_documents=%r", solver_documents)
 
 
 @analyzer_documents_seconds.time()
@@ -136,23 +133,111 @@ def get_analyzer_documents():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    graph_db = GraphDatabase.create()
-    graph_db.connect()
-    analyzer_documents = graph_db.get_solver_documents_count()
+    graph_db = GraphDatabase()
+    number_analyzer_documents = graph_db.get_analyzer_documents_count()
 
-    _LOGGER.debug("analyzer_documents_total=%r", analyzer_documents)
+    analyzer_documents_total.set(number_analyzer_documents)
+    _LOGGER.debug("analyzer_documents_total=%r", number_analyzer_documents)
 
 
-def get_janusgraph_v_and_e_total():
-    """Get the total number of Vertices and Edges stored in JanusGraph Server."""
+def get_tot_vertex_and_edges_instances():
+    """Get the total number of Vertex and Edge instances stored in JanusGraph Server."""
+    graph_db = GraphDatabase()
+
+    v_total = graph_db.get_total_number_of_vertex_instances_count()
+    e_total = graph_db.get_total_number_of_edge_instances_count()
+
+    graphdb_total_vertex_instances.set(v_total)
+    graphdb_total_edge_instances.set(e_total)
+
+    _LOGGER.debug("graphdb_total_vertex_instances=%r", v_total)
+    _LOGGER.debug("graphdb_total_edge_instances=%r", e_total)
+
+
+def get_tot_instances_for_each_vertex():
+    """Get the total number of Instances for each Vertex stored in JanusGraph Server."""
+    graph_db = GraphDatabase()
+
+    v_instances_total = graph_db.get_total_number_of_instances_for_each_vertex_count()
+
+    for v_label, v_instances_count in v_instances_total.items():
+        graphdb_total_instances_per_vertex.labels(v_label).set(v_instances_count)
+
+    _LOGGER.debug("graphdb_total_instances_per_vertex=%r", v_instances_total)
+
+
+def get_tot_instances_for_each_edge():
+    """Get the total number of Instances for each Edge stored in JanusGraph Server."""
+    graph_db = GraphDatabase()
+
+    e_instances_total = graph_db.get_total_number_of_instances_for_each_edge_count()
+
+    for e_label, e_instances_count in e_instances_total.items():
+        graphdb_total_instances_per_edge.labels(e_label).set(e_instances_count)
+
+    _LOGGER.debug("graphdb_total_instances_per_edge=%r", e_instances_total)
+
+
+def get_difference_between_v_python_artifact_and_e_has_artifact_instances():
+    """Get the difference between the instances of Vertex "python_artifact" instances and Edge "has_artifacts"."""
+    graph_db = GraphDatabase()
+
+    graphdb_total_v_python_artifact_instances = graph_db.get_total_number_of_python_artifact_vertex_instances_count()
+    graphdb_total_e_has_artifact_instances = graph_db.get_total_number_of_has_artifact_edge_instances_count()
+
+    difference_between_v_python_artifact_and_e_has_artifact_instances.set(
+        graphdb_total_e_has_artifact_instances - graphdb_total_v_python_artifact_instances
+    )
+
+    _LOGGER.debug(
+        "difference_between_v_python_artifact_and_e_has_artifact_instances=%r",
+        graphdb_total_e_has_artifact_instances - graphdb_total_v_python_artifact_instances,
+    )
+
+
+def get_python_packages_solver_error_count():
+    """Get the total numbr of python packages with solver error True and how many are unparsable or unsolvable."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    graph_db = GraphDatabase.create()
-    graph_db.connect()
+    graph_db = GraphDatabase()
 
-    v_total = asyncio.get_event_loop().run_until_complete(graph_db.g.V().count().next())
-    e_total = asyncio.get_event_loop().run_until_complete(graph_db.g.E().count().next())
+    total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparsable=True)
+    total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
 
-    graphdatabase_vertex_total.set(v_total)
-    graphdatabase_edge_total.set(e_total)
+    graphdb_total_python_packages_with_solver_error_unparsable.set(total_python_packages_with_solver_error_unparsable)
+    graphdb_total_python_packages_with_solver_error_unsolvable.set(total_python_packages_with_solver_error_unsolvable)
+    graphdb_total_python_packages_with_solver_error.set(
+        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
+    )
+
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error=%r",
+        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
+    )
+
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error_unparsable=%r",
+        total_python_packages_with_solver_error_unparsable,
+    )
+
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
+        total_python_packages_with_solver_error_unsolvable,
+    )
+
+
+def get_difference_between_known_urls_and_all_urls():
+    """Get the difference between Thoth known urls and all urls in the packages."""
+    graph_db = GraphDatabase()
+
+    graphdb_known_thoth_urls = graph_db.get_python_package_index_urls()
+    graphdb_total_number_packages_per_url_index = graph_db.get_total_number_of_packages_per_url_index_count()
+
+    graphdb_all_urls = [url_index for url_index in graphdb_total_number_packages_per_url_index.keys()]
+
+    difference_between_all_urls_and_known_urls.set(len(set(graphdb_all_urls) - set(graphdb_known_thoth_urls)))
+
+    _LOGGER.debug(
+        "difference_between_all_urls_and_known_urls=%r", len(set(graphdb_all_urls) - set(graphdb_known_thoth_urls))
+    )
