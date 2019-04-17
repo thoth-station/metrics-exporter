@@ -50,6 +50,7 @@ def get_retrieve_unsolved_pypi_packages():
     try:
         # janusgraph is a hostname injected into the pod by the 'janusgraph' service object
         graph = GraphDatabase()
+        graph_db.connect()
 
         package_version_total.labels(ecosystem="pypi", solver="f27", status="unsolved").set(
             len(list(chain(*graph.retrieve_unsolved_pypi_packages().values())))
@@ -124,25 +125,32 @@ def get_solver_documents(solver_name: str = None):
         _LOGGER.debug("solver_documents_total=%r", number_solver_documents)
 
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
 
 @analyzer_documents_seconds.time()
 def get_analyzer_documents():
     """Get the total number Analyzer Documents in Graph Database."""
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-    graph_db = GraphDatabase()
-    number_analyzer_documents = graph_db.get_analyzer_documents_count()
+        number_analyzer_documents = graph_db.get_analyzer_documents_count()
 
-    analyzer_documents_total.set(number_analyzer_documents)
-    _LOGGER.debug("analyzer_documents_total=%r", number_analyzer_documents)
+        analyzer_documents_total.set(number_analyzer_documents)
+        graphdb_connection_error_status.set(0)
+        _LOGGER.debug("analyzer_documents_total=%r", number_analyzer_documents)
+
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
+        _LOGGER.error(excptn)
 
 
 def get_tot_vertex_and_edges_instances():
     """Get the total number of Vertex and Edge instances stored in JanusGraph Server."""
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     v_total = graph_db.get_total_number_of_vertex_instances_count()
     e_total = graph_db.get_total_number_of_edge_instances_count()
@@ -157,6 +165,7 @@ def get_tot_vertex_and_edges_instances():
 def get_tot_instances_for_each_vertex():
     """Get the total number of Instances for each Vertex stored in JanusGraph Server."""
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     v_instances_total = graph_db.get_total_number_of_instances_for_each_vertex_count()
 
@@ -169,6 +178,7 @@ def get_tot_instances_for_each_vertex():
 def get_tot_instances_for_each_edge():
     """Get the total number of Instances for each Edge stored in JanusGraph Server."""
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     e_instances_total = graph_db.get_total_number_of_instances_for_each_edge_count()
 
@@ -181,6 +191,7 @@ def get_tot_instances_for_each_edge():
 def get_difference_between_v_python_artifact_and_e_has_artifact_instances():
     """Get the difference between the instances of Vertex "python_artifact" instances and Edge "has_artifacts"."""
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     graphdb_total_v_python_artifact_instances = graph_db.get_total_number_of_python_artifact_vertex_instances_count()
     graphdb_total_e_has_artifact_instances = graph_db.get_total_number_of_has_artifact_edge_instances_count()
@@ -197,10 +208,8 @@ def get_difference_between_v_python_artifact_and_e_has_artifact_instances():
 
 def get_python_packages_solver_error_count():
     """Get the total numbr of python packages with solver error True and how many are unparsable or unsolvable."""
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparsable=True)
     total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
@@ -230,6 +239,7 @@ def get_python_packages_solver_error_count():
 def get_difference_between_known_urls_and_all_urls():
     """Get the difference between Thoth known urls and all urls in the packages."""
     graph_db = GraphDatabase()
+    graph_db.connect()
 
     graphdb_known_thoth_urls = graph_db.get_python_package_index_urls()
     graphdb_total_number_packages_per_url_index = graph_db.get_total_number_of_packages_per_url_index_count()
