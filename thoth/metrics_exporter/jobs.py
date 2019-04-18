@@ -207,27 +207,27 @@ def get_difference_between_v_python_artifact_and_e_has_artifact_instances():
 
 
 def get_python_packages_solver_error_count():
-    """Get the total numbr of python packages with solver error True and how many are unparsable or unsolvable."""
+    """Get the total numbr of python packages with solver error True and how many are unparseable or unsolvable."""
     graph_db = GraphDatabase()
     graph_db.connect()
 
-    total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparsable=True)
+    total_python_packages_with_solver_error_unparseable = graph_db.get_error_python_packages_count(unparseable=True)
     total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
 
-    graphdb_total_python_packages_with_solver_error_unparsable.set(total_python_packages_with_solver_error_unparsable)
+    graphdb_total_python_packages_with_solver_error_unparseable.set(total_python_packages_with_solver_error_unparseable)
     graphdb_total_python_packages_with_solver_error_unsolvable.set(total_python_packages_with_solver_error_unsolvable)
     graphdb_total_python_packages_with_solver_error.set(
-        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
+        total_python_packages_with_solver_error_unparseable + total_python_packages_with_solver_error_unsolvable
     )
 
     _LOGGER.debug(
         "graphdb_total_python_packages_with_solver_error=%r",
-        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
+        total_python_packages_with_solver_error_unparseable + total_python_packages_with_solver_error_unsolvable,
     )
 
     _LOGGER.debug(
-        "graphdb_total_python_packages_with_solver_error_unparsable=%r",
-        total_python_packages_with_solver_error_unparsable,
+        "graphdb_total_python_packages_with_solver_error_unparseable=%r",
+        total_python_packages_with_solver_error_unparseable,
     )
 
     _LOGGER.debug(
