@@ -11,6 +11,7 @@ requests = "*"
 responder = "==1.1.1"
 uvicorn = "*"
 starlette = "<0.8.0"
+aiohttp = "*"
 
 [dev-packages]
 

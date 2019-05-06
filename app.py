@@ -36,13 +36,9 @@ from thoth.metrics_exporter import __version__
 from thoth.metrics_exporter.jobs import (
     get_solver_documents,
     get_analyzer_documents,
-    get_tot_vertex_and_edges_instances,
+    get_tot_vertex_instances,
     get_tot_instances_for_each_vertex,
-    get_tot_instances_for_each_edge,
-    get_difference_between_v_python_artifact_and_e_has_artifact_instances,
     get_python_packages_solver_error_count,
-    get_difference_between_known_urls_and_all_urls,
-    get_retrieve_unsolved_pypi_packages,
     get_thoth_solver_jobs,
 )
 
@@ -50,7 +46,7 @@ from thoth.metrics_exporter.jobs import (
 init_logging()
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
+_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", True)
 
 api = responder.API(title="Thoth Metrics Exporter", version=__version__)
 api.debug = _DEBUG
@@ -75,17 +71,13 @@ async def metrics(req, resp):
     _LOGGER.debug("exporting metrics registry...")
 
     @api.background.task
-    def update_janusgraph_metrics():
-        _LOGGER.debug("updating JanusGraph metrics")
+    def update_dgraph_metrics():
+        _LOGGER.debug("updating Dgraph metrics")
         get_solver_documents()
         get_analyzer_documents()
-        get_tot_vertex_and_edges_instances()
+        get_tot_vertex_instances()
         get_tot_instances_for_each_vertex()
-        get_tot_instances_for_each_edge()
-        get_difference_between_v_python_artifact_and_e_has_artifact_instances()
         get_python_packages_solver_error_count()
-        get_difference_between_known_urls_and_all_urls()
-        # get_retrieve_unsolved_pypi_packages()
 
     @api.background.task
     def update_openshift_metrics():
@@ -93,7 +85,7 @@ async def metrics(req, resp):
 
         get_thoth_solver_jobs('thoth-test-core')
 
-    update_janusgraph_metrics()
+    update_dgraph_metrics()
     update_openshift_metrics()
     resp.text = generate_latest().decode("utf-8")
 
