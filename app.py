@@ -34,11 +34,13 @@ from thoth.common import init_logging
 
 from thoth.metrics_exporter import __version__
 from thoth.metrics_exporter.jobs import (
-    get_solver_documents,
-    get_analyzer_documents,
-    get_tot_vertex_instances,
-    get_tot_instances_for_each_vertex,
+    get_tot_nodes_count,
+    get_tot_nodes_for_each_entity_count,
     get_python_packages_solver_error_count,
+    get_unique_python_packages_count,
+    get_unique_run_software_environment_count,
+    get_user_unique_run_software_environment_count,
+    get_unique_build_software_environment_count,
     get_thoth_solver_jobs,
 )
 
@@ -73,17 +75,19 @@ async def metrics(req, resp):
     @api.background.task
     def update_dgraph_metrics():
         _LOGGER.debug("updating Dgraph metrics")
-        get_solver_documents()
-        get_analyzer_documents()
-        get_tot_vertex_instances()
-        get_tot_instances_for_each_vertex()
+        get_tot_nodes_count()
+        get_tot_nodes_for_each_entity_count()
         get_python_packages_solver_error_count()
+        get_unique_python_packages_count()
+        get_unique_run_software_environment_count()
+        get_user_unique_run_software_environment_count()
+        get_unique_build_software_environment_count()
 
     @api.background.task
     def update_openshift_metrics():
         _LOGGER.debug("updating OpenShift metrics")
 
-        get_thoth_solver_jobs('thoth-test-core')
+        print("No openshift metrics")
 
     update_dgraph_metrics()
     update_openshift_metrics()
