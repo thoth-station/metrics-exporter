@@ -67,70 +67,11 @@ def get_thoth_solver_jobs(namespace: str = None):
     if namespace is None:
         namespace = os.getenv("MY_NAMESPACE")
 
-    endpoint = "{}/namespaces/{}/jobs".format(
-        "https://paas.upshift.redhat.com:443/apis/batch/v1", namespace
-    )  # FIXME the OpenShift API URL should not be hardcoded
-
     openshift = OpenShift()
-    try:
-        # FIXME we should not hardcode the solver dist names
-        response = requests.get(
-            endpoint,
-            headers={"Authorization": "Bearer {}".format(openshift.token), "Content-Type": "application/json"},
-            params={"labelSelector": "component=solver-f27"},
-            verify=False,
-        ).json()
-
-        created, failed, succeeded = countJobStatus(response["items"])
-
-        solver_jobs_total.labels("f27", "created").set(created)
-        solver_jobs_total.labels("f27", "failed").set(failed)
-        solver_jobs_total.labels("f27", "succeeded").set(succeeded)
-
-    except ResourceNotFoundError as excptn:
-        _LOGGER.error(excptn)
 
 
-@solver_documents_seconds.time()
-def get_solver_documents(solver_name: str = None):
-    """Get the total number Solver Documents in Graph Database."""
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        number_solver_documents = graph_db.get_solver_documents_count()
-
-        solver_documents_total.set(number_solver_documents)
-        _LOGGER.debug("solver_documents_total=%r", number_solver_documents)
-
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
-
-
-@analyzer_documents_seconds.time()
-def get_analyzer_documents():
-    """Get the total number Analyzer Documents in Graph Database."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        number_analyzer_documents = graph_db.get_analyzer_documents_count()
-
-        analyzer_documents_total.set(number_analyzer_documents)
-        graphdb_connection_error_status.set(0)
-        _LOGGER.debug("analyzer_documents_total=%r", number_analyzer_documents)
-
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
-
-
-def get_tot_vertex_instances():
-    """Get the total number of Vertex instances stored in Thoth Knowledge Graph."""
+def get_tot_nodes_count():
+    """Get the total number of Nodes stored in Thoth Knowledge Graph."""
     try:
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -146,8 +87,8 @@ def get_tot_vertex_instances():
         _LOGGER.error(excptn)
 
 
-def get_tot_instances_for_each_vertex():
-    """Get the total number of Instances for each Vertex in Thoth Knowledge Graph."""
+def get_tot_nodes_for_each_entity_count():
+    """Get the total number of Nodes for each Entity in Thoth Knowledge Graph."""
     try:
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -197,6 +138,80 @@ def get_python_packages_solver_error_count():
             "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
             total_python_packages_with_solver_error_unsolvable,
         )
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
+        _LOGGER.error(excptn)
+
+
+def get_unique_python_packages_count():
+    """Get the total number of unique python packages in Thoth Knowledge Graph."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        total_unique_python_packages = len(graph_db.get_python_packages())
+
+        graphdb_total_unique_python_packages.set(total_unique_python_packages)
+
+        _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
+
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
+        _LOGGER.error(excptn)
+
+
+def get_unique_run_software_environment_count():
+    """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
+
+        graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
+
+        _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
+
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
+        _LOGGER.error(excptn)
+
+
+def get_user_unique_run_software_environment_count():
+    """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_user_run_software_environment = len(
+            set(graph_db.run_software_environment_listing(is_user_run=True))
+        )
+
+        graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+
+        _LOGGER.debug(
+            "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+        )
+
+    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+        graphdb_connection_error_status.set(1)
+        _LOGGER.error(excptn)
+
+
+def get_unique_build_software_environment_count():
+    """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+
+        graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
+
+        _LOGGER.debug(
+            "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
+        )
+
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
