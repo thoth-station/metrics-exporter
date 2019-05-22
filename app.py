@@ -41,7 +41,7 @@ from thoth.metrics_exporter.jobs import (
     get_unique_run_software_environment_count,
     get_user_unique_run_software_environment_count,
     get_unique_build_software_environment_count,
-    get_thoth_solver_jobs,
+    get_thoth_graph_sync_jobs,
 )
 
 
@@ -86,8 +86,7 @@ async def metrics(req, resp):
     @api.background.task
     def update_openshift_metrics():
         _LOGGER.debug("updating OpenShift metrics")
-
-        print("No openshift metrics")
+        get_thoth_graph_sync_jobs()
 
     update_dgraph_metrics()
     update_openshift_metrics()
