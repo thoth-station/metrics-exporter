@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019 Christoph Görn
+# Copyright(C) 2018, 2019 Christoph Görn, Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,33 +41,57 @@ init_logging()
 _LOGGER = logging.getLogger("thoth.metrics_exporter.jobs")
 
 
-def countJobStatus(JobListItems: dict) -> (int, int, int):
-    """Count the number of created, failed and succeeded Solver Jobs."""
-    created = 0
-    failed = 0
-    succeeded = 0
+def countGraphSyncJobStatus(JobListItems: dict) -> (int, int, int):
+    """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
+    graph_sync_jobs_status = {}
+    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending"]
+    graph_sync_job_types = [
+        "solver",
+        "adviser",
+        "provenance-checker",
+        "inspection",
+        "package-extract",
+        "dependency-monkey",
+    ]
+
+    # Initialize
+    for graph_sync_job_type in graph_sync_job_types:
+        graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"] = {}
+        for job_s in graph_sync_job_status:
+            graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"][job_s] = 0
 
     for item in JobListItems:
-        created = created + 1
+        for graph_sync_job_type in graph_sync_job_types:
+            if graph_sync_job_type in item["metadata"]["name"]:
+                job_type = f"graph-sync-{graph_sync_job_type}"
+                break
 
-        try:
-            if "succeeded" in item["status"].keys():
-                succeeded = succeeded + 1
-            if "failed" in item["status"].keys():
-                failed = failed + 1
-        except KeyError as excptn:
-            pass
+        graph_sync_jobs_status[job_type]["created"] += 1
 
-    return (created, failed, succeeded)
+        if "succeeded" in item["status"].keys():
+            graph_sync_jobs_status[job_type]["succeeded"] += 1
+        elif "failed" in item["status"].keys():
+            graph_sync_jobs_status[job_type]["failed"] += 1
+        elif "active" in item["status"].keys():
+            graph_sync_jobs_status[job_type]["active"] += 1
+        else:
+            graph_sync_jobs_status[job_type]["pending"] += 1
+
+    return graph_sync_jobs_status
 
 
-@solver_jobs_seconds.time()
-def get_thoth_solver_jobs(namespace: str = None):
-    """Get the total number Solver Jobs."""
-    if namespace is None:
-        namespace = os.getenv("MY_NAMESPACE")
-
+def get_thoth_graph_sync_jobs():
+    """Get the total number of graph-sync Jobs per category with corresponding status."""
+    namespace = os.getenv("MY_NAMESPACE")
     openshift = OpenShift()
+    response = openshift.get_jobs(label_selector="component=graph-sync", namespace=namespace)
+
+    jobs_status = countGraphSyncJobStatus(response["items"])
+    for j_type, j_statuses in jobs_status.items():
+        for j_status, j_counts in j_statuses.items():
+            jobs_sync_status.labels(j_type, j_status).set(j_counts)
+
+    _LOGGER.debug("thoth_graph_sync_jobs=%r", jobs_status)
 
 
 def get_tot_nodes_count():
@@ -78,9 +102,9 @@ def get_tot_nodes_count():
 
         v_total = graph_db.get_number_of_each_vertex_in_graph()
 
-        graphdb_total_vertex_instances.set(sum([count_vertex for count_vertex in v_total.values()]))
+        graphdb_total_nodes_instances.set(sum([count_vertex for count_vertex in v_total.values()]))
 
-        _LOGGER.debug("graphdb_total_vertex_instances=%r", sum([count_vertex for count_vertex in v_total.values()]))
+        _LOGGER.debug("graphdb_total_nodes_instances=%r", sum([count_vertex for count_vertex in v_total.values()]))
 
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         graphdb_connection_error_status.set(1)
@@ -96,9 +120,9 @@ def get_tot_nodes_for_each_entity_count():
         v_instances_total = graph_db.get_number_of_each_vertex_in_graph()
 
         for v_label, v_instances_count in v_instances_total.items():
-            graphdb_total_instances_per_vertex.labels(v_label).set(v_instances_count)
+            graphdb_total_instances_per_node.labels(v_label).set(v_instances_count)
 
-        _LOGGER.debug("graphdb_total_instances_per_vertex=%r", v_instances_total)
+        _LOGGER.debug("graphdb_total_instances_per_node=%r", v_instances_total)
 
     except aiohttp.client_exceptions.ClientConnectorError as excptn:
         graphdb_connection_error_status.set(1)

@@ -38,21 +38,19 @@ metrics_exporter_info.labels(__version__).inc()
 
 # SERVICE METRICS
 # Solver Jobs
-solver_jobs_total = Gauge("thoth_solver_jobs_total", "Number of Solver Jobs running.", ["dist", "status"])
+jobs_sync_status = Gauge("thoth_graph_sync_jobs_status", "Graph Sync Jobs status overview.", ["job_type", "job_status"])
 
-solver_jobs_seconds = Gauge(
-    "thoth_solver_jobs_seconds", "Time spent processing requests to OpenShift to get Solver Jobs", []
-)
 
 # CONTENT METRICS
 # Graph Structure
-graphdb_total_vertex_instances = Gauge(
-    "thoth_graph_db_total_vertex_instances", "Total number of Vertex Instances in Thoth Knowledge Graph", []
+graphdb_total_nodes_instances = Gauge(
+    "thoth_graph_db_total_node_instances", "Total number of Nodes in Thoth Knowledge Graph", []
 )
 
-graphdb_total_instances_per_vertex = Gauge(
-    "thoth_graphdb_total_instances_per_vertex",
-    "Total number of Instances for each Vertex in in Thoth Knowledge Graph", ["vertex_label"]
+graphdb_total_instances_per_node = Gauge(
+    "thoth_graphdb_total_instances_per_node",
+    "Total number of instances for each Node in Thoth Knowledge Graph",
+    ["node_label"],
 )
 
 # Graph Content
@@ -60,42 +58,39 @@ graphdb_total_instances_per_vertex = Gauge(
 # Python Packages Solver Error
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
-    "Total number of python packages with solver error True", []
+    "Total number of python packages with solver error True",
+    [],
 )
 graphdb_total_python_packages_with_solver_error_unparsable = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error_unparsable",
-    "Total number of python packages with solver error True and error_unparsable True", []
+    "Total number of python packages with solver error True and error_unparsable True",
+    [],
 )
 
 graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error_unsolvable",
-    "Total number of python packages with solver error True and error_unsolvable True", []
+    "Total number of python packages with solver error True and error_unsolvable True",
+    [],
 )
 
 # Python Packages
 graphdb_total_unique_python_packages = Gauge(
-    "thoth_graphdb_total_unique_python_packages",
-    "Total number of unique python packages", []
+    "thoth_graphdb_total_unique_python_packages", "Total number of unique python packages", []
 )
 
 # Software environments for run
 graphdb_total_run_software_environment = Gauge(
-    "thoth_graphdb_total_run_software_environment",
-    "Total number of unique software environment for run", []
+    "thoth_graphdb_total_run_software_environment", "Total number of unique software environment for run", []
 )
 
 graphdb_total_user_run_software_environment = Gauge(
-    "thoth_graphdb_total_user_run_software_environment",
-    "Total number of users unique software environment for run", []
+    "thoth_graphdb_total_user_run_software_environment", "Total number of users unique software environment for run", []
 )
 
 # Software environments for build
 graphdb_total_build_software_environment = Gauge(
-    "thoth_graphdb_total_build_software_environment",
-    "Total number of unique software environment for build", []
+    "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build", []
 )
 
 # Graph Metrics Availability
-graphdb_connection_error_status = Gauge(
-    "thoth_graphdb_connection_issues", "Connection error status", []
-)
+graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
