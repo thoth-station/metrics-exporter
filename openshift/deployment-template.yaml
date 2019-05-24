@@ -25,6 +25,10 @@ parameters:
     required: true
     name: IMAGE_STREAM_TAG
     value: 'latest'
+  - description: Project the ImageStream to be use lives in
+    displayName: ImageStream Project
+    required: true
+    name: IMAGE_STREAM_PROJECT_NAME
 
 objects:
   - kind: Route
@@ -129,3 +133,4 @@ objects:
             from:
               kind: ImageStreamTag
               name: 'metrics-exporter:${IMAGE_STREAM_TAG}'
+              namespace: "${IMAGE_STREAM_PROJECT_NAME}"
