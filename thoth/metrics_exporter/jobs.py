@@ -106,7 +106,7 @@ def get_tot_nodes_count():
 
         _LOGGER.debug("graphdb_total_nodes_instances=%r", sum([count_vertex for count_vertex in v_total.values()]))
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -124,7 +124,7 @@ def get_tot_nodes_for_each_entity_count():
 
         _LOGGER.debug("graphdb_total_instances_per_node=%r", v_instances_total)
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -162,7 +162,7 @@ def get_python_packages_solver_error_count():
             "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
             total_python_packages_with_solver_error_unsolvable,
         )
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -179,7 +179,7 @@ def get_unique_python_packages_count():
 
         _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -196,7 +196,7 @@ def get_unique_run_software_environment_count():
 
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -217,7 +217,7 @@ def get_user_unique_run_software_environment_count():
             "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
         )
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
 
@@ -236,6 +236,6 @@ def get_unique_build_software_environment_count():
             "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
         )
 
-    except aiohttp.client_exceptions.ClientConnectorError as excptn:
+    except Exception as excptn:
         graphdb_connection_error_status.set(1)
         _LOGGER.error(excptn)
