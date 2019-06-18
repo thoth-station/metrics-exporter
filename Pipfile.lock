@@ -834,10 +834,10 @@
         },
         "uvicorn": {
             "hashes": [
-                "sha256:c671d0af24bae3d7153bfae58d4d190590445343a537fc560a58798c78b03d4d"
+                "sha256:3b95412939969e592f0e151da7b661c8078893e79f7504afb7a65b18748871ab"
             ],
             "index": "pypi",
-            "version": "==0.7.3"
+            "version": "==0.8.0"
         },
         "uvloop": {
             "hashes": [
