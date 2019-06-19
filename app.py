@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019 Christoph Görn
+# Copyright(C) 2018, 2019 Christoph Görn, Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ from thoth.metrics_exporter.jobs import (
     get_user_unique_run_software_environment_count,
     get_unique_build_software_environment_count,
     get_thoth_graph_sync_jobs,
+    get_configmaps_per_namespace_per_operator
 )
 
 
@@ -87,6 +88,7 @@ async def metrics(req, resp):
     def update_openshift_metrics():
         _LOGGER.debug("updating OpenShift metrics")
         get_thoth_graph_sync_jobs()
+        get_configmaps_per_namespace_per_operator()
 
     update_dgraph_metrics()
     update_openshift_metrics()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019 Christoph Görn
+# Copyright(C) 2018, 2019 Christoph Görn, Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""This is a Promotheus Metrics exporter for Thoth."""
+"""This is a Prometheus Metrics exporter for Thoth."""
 
 
 from prometheus_client import Gauge, Summary
@@ -38,7 +38,14 @@ metrics_exporter_info.labels(__version__).inc()
 
 # SERVICE METRICS
 # Solver Jobs
-jobs_sync_status = Gauge("thoth_graph_sync_jobs_status", "Graph Sync Jobs status overview.", ["job_type", "job_status"])
+jobs_sync_status = Gauge(
+    "thoth_graph_sync_jobs_status", "Graph Sync Jobs status overview.", ["job_type", "job_status", "namespace"]
+)
+
+# ConfigMaps
+config_maps_number = Gauge(
+    "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
+)
 
 
 # CONTENT METRICS
@@ -92,5 +99,5 @@ graphdb_total_build_software_environment = Gauge(
     "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build", []
 )
 
-# Graph Metrics Availability
+# Graph connection availability
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
