@@ -41,7 +41,23 @@ init_logging()
 _LOGGER = logging.getLogger("thoth.metrics_exporter.jobs")
 
 
-def countGraphSyncJobStatus(job_list_items: list) -> dict:
+def get_namespaces() -> set:
+    """Retrieve namespaces that shall be monitored by metrics-exporter."""
+    environment_variables = [
+        "THOTH_FRONTEND_NAMESPACE",
+        "THOTH_MIDDLETIER_NAMESPACE",
+        "THOTH_BACKEND_NAMESPACE",
+    ]
+    namespaces = []
+    for environment_varibale in environment_variables:
+        if os.getenv(environment_varibale):
+            namespaces.append(os.getenv(environment_varibale))
+        else:
+            _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
+    return set(namespaces)
+
+
+def count_graph_sync_job_status(job_list_items: list) -> dict:
     """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
     graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending"]
     graph_sync_job_types = [
@@ -85,25 +101,14 @@ def countGraphSyncJobStatus(job_list_items: list) -> dict:
 
 def get_thoth_graph_sync_jobs():
     """Get the total number of graph-sync Jobs per category with corresponding status."""
-    namespaces = []
-    namespaces.append(os.getenv("MY_NAMESPACE"))
-
-    if os.getenv("THOTH_MIDDLETIER_NAMESPACE"):
-        namespaces.append(os.getenv("THOTH_MIDDLETIER_NAMESPACE"))
-    else:
-        _LOGGER.warning("Thoth namespace variable not provided for %r", "THOTH_MIDDLETIER_NAMESPACE")
-
-    if os.getenv("THOTH_BACKEND_NAMESPACE"):
-        namespaces.append(os.getenv("THOTH_BACKEND_NAMESPACE"))
-    else:
-        _LOGGER.warning("Thoth namespace variable not provided for %r", "THOTH_BACKEND_NAMESPACE")
+    namespaces = get_namespaces()
 
     openshift = OpenShift()
     for namespace in list(set(namespaces)):
         _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
         response = openshift.get_jobs(label_selector="component=graph-sync", namespace=namespace)
 
-        jobs_status = countGraphSyncJobStatus(response["items"])
+        jobs_status = count_graph_sync_job_status(response["items"])
         for j_type, j_statuses in jobs_status.items():
             for j_status, j_counts in j_statuses.items():
                 jobs_sync_status.labels(j_type, j_status, namespace).set(j_counts)
@@ -117,18 +122,7 @@ def count_configmaps(config_map_list_items: list) -> int:
 
 def get_configmaps_per_namespace_per_operator():
     """Get the total number of configmaps in the namespace from operators."""
-    namespaces = []
-    namespaces.append(os.getenv("MY_NAMESPACE"))
-
-    if os.getenv("THOTH_MIDDLETIER_NAMESPACE"):
-        namespaces.append(os.getenv("THOTH_MIDDLETIER_NAMESPACE"))
-    else:
-        _LOGGER.warning("Thoth namespace variable not provided for %r", "THOTH_MIDDLETIER_NAMESPACE")
-
-    if os.getenv("THOTH_BACKEND_NAMESPACE"):
-        namespaces.append(os.getenv("THOTH_BACKEND_NAMESPACE"))
-    else:
-        _LOGGER.warning("Thoth namespace variable not provided for %r", "THOTH_BACKEND_NAMESPACE")
+    namespaces = get_namespaces()
 
     openshift = OpenShift()
     operators = ["operator=workload", "operator=graph-sync"]
