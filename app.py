@@ -49,7 +49,7 @@ from thoth.metrics_exporter.jobs import (
 init_logging()
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", True)
+_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 
 api = responder.API(title="Thoth Metrics Exporter", version=__version__)
 api.debug = _DEBUG
