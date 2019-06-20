@@ -104,7 +104,7 @@ def get_thoth_graph_sync_jobs():
     namespaces = get_namespaces()
 
     openshift = OpenShift()
-    for namespace in list(set(namespaces)):
+    for namespace in namespaces:
         _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
         response = openshift.get_jobs(label_selector="component=graph-sync", namespace=namespace)
 
@@ -126,7 +126,7 @@ def get_configmaps_per_namespace_per_operator():
 
     openshift = OpenShift()
     operators = ["operator=workload", "operator=graph-sync"]
-    for namespace in list(set(namespaces)):
+    for namespace in namespaces:
         _LOGGER.info("Evaluating configmaps metrics for Thoth namespace: %r", namespace)
 
         for operator in operators:
