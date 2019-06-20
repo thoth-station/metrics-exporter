@@ -59,6 +59,7 @@ def get_namespaces() -> set:
 
 def count_graph_sync_job_status(job_list_items: list) -> dict:
     """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
+    graph_sync_jobs_status = {}
     graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending"]
     graph_sync_job_types = [
         "solver",
@@ -70,12 +71,10 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
     ]
 
     # Initialize
-    graph_sync_jobs_status = dict.fromkeys(
-        [f"graph-sync-{graph_sync_job_type}" for graph_sync_job_type in graph_sync_job_types], {}
-    )
-    for graph_sync_job_type in graph_sync_jobs_status.keys():
+    for graph_sync_job_type in graph_sync_job_types:
+        graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"] = {}
         for job_s in graph_sync_job_status:
-            graph_sync_jobs_status[graph_sync_job_type][job_s] = 0
+            graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"][job_s] = 0
 
     for item in job_list_items:
         for graph_sync_job_type in graph_sync_job_types:
