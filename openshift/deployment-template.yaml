@@ -78,18 +78,21 @@ objects:
           containers:
             - name: "metrics-exporter"
               env:
-                - name: "MY_NAMESPACE"
+                - name: "THOTH_FRONTEND_NAMESPACE"
                   valueFrom:
-                    fieldRef:
-                      fieldPath: metadata.namespace
+                    configMapKeyRef:
+                      key: frontend-namespace
+                      name: thoth
                 - name: "THOTH_MIDDLETIER_NAMESPACE"
                   valueFrom:
-                    fieldRef:
-                      fieldPath: middletier-namespace
+                    configMapKeyRef:
+                      key: middletier-namespace
+                      name: thoth
                 - name: "THOTH_BACKEND_NAMESPACE"
                   valueFrom:
-                    fieldRef:
-                      fieldPath: backend-namespace
+                    configMapKeyRef:
+                      key: backend-namespace
+                      name: thoth
                 - name: "RSYSLOG_HOST"
                   valueFrom:
                     configMapKeyRef:
