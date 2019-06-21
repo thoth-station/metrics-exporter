@@ -78,6 +78,10 @@ objects:
           containers:
             - name: "metrics-exporter"
               env:
+                - name: "WEB_CONCURRENCY"
+                  value: "1"
+                - name: "THOTH_METRICS_EXPORTER_UPDATE_INTERVAL"
+                  value: "20"
                 - name: "THOTH_FRONTEND_NAMESPACE"
                   valueFrom:
                     configMapKeyRef:

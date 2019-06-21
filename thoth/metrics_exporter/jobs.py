@@ -15,30 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""This is a Promotheus exporter for Thoth."""
-
+"""This is a Prometheus exporter for Thoth."""
 
 import os
-import asyncio
-import aiohttp
 import logging
-
-from datetime import datetime
-from itertools import chain
-
-import requests
-
-from openshift.dynamic.exceptions import ResourceNotFoundError
 
 from thoth.storages import GraphDatabase
 from thoth.common import init_logging
 from thoth.common import OpenShift
-from thoth.metrics_exporter import *
+import thoth.metrics_exporter.metrics as metrics
 
 
 init_logging()
 
-_LOGGER = logging.getLogger("thoth.metrics_exporter.jobs")
+_LOGGER = logging.getLogger(__name__)
 
 
 def get_namespaces() -> set:
@@ -110,7 +100,7 @@ def get_thoth_graph_sync_jobs():
         jobs_status = count_graph_sync_job_status(response["items"])
         for j_type, j_statuses in jobs_status.items():
             for j_status, j_counts in j_statuses.items():
-                jobs_sync_status.labels(j_type, j_status, namespace).set(j_counts)
+                metrics.jobs_sync_status.labels(j_type, j_status, namespace).set(j_counts)
         _LOGGER.debug("thoth_graph_sync_jobs=%r", jobs_status)
 
 
@@ -131,7 +121,7 @@ def get_configmaps_per_namespace_per_operator():
         for operator in operators:
             config_maps_items = openshift.get_configmaps(namespace=namespace, label_selector=operator)
             number_configmaps = count_configmaps(config_maps_items)
-            config_maps_number.labels(namespace, operator).set(number_configmaps)
+            metrics.config_maps_number.labels(namespace, operator).set(number_configmaps)
             _LOGGER.debug(
                 "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, operator
             )
@@ -144,15 +134,15 @@ def get_tot_nodes_count():
         graph_db.connect()
 
         v_total = graph_db.get_number_of_each_vertex_in_graph()
-        graphdb_total_nodes_instances.set(sum([count_vertex for count_vertex in v_total.values()]))
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_total_nodes_instances.set(sum([count_vertex for count_vertex in v_total.values()]))
+        metrics.graphdb_connection_error_status.set(0)
 
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
         _LOGGER.debug("graphdb_total_nodes_instances=%r", sum([count_vertex for count_vertex in v_total.values()]))
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_tot_nodes_for_each_entity_count():
@@ -164,16 +154,16 @@ def get_tot_nodes_for_each_entity_count():
         v_instances_total = graph_db.get_number_of_each_vertex_in_graph()
 
         for v_label, v_instances_count in v_instances_total.items():
-            graphdb_total_instances_per_node.labels(v_label).set(v_instances_count)
+            metrics.graphdb_total_instances_per_node.labels(v_label).set(v_instances_count)
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug("graphdb_total_instances_per_node=%r", v_instances_total)
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_python_packages_solver_error_count():
@@ -185,17 +175,17 @@ def get_python_packages_solver_error_count():
         total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
         total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
 
-        graphdb_total_python_packages_with_solver_error_unparsable.set(
+        metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
             total_python_packages_with_solver_error_unparsable
         )
-        graphdb_total_python_packages_with_solver_error_unsolvable.set(
+        metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
             total_python_packages_with_solver_error_unsolvable
         )
-        graphdb_total_python_packages_with_solver_error.set(
+        metrics.graphdb_total_python_packages_with_solver_error.set(
             total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
         )
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug(
@@ -213,8 +203,8 @@ def get_python_packages_solver_error_count():
             total_python_packages_with_solver_error_unsolvable,
         )
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_unique_python_packages_count():
@@ -224,16 +214,16 @@ def get_unique_python_packages_count():
         graph_db.connect()
 
         total_unique_python_packages = len(graph_db.get_python_packages())
-        graphdb_total_unique_python_packages.set(total_unique_python_packages)
+        metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_unique_run_software_environment_count():
@@ -243,16 +233,16 @@ def get_unique_run_software_environment_count():
         graph_db.connect()
 
         thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
-        graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
+        metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_user_unique_run_software_environment_count():
@@ -265,9 +255,9 @@ def get_user_unique_run_software_environment_count():
             set(graph_db.run_software_environment_listing(is_user_run=True))
         )
 
-        graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+        metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug(
@@ -275,8 +265,8 @@ def get_user_unique_run_software_environment_count():
         )
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
 
 
 def get_unique_build_software_environment_count():
@@ -287,9 +277,9 @@ def get_unique_build_software_environment_count():
 
         thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
 
-        graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
+        metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
 
-        graphdb_connection_error_status.set(0)
+        metrics.graphdb_connection_error_status.set(0)
         _LOGGER.debug("graphdb_connection_error_status=%r", 0)
 
         _LOGGER.debug(
@@ -297,5 +287,18 @@ def get_unique_build_software_environment_count():
         )
 
     except Exception as excptn:
-        graphdb_connection_error_status.set(1)
-        _LOGGER.error(excptn)
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
+
+
+ALL_REGISTERED_JOBS = frozenset((
+    get_thoth_graph_sync_jobs,
+    get_configmaps_per_namespace_per_operator,
+    get_tot_nodes_count,
+    get_tot_nodes_for_each_entity_count,
+    get_python_packages_solver_error_count,
+    get_unique_python_packages_count,
+    get_unique_run_software_environment_count,
+    get_user_unique_run_software_environment_count,
+    get_unique_build_software_environment_count,
+))
