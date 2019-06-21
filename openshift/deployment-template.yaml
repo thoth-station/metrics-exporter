@@ -124,10 +124,10 @@ objects:
               resources:
                 requests:
                   memory: "384Mi"
-                  cpu: "125m"
+                  cpu: "2"
                 limits:
                   memory: "768Mi"
-                  cpu: "500m"
+                  cpu: "2"
           volumes:
             - name: dgraph-tls-secrets
               secret:
