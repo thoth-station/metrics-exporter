@@ -6,12 +6,10 @@ name = "pypi"
 [packages]
 prometheus-client = "*"
 thoth-storages = "*"
-thoth-common = {extras = ["openshift"], version = "*"}
-requests = "*"
+thoth-common = {extras = ["openshift"],version = "*"}
 responder = "==1.1.1"
-uvicorn = "*"
-starlette = "<0.8.0"
-aiohttp = "*"
+flask-apscheduler = "*"
+gunicorn = "*"
 
 [dev-packages]
 
