@@ -50,7 +50,7 @@ def get_namespaces() -> set:
 def count_graph_sync_job_status(job_list_items: list) -> dict:
     """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
     graph_sync_jobs_status = {}
-    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "waiting"]
+    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "waiting", "started"]
     graph_sync_job_types = [
         "solver",
         "adviser",
@@ -86,6 +86,8 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
             graph_sync_jobs_status[job_type]["pending"] += 1
         elif not item["status"].keys():
             graph_sync_jobs_status[job_type]["waiting"] += 1
+        elif 'startTime' in item["status"].keys() and len(item["status"].keys()) == 1:
+            graph_sync_jobs_status[job_type]["started"] += 1
         else:
             try:
                 if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
