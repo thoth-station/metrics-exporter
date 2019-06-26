@@ -50,7 +50,7 @@ def get_namespaces() -> set:
 def count_graph_sync_job_status(job_list_items: list) -> dict:
     """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
     graph_sync_jobs_status = {}
-    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "empty"]
+    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "waiting"]
     graph_sync_job_types = [
         "solver",
         "adviser",
@@ -78,16 +78,22 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
             graph_sync_jobs_status[job_type]["succeeded"] += 1
         elif "failed" in item["status"].keys():
             graph_sync_jobs_status[job_type]["failed"] += 1
+            if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
+                graph_sync_jobs_status[job_type]["retry"] += 1
         elif "active" in item["status"].keys():
             graph_sync_jobs_status[job_type]["active"] += 1
         elif "pending" in item["status"].keys():
             graph_sync_jobs_status[job_type]["pending"] += 1
         elif not item["status"].keys():
-            graph_sync_jobs_status[job_type]["empty"] += 1
-        elif "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
-            graph_sync_jobs_status[job_type]["retry"] += 1
+            graph_sync_jobs_status[job_type]["waiting"] += 1
         else:
-            _LOGGER.error("Unknown job status %r", item["status"])
+            try:
+                if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
+                    graph_sync_jobs_status[job_type]["retry"] += 1
+                    graph_sync_jobs_status[job_type]["failed"] += 1
+            except Exception as excptn:
+                _LOGGER.error("Unknown job status %r", item)
+                _LOGGER.exception(excptn)
     return graph_sync_jobs_status
 
 
