@@ -97,6 +97,16 @@ objects:
                     configMapKeyRef:
                       key: backend-namespace
                       name: thoth
+                - name: "THOTH_AMUN_NAMESPACE"
+                  valueFrom:
+                    configMapKeyRef:
+                      key: amun-namespace
+                      name: thoth
+                - name: "THOTH_AMUN_INSPECTION_NAMESPACE"
+                  valueFrom:
+                    configMapKeyRef:
+                      key: amun-inspection-namespace
+                      name: thoth
                 - name: "RSYSLOG_HOST"
                   valueFrom:
                     configMapKeyRef:
