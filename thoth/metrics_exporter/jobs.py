@@ -37,6 +37,8 @@ def get_namespaces() -> set:
         "THOTH_FRONTEND_NAMESPACE",
         "THOTH_MIDDLETIER_NAMESPACE",
         "THOTH_BACKEND_NAMESPACE",
+        "THOTH_AMUN_NAMESPACE",
+        "THOTH_AMUN_INSPECTION_NAMESPACE",
     ]
     namespaces = []
     for environment_varibale in environment_variables:
