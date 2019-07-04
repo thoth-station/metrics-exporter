@@ -80,8 +80,6 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
             graph_sync_jobs_status[job_type]["succeeded"] += 1
         elif "failed" in item["status"].keys():
             graph_sync_jobs_status[job_type]["failed"] += 1
-            if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
-                graph_sync_jobs_status[job_type]["retry"] += 1
         elif "active" in item["status"].keys():
             graph_sync_jobs_status[job_type]["active"] += 1
         elif "pending" in item["status"].keys():
@@ -94,7 +92,6 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
             try:
                 if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
                     graph_sync_jobs_status[job_type]["retry"] += 1
-                    graph_sync_jobs_status[job_type]["failed"] += 1
             except Exception as excptn:
                 _LOGGER.error("Unknown job status %r", item)
                 _LOGGER.exception(excptn)
