@@ -119,21 +119,21 @@ def count_configmaps(config_map_list_items: list) -> int:
     return len(config_map_list_items["items"])
 
 
-def get_configmaps_per_namespace_per_operator():
-    """Get the total number of configmaps in the namespace from operators."""
+def get_configmaps_per_namespace_per_label():
+    """Get the total number of configmaps in the namespace based on labels."""
     namespaces = get_namespaces()
 
     openshift = OpenShift()
-    operators = ["operator=workload", "operator=graph-sync"]
+    labels = ["operator=workload", "operator=graph-sync", "component=graph-sync", "component=solver"]
     for namespace in namespaces:
         _LOGGER.info("Evaluating configmaps metrics for Thoth namespace: %r", namespace)
 
-        for operator in operators:
-            config_maps_items = openshift.get_configmaps(namespace=namespace, label_selector=operator)
+        for label in labels:
+            config_maps_items = openshift.get_configmaps(namespace=namespace, label_selector=label)
             number_configmaps = count_configmaps(config_maps_items)
-            metrics.config_maps_number.labels(namespace, operator).set(number_configmaps)
+            metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
             _LOGGER.debug(
-                "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, operator
+                "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
             )
 
 
@@ -303,7 +303,7 @@ def get_unique_build_software_environment_count():
 
 ALL_REGISTERED_JOBS = frozenset((
     get_thoth_graph_sync_jobs,
-    get_configmaps_per_namespace_per_operator,
+    get_configmaps_per_namespace_per_label,
     get_tot_nodes_count,
     get_tot_nodes_for_each_entity_count,
     get_python_packages_solver_error_count,
