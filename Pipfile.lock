@@ -94,17 +94,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:3ef7c4a5f2a5d10619ccffa7fa39793bdc96d4b737cf9a222d82f41eae673ce9",
-                "sha256:c9d106965899abf062aaa0ffd521212855f7c44491d771d03e7643583e84074b"
+                "sha256:6be71f5f43882915ea2cd6ca4c6c14472418531ac585a060a0c5ca7afc13e1c7",
+                "sha256:d02144562aabc3ffdb74830b8d71167c012e9c4d6523912ec6e55c6181662d37"
             ],
-            "version": "==1.9.187"
+            "version": "==1.9.188"
         },
         "botocore": {
             "hashes": [
-                "sha256:1b695b7ceb71c5df1fe67b3a61b0e8a7e1576d5e2ff429a0933f3a046a88787e",
-                "sha256:42673abd5fe33c4b4a20f526d4f347c57397b093389f418eb6e0f3d88b7133d4"
+                "sha256:140ab03867d912b9cf44421861e6191681cbc065e36ccb51ece865b0ee30b5f3",
+                "sha256:f9c54673beb91ea21c718f1c1fef64862851c561a3810a18b39d3fdbd62ce32c"
             ],
-            "version": "==1.12.187"
+            "version": "==1.12.188"
         },
         "cachetools": {
             "hashes": [
@@ -260,10 +260,10 @@
         },
         "graphene": {
             "hashes": [
-                "sha256:2ac16d6bb3bdba4da3daa0f6d15b74ac585ed6a016980f502c77c3e687c763bb",
-                "sha256:fcbcb24ee960b2c768de4285fbd025aa98eed4ecb6a679bbd41985b05b4008c5"
+                "sha256:77d61618132ccd084c343e64c22d806cee18dce73cc86e0f427378dbdeeac287",
+                "sha256:acf808d50d053b94f7958414d511489a9e490a7f9563b9be80f6875fc5723d2a"
             ],
-            "version": "==2.1.6"
+            "version": "==2.1.7"
         },
         "graphql-core": {
             "hashes": [
@@ -274,9 +274,11 @@
         },
         "graphql-relay": {
             "hashes": [
-                "sha256:2716b7245d97091af21abf096fabafac576905096d21ba7118fba722596f65db"
+                "sha256:0e94201af4089e1f81f07d7bd8f84799768e39d70fa1ea16d1df505b46cc6335",
+                "sha256:75aa0758971e252964cb94068a4decd472d2a8295229f02189e3cbca1f10dbb5",
+                "sha256:7fa74661246e826ef939ee92e768f698df167a7617361ab399901eaebf80dce6"
             ],
-            "version": "==0.4.5"
+            "version": "==2.0.0"
         },
         "graphql-server-core": {
             "hashes": [
@@ -697,10 +699,10 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:1db9c4653e71d39ff3557c0981d5fb5f43a43e3a830fcf5e21a37c97f7bce6bb",
-                "sha256:7e24f3ec1f4c909306d1b97373fe5caa942f54009acdcfa4d1ee6671f626bbe9"
+                "sha256:d491aa6399eaa3eded433972751a9770180730fd8b4c225b0b7f49c4fa2af70b",
+                "sha256:d68003cdffbbfcadaa2c445b72e1050b0a44406f94199866f192986c016b23f5"
             ],
-            "version": "==0.10.1"
+            "version": "==0.10.2"
         },
         "six": {
             "hashes": [
@@ -711,9 +713,9 @@
         },
         "starlette": {
             "hashes": [
-                "sha256:4db50dd5c0da9659e3434f2cc469233fa1ae3c5f9a97d7c94f2a9bf3683c1847"
+                "sha256:23f1de058ffcc053e9bddd87f49bb8bcda709ed2787d038819f6d8561e71f8d4"
             ],
-            "version": "==0.12.2"
+            "version": "==0.12.4"
         },
         "strict-rfc3339": {
             "hashes": [
@@ -743,11 +745,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:3a044801f42c4aa774b6d800eb26dfd61076997dd56226e6f198e60784ca22ea",
-                "sha256:b78e767402b38467ee57c277ca32b688f737d1f176ff42ec4e5e9d69489a264c"
+                "sha256:7ca092d81aaf95d90baa8f8472836e2e0545efafbf89efe216bc622e6fadd9f4",
+                "sha256:a2f49447f82d1fd297b91c18956f3443ee7e1bb69a251adf38ba98da72e8f9fd"
             ],
             "index": "pypi",
-            "version": "==0.14.7"
+            "version": "==0.14.8"
         },
         "timestamp": {
             "hashes": [
@@ -763,10 +765,10 @@
         },
         "tzlocal": {
             "hashes": [
-                "sha256:8162ce66761d0bd59be79dbe4d6fc098c47702a24cf35944f78ad5adda029742",
-                "sha256:bb848e9884e19d88375678f41430ca6f6cf72f7fdee42d2b61feeb24b79cd913"
+                "sha256:75daed282e21c81de46d18faeb92df43254338b7eb2e7c24f8e4068c26821a20",
+                "sha256:ce42c6f194b21fc5ffed877176a7de1fbc89bd3ebf6bfc7d9e60bdb0c843c25f"
             ],
-            "version": "==2.0.0b2"
+            "version": "==2.0.0b3"
         },
         "urllib3": {
             "hashes": [
@@ -847,10 +849,10 @@
         },
         "whitenoise": {
             "hashes": [
-                "sha256:118ab3e5f815d380171b100b05b76de2a07612f422368a201a9ffdeefb2251c1",
-                "sha256:42133ddd5229eeb6a0c9899496bdbe56c292394bf8666da77deeb27454c0456a"
+                "sha256:59d880d25d0e90bcc6554fe0504a11195bd2e59b3d690b6fb42a8040d4e67ef5",
+                "sha256:c9b7c47fdc1dba4d37bf2787a01a844dc7a521e174fcd22a2d429e0be65e1782"
             ],
-            "version": "==4.1.2"
+            "version": "==4.1.3"
         }
     },
     "develop": {}
