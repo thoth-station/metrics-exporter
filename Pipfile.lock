@@ -58,10 +58,10 @@
         },
         "apscheduler": {
             "hashes": [
-                "sha256:8f56b888fdc9dc57dd18d79c124b5093a01e29144be84e3e99130600eea34260",
-                "sha256:e885b0f2ad5887a69ceffc5de39e2b2f34b4aa80521b79b1f2db911340e68a66"
+                "sha256:529afb7909e08416132891188cbfea5351eb35e4a684b67e983d819e8d01a6b0",
+                "sha256:cde18f6dbffa1b75aff67fd7fe423a3020cb0363f6c67bd45f24306d90898231"
             ],
-            "version": "==3.6.0"
+            "version": "==3.6.1"
         },
         "asgiref": {
             "hashes": [
@@ -745,11 +745,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:7ca092d81aaf95d90baa8f8472836e2e0545efafbf89efe216bc622e6fadd9f4",
-                "sha256:a2f49447f82d1fd297b91c18956f3443ee7e1bb69a251adf38ba98da72e8f9fd"
+                "sha256:908f1a621b012318b9095ac4fc3cce906925a9432d57daf3b09e72790147ccbc",
+                "sha256:c83c4b17aa8e44dffd9b66b42f8a8da7335493c0062db1894e57214c3a0c6a6a"
             ],
             "index": "pypi",
-            "version": "==0.14.8"
+            "version": "==0.15.0"
         },
         "timestamp": {
             "hashes": [
