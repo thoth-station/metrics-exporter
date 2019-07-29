@@ -21,6 +21,12 @@ import os
 import logging
 
 from thoth.storages import GraphDatabase
+from thoth.storages import SolverResultsStore
+from thoth.storages import AdvisersResultsStore
+from thoth.storages import AnalysisResultsStore
+from thoth.storages import InspectionResultsStore
+from thoth.storages import ProvenanceResultsStore
+from thoth.storages import DependencyMonkeyReportsStore
 from thoth.common import init_logging
 from thoth.common import OpenShift
 import thoth.metrics_exporter.metrics as metrics
@@ -29,6 +35,15 @@ import thoth.metrics_exporter.metrics as metrics
 init_logging()
 
 _LOGGER = logging.getLogger(__name__)
+
+_MONITORED_STORES = (
+    AdvisersResultsStore(),
+    AnalysisResultsStore(),
+    InspectionResultsStore(),
+    ProvenanceResultsStore(),
+    SolverResultsStore(),
+    DependencyMonkeyReportsStore(),
+)
 
 
 def get_namespaces() -> set:
@@ -86,7 +101,7 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
             graph_sync_jobs_status[job_type]["pending"] += 1
         elif not item["status"].keys():
             graph_sync_jobs_status[job_type]["waiting"] += 1
-        elif 'startTime' in item["status"].keys() and len(item["status"].keys()) == 1:
+        elif "startTime" in item["status"].keys() and len(item["status"].keys()) == 1:
             graph_sync_jobs_status[job_type]["started"] += 1
         else:
             try:
@@ -135,6 +150,25 @@ def get_configmaps_per_namespace_per_label():
             _LOGGER.debug(
                 "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
             )
+
+
+def get_ceph_results_per_type():
+    """Get the total number of results in Ceph per type."""
+    for store in _MONITORED_STORES:
+        try:
+            if not store.is_connected():
+                store.connect()
+            all_document_ids = store.get_document_listing()
+            list_ids = [str(cid) for cid in all_document_ids]
+            metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
+            metrics.ceph_connection_error_status.set(0)
+
+            _LOGGER.debug("ceph_connection_error_status=%r", 0)
+            _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
+
+        except Exception as excptn:
+            metrics.ceph_connection_error_status.set(1)
+            _LOGGER.exception(excptn)
 
 
 def get_tot_nodes_count():
@@ -301,14 +335,17 @@ def get_unique_build_software_environment_count():
         _LOGGER.exception(excptn)
 
 
-ALL_REGISTERED_JOBS = frozenset((
-    get_thoth_graph_sync_jobs,
-    get_configmaps_per_namespace_per_label,
-    get_tot_nodes_count,
-    get_tot_nodes_for_each_entity_count,
-    get_python_packages_solver_error_count,
-    get_unique_python_packages_count,
-    get_unique_run_software_environment_count,
-    get_user_unique_run_software_environment_count,
-    get_unique_build_software_environment_count,
-))
+ALL_REGISTERED_JOBS = frozenset(
+    (
+        get_thoth_graph_sync_jobs,
+        get_configmaps_per_namespace_per_label,
+        get_ceph_results_per_type,
+        get_tot_nodes_count,
+        get_tot_nodes_for_each_entity_count,
+        get_python_packages_solver_error_count,
+        get_unique_python_packages_count,
+        get_unique_run_software_environment_count,
+        get_user_unique_run_software_environment_count,
+        get_unique_build_software_environment_count,
+    )
+)
