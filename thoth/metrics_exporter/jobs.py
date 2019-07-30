@@ -171,6 +171,36 @@ def get_ceph_results_per_type():
             _LOGGER.exception(excptn)
 
 
+def get_inspection_results_per_identifier():
+    """Get the total number of inspections in Ceph per identifier."""
+    store = InspectionResultsStore()
+    try:
+        if not store.is_connected():
+            store.connect()
+        specific_list_ids = {}
+        specific_list_ids["without_identifier"] = 0
+        for ids in store.get_document_listing():
+            inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
+            if inspection_filter:
+                if inspection_filter not in specific_list_ids.keys():
+                    specific_list_ids[inspection_filter] = 1
+                else:
+                    specific_list_ids[inspection_filter] += 1
+            else:
+                specific_list_ids["without_identifier"] += 1
+
+        for identifier, identifier_list in specific_list_ids.items():
+            metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
+            _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
+
+        metrics.ceph_connection_error_status.set(0)
+        _LOGGER.debug("ceph_connection_error_status=%r", 0)
+
+    except Exception as excptn:
+        metrics.ceph_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
+
+
 def get_tot_nodes_count():
     """Get the total number of Nodes stored in Thoth Knowledge Graph."""
     try:
@@ -340,6 +370,7 @@ ALL_REGISTERED_JOBS = frozenset(
         get_thoth_graph_sync_jobs,
         get_configmaps_per_namespace_per_label,
         get_ceph_results_per_type,
+        get_inspection_results_per_identifier,
         get_tot_nodes_count,
         get_tot_nodes_for_each_entity_count,
         get_python_packages_solver_error_count,
