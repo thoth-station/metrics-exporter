@@ -41,6 +41,10 @@ config_maps_number = Gauge(
     "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
 )
 
+# Ceph results stored
+ceph_results_number = Gauge(
+    "thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"]
+)
 
 # CONTENT METRICS
 # Graph Structure
@@ -95,3 +99,6 @@ graphdb_total_build_software_environment = Gauge(
 
 # Graph connection availability
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
+
+# Ceph connection availability
+ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Connection error status", [])
