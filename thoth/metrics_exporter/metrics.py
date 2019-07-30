@@ -42,8 +42,11 @@ config_maps_number = Gauge(
 )
 
 # Ceph results stored
-ceph_results_number = Gauge(
-    "thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"]
+ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"])
+
+# Inspection results stored in Ceph per identifier
+inspection_results_ceph = Gauge(
+    "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
 )
 
 # CONTENT METRICS
