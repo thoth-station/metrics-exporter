@@ -25,6 +25,7 @@ from thoth.storages import SolverResultsStore
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import InspectionResultsStore
+from thoth.storages import PackageAnalysisResultsStore
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import DependencyMonkeyReportsStore
 from thoth.common import init_logging
@@ -41,6 +42,7 @@ _MONITORED_STORES = (
     AnalysisResultsStore(),
     InspectionResultsStore(),
     ProvenanceResultsStore(),
+    PackageAnalysisResultsStore(),
     SolverResultsStore(),
     DependencyMonkeyReportsStore(),
 )
