@@ -100,6 +100,13 @@ graphdb_total_build_software_environment = Gauge(
     "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build", []
 )
 
+# Performance Indicators
+graphdb_total_number_of_pi_per_framework = Gauge(
+    "thoth_graphdb_total_number_of_pi_per_framework",
+    "Total number of Observations for PI per framework",
+    ["framework", "pi"],
+)
+
 # Graph connection availability
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
 
