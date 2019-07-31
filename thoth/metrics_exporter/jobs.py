@@ -118,6 +118,40 @@ def count_graph_sync_job_status(job_list_items: list) -> dict:
     return graph_sync_jobs_status
 
 
+def count_job_status(job_list_items: list) -> dict:
+    """Count the number of created, active, failed, succeeded, pending Jobs."""
+    jobs_status = {}
+    job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "waiting", "started"]
+
+    # Initialize
+    for job_s in job_status:
+        jobs_status[job_s] = 0
+
+    for item in job_list_items:
+        jobs_status["created"] += 1
+
+        if "succeeded" in item["status"].keys():
+            jobs_status["succeeded"] += 1
+        elif "failed" in item["status"].keys():
+            jobs_status["failed"] += 1
+        elif "active" in item["status"].keys():
+            jobs_status["active"] += 1
+        elif "pending" in item["status"].keys():
+            jobs_status["pending"] += 1
+        elif not item["status"].keys():
+            jobs_status["waiting"] += 1
+        elif "startTime" in item["status"].keys() and len(item["status"].keys()) == 1:
+            jobs_status["started"] += 1
+        else:
+            try:
+                if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
+                    jobs_status["retry"] += 1
+            except Exception as excptn:
+                _LOGGER.error("Unknown job status %r", item)
+                _LOGGER.exception(excptn)
+    return jobs_status
+
+
 def get_thoth_graph_sync_jobs():
     """Get the total number of graph-sync Jobs per category with corresponding status."""
     namespaces = get_namespaces()
@@ -131,6 +165,21 @@ def get_thoth_graph_sync_jobs():
             for j_status, j_counts in j_statuses.items():
                 metrics.jobs_sync_status.labels(j_type, j_status, namespace).set(j_counts)
         _LOGGER.debug("thoth_graph_sync_jobs=%r", jobs_status)
+
+
+def get_thoth_amun_inspection_jobs():
+    """Get the total number of Jobs for Amun Inspections with corresponding status."""
+    namespaces = get_namespaces()
+
+    openshift = OpenShift()
+    for namespace in namespaces:
+        _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
+        response = openshift.get_jobs(label_selector="component=amun-inspection-job", namespace=namespace)
+
+        inspection_jobs_status = count_job_status(response["items"])
+        for j_status, j_counts in inspection_jobs_status.items():
+            metrics.inspection_jobs_status.labels(j_status, namespace).set(j_counts)
+        _LOGGER.debug("thoth_jobs=%r", inspection_jobs_status)
 
 
 def count_configmaps(config_map_list_items: list) -> int:
@@ -410,6 +459,7 @@ def get_observations_count_per_framework():
 
 ALL_REGISTERED_JOBS = frozenset(
     (
+        get_thoth_amun_inspection_jobs,
         get_thoth_graph_sync_jobs,
         get_configmaps_per_namespace_per_label,
         get_ceph_results_per_type,
