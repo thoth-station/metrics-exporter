@@ -367,6 +367,28 @@ def get_unique_build_software_environment_count():
         _LOGGER.exception(excptn)
 
 
+def get_observations_count_per_framework():
+    """Get the total number of PI per framework in Thoth Knowledge Graph."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+        thoth_number_of_pi_per_type = {}
+
+        frameworks = ["tensorflow"]
+
+        for framework in frameworks:
+            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+
+            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
+                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+
+        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+
+    except Exception as excptn:
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
+
+
 ALL_REGISTERED_JOBS = frozenset(
     (
         get_thoth_graph_sync_jobs,
@@ -380,5 +402,6 @@ ALL_REGISTERED_JOBS = frozenset(
         get_unique_run_software_environment_count,
         get_user_unique_run_software_environment_count,
         get_unique_build_software_environment_count,
+        get_observations_count_per_framework,
     )
 )
