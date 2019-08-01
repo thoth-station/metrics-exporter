@@ -723,9 +723,9 @@
         },
         "starlette": {
             "hashes": [
-                "sha256:c270f78af93c4ff4d7fbb9c10f9d9e15be1726284c39805f93ea48e3f45997d7"
+                "sha256:849553e6dc8dd4faac5d4383219bdf49b199f3f09d60ce374c2a00a42ab7c77d"
             ],
-            "version": "==0.12.6"
+            "version": "==0.12.7"
         },
         "strict-rfc3339": {
             "hashes": [
@@ -756,11 +756,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:6569e1ffbc681078f267956025fd9cbb5a93d32012f881beab252df03b81ba9e",
-                "sha256:7b3af21d09e7d2e869859002e956b2ef464d307f0bdc0415245c746bbd8cf0a3"
+                "sha256:16dceb409b17564ac1763cb2b10bd16020fec8fc41a3af5cd30d83d4703058e2",
+                "sha256:fa2a2240582bb23297c0606aa31191aee570ec11fd2b1448a1a294ee6ce28d1d"
             ],
             "index": "pypi",
-            "version": "==0.18.1"
+            "version": "==0.18.3"
         },
         "timestamp": {
             "hashes": [
@@ -791,9 +791,9 @@
         },
         "uvicorn": {
             "hashes": [
-                "sha256:5320b48629564fa914fe8120542608c91f98fcd2278e8454bda9db08467519d1"
+                "sha256:8aa44f9d9c3082ef693950387ea25d376e32944df6d4071dbd8edc3c25a40c74"
             ],
-            "version": "==0.8.4"
+            "version": "==0.8.6"
         },
         "uvloop": {
             "hashes": [
