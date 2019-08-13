@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 prometheus-client = "*"
 thoth-storages = "*"
-thoth-common = {extras = ["openshift"],version = "*"}
+thoth-common = "*"
 responder = "==1.1.1"
 flask-apscheduler = "*"
 gunicorn = "*"
