@@ -107,6 +107,13 @@ graphdb_total_number_of_pi_per_framework = Gauge(
     ["framework", "pi"],
 )
 
+# Unsolved Python packages per solver_name
+graphdb_total_number_unsolved_python_packages = Gauge(
+    "thoth_graphdb_total_number_unsolved_python_packages",
+    "Total number of unsolved Python packages per solver",
+    ["solver_name"],
+)
+
 # Graph connection availability
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
 

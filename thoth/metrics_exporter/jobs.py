@@ -48,6 +48,9 @@ _MONITORED_STORES = (
 )
 
 
+_OPENSHIFT = OpenShift()
+
+
 def get_namespaces() -> set:
     """Retrieve namespaces that shall be monitored by metrics-exporter."""
     environment_variables = [
@@ -119,10 +122,9 @@ def get_thoth_graph_sync_jobs():
     """Get the total number of graph-sync Jobs per category with corresponding status."""
     namespaces = get_namespaces()
 
-    openshift = OpenShift()
     for namespace in namespaces:
         _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
-        response = openshift.get_jobs(label_selector="component=graph-sync", namespace=namespace)
+        response = _OPENSHIFT.get_jobs(label_selector="component=graph-sync", namespace=namespace)
 
         jobs_status = count_graph_sync_job_status(response["items"])
         for j_type, j_statuses in jobs_status.items():
@@ -140,13 +142,13 @@ def get_configmaps_per_namespace_per_label():
     """Get the total number of configmaps in the namespace based on labels."""
     namespaces = get_namespaces()
 
-    openshift = OpenShift()
+    _OPENSHIFT = OpenShift()
     labels = ["operator=workload", "operator=graph-sync", "component=graph-sync", "component=solver"]
     for namespace in namespaces:
         _LOGGER.info("Evaluating configmaps metrics for Thoth namespace: %r", namespace)
 
         for label in labels:
-            config_maps_items = openshift.get_configmaps(namespace=namespace, label_selector=label)
+            config_maps_items = _OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
             number_configmaps = count_configmaps(config_maps_items)
             metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
             _LOGGER.debug(
@@ -302,6 +304,23 @@ def get_unique_python_packages_count():
         _LOGGER.exception(excptn)
 
 
+def get_unsolved_python_packages_count():
+    """Get number of unsolved Python packages per solver."""
+    try:
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        for solver_name in _OPENSHIFT.get_solver_names():
+            count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
+            metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
+            _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
+
+        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
+    except Exception as excptn:
+        metrics.graphdb_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
+
+
 def get_unique_run_software_environment_count():
     """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
     try:
@@ -400,6 +419,7 @@ ALL_REGISTERED_JOBS = frozenset(
         get_python_packages_solver_error_count,
         get_unique_python_packages_count,
         get_unique_run_software_environment_count,
+        get_unsolved_python_packages_count,
         get_user_unique_run_software_environment_count,
         get_unique_build_software_environment_count,
         get_observations_count_per_framework,
