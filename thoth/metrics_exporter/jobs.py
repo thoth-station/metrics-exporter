@@ -56,6 +56,7 @@ _NAMESPACES_VARIABLES = [
 ]
 
 _JOBS_LABELS = [
+    "component=dependency-monkey",
     "component=amun-inspection-job",
     "graph-sync-type=adviser",
     "graph-sync-type=dependency-monkey",
@@ -88,11 +89,12 @@ def get_thoth_jobs_per_label():
     for label_selector in _JOBS_LABELS:
         for namespace in namespaces:
             _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
-            jobs_status_evaluated = get_job_status_count(label_selector=label_selector, namespace=namespace)
+            jobs_status_evaluated = _OPENSHIFT.get_job_status_count(label_selector=label_selector, namespace=namespace)
 
             for j_status, j_counts in jobs_status_evaluated.items():
                 metrics.jobs_status.labels(label_selector, j_status, namespace).set(j_counts)
-            _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated) 
+
+            _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
 
 
 def count_configmaps(config_map_list_items: list) -> int:
