@@ -31,9 +31,10 @@ metrics_exporter_info = Gauge(
 metrics_exporter_info.labels(__version__).inc()
 
 # SERVICE METRICS
-# Solver Jobs
-jobs_sync_status = Gauge(
-    "thoth_graph_sync_jobs_status", "Graph Sync Jobs status overview.", ["job_type", "job_status", "namespace"]
+
+# Jobs
+jobs_status = Gauge(
+    "thoth_jobs_status", "Jobs status overview per label.", ["label_selector", "job_status", "namespace"]
 )
 
 # ConfigMaps

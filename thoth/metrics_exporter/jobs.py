@@ -47,21 +47,34 @@ _MONITORED_STORES = (
     DependencyMonkeyReportsStore(),
 )
 
+_NAMESPACES_VARIABLES = [
+    "THOTH_FRONTEND_NAMESPACE",
+    "THOTH_MIDDLETIER_NAMESPACE",
+    "THOTH_BACKEND_NAMESPACE",
+    "THOTH_AMUN_NAMESPACE",
+    "THOTH_AMUN_INSPECTION_NAMESPACE",
+]
+
+_JOBS_LABELS = [
+    "component=dependency-monkey",
+    "component=amun-inspection-job",
+    "graph-sync-type=adviser",
+    "graph-sync-type=dependency-monkey",
+    "graph-sync-type=inspection",
+    "graph-sync-type=package-analyzer",
+    "graph-sync-type=package-extract",
+    "graph-sync-type=provenance-checker",
+    "graph-sync-type=solver",
+]
+
 
 _OPENSHIFT = OpenShift()
 
 
 def get_namespaces() -> set:
     """Retrieve namespaces that shall be monitored by metrics-exporter."""
-    environment_variables = [
-        "THOTH_FRONTEND_NAMESPACE",
-        "THOTH_MIDDLETIER_NAMESPACE",
-        "THOTH_BACKEND_NAMESPACE",
-        "THOTH_AMUN_NAMESPACE",
-        "THOTH_AMUN_INSPECTION_NAMESPACE",
-    ]
     namespaces = []
-    for environment_varibale in environment_variables:
+    for environment_varibale in _NAMESPACES_VARIABLES:
         if os.getenv(environment_varibale):
             namespaces.append(os.getenv(environment_varibale))
         else:
@@ -69,68 +82,19 @@ def get_namespaces() -> set:
     return set(namespaces)
 
 
-def count_graph_sync_job_status(job_list_items: list) -> dict:
-    """Count the number of created, active, failed, succeeded, pending graph-sync Jobs."""
-    graph_sync_jobs_status = {}
-    graph_sync_job_status = ["created", "active", "failed", "succeeded", "pending", "retry", "waiting", "started"]
-    graph_sync_job_types = [
-        "solver",
-        "adviser",
-        "provenance-checker",
-        "inspection",
-        "package-extract",
-        "dependency-monkey",
-    ]
-
-    # Initialize
-    for graph_sync_job_type in graph_sync_job_types:
-        graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"] = {}
-        for job_s in graph_sync_job_status:
-            graph_sync_jobs_status[f"graph-sync-{graph_sync_job_type}"][job_s] = 0
-
-    for item in job_list_items:
-        for graph_sync_job_type in graph_sync_job_types:
-            if graph_sync_job_type in item["metadata"]["name"]:
-                job_type = f"graph-sync-{graph_sync_job_type}"
-                break
-
-        graph_sync_jobs_status[job_type]["created"] += 1
-
-        if "succeeded" in item["status"].keys():
-            graph_sync_jobs_status[job_type]["succeeded"] += 1
-        elif "failed" in item["status"].keys():
-            graph_sync_jobs_status[job_type]["failed"] += 1
-        elif "active" in item["status"].keys():
-            graph_sync_jobs_status[job_type]["active"] += 1
-        elif "pending" in item["status"].keys():
-            graph_sync_jobs_status[job_type]["pending"] += 1
-        elif not item["status"].keys():
-            graph_sync_jobs_status[job_type]["waiting"] += 1
-        elif "startTime" in item["status"].keys() and len(item["status"].keys()) == 1:
-            graph_sync_jobs_status[job_type]["started"] += 1
-        else:
-            try:
-                if "BackoffLimitExceeded" in item["status"]["conditions"][0]["reason"]:
-                    graph_sync_jobs_status[job_type]["retry"] += 1
-            except Exception as excptn:
-                _LOGGER.error("Unknown job status %r", item)
-                _LOGGER.exception(excptn)
-    return graph_sync_jobs_status
-
-
-def get_thoth_graph_sync_jobs():
-    """Get the total number of graph-sync Jobs per category with corresponding status."""
+def get_thoth_jobs_per_label():
+    """Get the total number of Jobs per label with corresponding status."""
     namespaces = get_namespaces()
 
-    for namespace in namespaces:
-        _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
-        response = _OPENSHIFT.get_jobs(label_selector="component=graph-sync", namespace=namespace)
+    for label_selector in _JOBS_LABELS:
+        for namespace in namespaces:
+            _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
+            jobs_status_evaluated = _OPENSHIFT.get_job_status_count(label_selector=label_selector, namespace=namespace)
 
-        jobs_status = count_graph_sync_job_status(response["items"])
-        for j_type, j_statuses in jobs_status.items():
-            for j_status, j_counts in j_statuses.items():
-                metrics.jobs_sync_status.labels(j_type, j_status, namespace).set(j_counts)
-        _LOGGER.debug("thoth_graph_sync_jobs=%r", jobs_status)
+            for j_status, j_counts in jobs_status_evaluated.items():
+                metrics.jobs_status.labels(label_selector, j_status, namespace).set(j_counts)
+
+            _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
 
 
 def count_configmaps(config_map_list_items: list) -> int:
@@ -410,7 +374,7 @@ def get_observations_count_per_framework():
 
 ALL_REGISTERED_JOBS = frozenset(
     (
-        get_thoth_graph_sync_jobs,
+        get_thoth_jobs_per_label,
         get_configmaps_per_namespace_per_label,
         get_ceph_results_per_type,
         get_inspection_results_per_identifier,
