@@ -157,6 +157,8 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: ceph-secret-key
+                - name: THOTH_STORAGES_GRAPH_CACHE_DISABLED
+                  value: "1"
                 - name: KNOWLEDGE_GRAPH_HOST
                   value: postgresql
                 - name: KNOWLEDGE_GRAPH_PORT
