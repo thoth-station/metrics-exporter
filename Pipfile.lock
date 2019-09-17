@@ -448,10 +448,10 @@
         },
         "marshmallow": {
             "hashes": [
-                "sha256:afec49590bae715f6365ccc777e457b2811c00eacea0a6130f3155efd94dc363",
-                "sha256:d89fd236e8fabf5808b6d7c344303fb308ba56891698ee7654cf7ff9f56ec4fc"
+                "sha256:6dca0125320c15795c4f2dfe8f2f5c37a96916e7a09a123eba05ef24d3126b94",
+                "sha256:801a7c70f0596b812a086773b9d7ba85b4bbad1becab14cde460ab7798511409"
             ],
-            "version": "==3.1.1"
+            "version": "==3.2.0"
         },
         "methodtools": {
             "hashes": [
@@ -816,11 +816,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:121b666a44a0cdc97a61e92fd5400dc79754a996ee24a90b56128bfae91f40c7",
-                "sha256:dadd5f3c49999c11ce9ace7d408f4a1eb26e345475566843ddf901d29f94ed0b"
+                "sha256:1ff1c4243685f4fd7173367f77bbd8f719f9c00c68d96b6319ff0cdaa2afc36c",
+                "sha256:9eab43759bafb29e56e89b12d8e14c76cde3896c471bb62d69c668130f453172"
             ],
             "index": "pypi",
-            "version": "==0.19.1"
+            "version": "==0.19.2"
         },
         "timestamp": {
             "hashes": [
