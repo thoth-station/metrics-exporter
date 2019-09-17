@@ -187,27 +187,6 @@ def get_tot_nodes_count():
         _LOGGER.exception(excptn)
 
 
-def get_tot_nodes_for_each_entity_count():
-    """Get the total number of Nodes for each Entity in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        v_instances_total = graph_db.get_number_of_each_vertex_in_graph()
-
-        for v_label, v_instances_count in v_instances_total.items():
-            metrics.graphdb_total_instances_per_node.labels(v_label).set(v_instances_count)
-
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-
-        _LOGGER.debug("graphdb_total_instances_per_node=%r", v_instances_total)
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
-
-
 def get_python_packages_solver_error_count():
     """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
     try:
