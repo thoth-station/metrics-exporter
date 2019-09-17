@@ -169,24 +169,6 @@ def get_inspection_results_per_identifier():
         _LOGGER.exception(excptn)
 
 
-def get_tot_nodes_count():
-    """Get the total number of Nodes stored in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        v_total = graph_db.get_number_of_each_vertex_in_graph()
-        metrics.graphdb_total_nodes_instances.set(sum([count_vertex for count_vertex in v_total.values()]))
-        metrics.graphdb_connection_error_status.set(0)
-
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-        _LOGGER.debug("graphdb_total_nodes_instances=%r", sum([count_vertex for count_vertex in v_total.values()]))
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
-
-
 def get_python_packages_solver_error_count():
     """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
     try:
@@ -357,8 +339,6 @@ ALL_REGISTERED_JOBS = frozenset(
         get_configmaps_per_namespace_per_label,
         get_ceph_results_per_type,
         get_inspection_results_per_identifier,
-        get_tot_nodes_count,
-        get_tot_nodes_for_each_entity_count,
         get_python_packages_solver_error_count,
         get_unique_python_packages_count,
         get_unique_run_software_environment_count,

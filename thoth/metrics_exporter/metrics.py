@@ -50,12 +50,6 @@ inspection_results_ceph = Gauge(
     "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
 )
 
-graphdb_total_nodes_instances = Gauge(
-    "thoth_graph_db_total_node_instances", "Total number of Nodes in Thoth Knowledge Graph", []
-)
-
-# Graph Content
-
 # Python Packages Solver Error
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
