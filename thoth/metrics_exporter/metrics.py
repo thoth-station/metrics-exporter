@@ -50,16 +50,8 @@ inspection_results_ceph = Gauge(
     "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
 )
 
-# CONTENT METRICS
-# Graph Structure
 graphdb_total_nodes_instances = Gauge(
     "thoth_graph_db_total_node_instances", "Total number of Nodes in Thoth Knowledge Graph", []
-)
-
-graphdb_total_instances_per_node = Gauge(
-    "thoth_graphdb_total_instances_per_node",
-    "Total number of instances for each Node in Thoth Knowledge Graph",
-    ["node_label"],
 )
 
 # Graph Content
