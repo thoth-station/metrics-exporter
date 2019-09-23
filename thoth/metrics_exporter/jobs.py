@@ -58,6 +58,7 @@ _NAMESPACES_VARIABLES = [
 _JOBS_LABELS = [
     "component=dependency-monkey",
     "component=amun-inspection-job",
+    "component=solver",
     "graph-sync-type=adviser",
     "graph-sync-type=dependency-monkey",
     "graph-sync-type=inspection",
