@@ -123,214 +123,169 @@ def get_configmaps_per_namespace_per_label():
 def get_ceph_results_per_type():
     """Get the total number of results in Ceph per type."""
     for store in _MONITORED_STORES:
-        try:
-            if not store.is_connected():
-                store.connect()
-            all_document_ids = store.get_document_listing()
-            list_ids = [str(cid) for cid in all_document_ids]
-            metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
-            metrics.ceph_connection_error_status.set(0)
-
-            _LOGGER.debug("ceph_connection_error_status=%r", 0)
-            _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
-
-        except Exception as excptn:
-            metrics.ceph_connection_error_status.set(1)
-            _LOGGER.exception(excptn)
+        if not store.is_connected():
+            store.connect()
+        all_document_ids = store.get_document_listing()
+        list_ids = [str(cid) for cid in all_document_ids]
+        metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
+        _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
 
 
 def get_inspection_results_per_identifier():
     """Get the total number of inspections in Ceph per identifier."""
     store = InspectionResultsStore()
-    try:
-        if not store.is_connected():
-            store.connect()
-        specific_list_ids = {}
-        specific_list_ids["without_identifier"] = 0
-        for ids in store.get_document_listing():
-            inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
-            if inspection_filter:
-                if inspection_filter not in specific_list_ids.keys():
-                    specific_list_ids[inspection_filter] = 1
-                else:
-                    specific_list_ids[inspection_filter] += 1
+    if not store.is_connected():
+        store.connect()
+
+    specific_list_ids = {}
+    specific_list_ids["without_identifier"] = 0
+    for ids in store.get_document_listing():
+        inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
+        if inspection_filter:
+            if inspection_filter not in specific_list_ids.keys():
+                specific_list_ids[inspection_filter] = 1
             else:
-                specific_list_ids["without_identifier"] += 1
+                specific_list_ids[inspection_filter] += 1
+        else:
+            specific_list_ids["without_identifier"] += 1
 
-        for identifier, identifier_list in specific_list_ids.items():
-            metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
-            _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
-
-        metrics.ceph_connection_error_status.set(0)
-        _LOGGER.debug("ceph_connection_error_status=%r", 0)
-
-    except Exception as excptn:
-        metrics.ceph_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    for identifier, identifier_list in specific_list_ids.items():
+        metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
+        _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
 
 
 def get_python_packages_solver_error_count():
     """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
-        total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
+    total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
+    total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
 
-        metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
-            total_python_packages_with_solver_error_unparsable
-        )
-        metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
-            total_python_packages_with_solver_error_unsolvable
-        )
-        metrics.graphdb_total_python_packages_with_solver_error.set(
-            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
-        )
+    metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
+        total_python_packages_with_solver_error_unparsable
+    )
+    metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
+        total_python_packages_with_solver_error_unsolvable
+    )
+    metrics.graphdb_total_python_packages_with_solver_error.set(
+        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
+    )
 
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error=%r",
+        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
+    )
 
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error=%r",
-            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
-        )
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error_unparsable=%r",
+        total_python_packages_with_solver_error_unparsable,
+    )
 
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error_unparsable=%r",
-            total_python_packages_with_solver_error_unparsable,
-        )
-
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
-            total_python_packages_with_solver_error_unsolvable,
-        )
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    _LOGGER.debug(
+        "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
+        total_python_packages_with_solver_error_unsolvable,
+    )
 
 
 def get_unique_python_packages_count():
     """Get the total number of unique python packages in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        total_unique_python_packages = len(graph_db.get_python_packages())
-        metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
-
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-
-        _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    total_unique_python_packages = len(graph_db.get_python_packages())
+    metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
+    _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
 
 
 def get_unsolved_python_packages_count():
     """Get number of unsolved Python packages per solver."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        for solver_name in _OPENSHIFT.get_solver_names():
-            count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
-            metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
-            _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
-
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    for solver_name in _OPENSHIFT.get_solver_names():
+        count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
+        metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
+        _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
 
 
 def get_unique_run_software_environment_count():
     """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
-        metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
-
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-
-        _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
+    metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
+    _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
 
 def get_user_unique_run_software_environment_count():
     """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        thoth_graphdb_total_user_run_software_environment = len(
-            set(graph_db.run_software_environment_listing(is_user_run=True))
-        )
+    thoth_graphdb_total_user_run_software_environment = len(
+        set(graph_db.run_software_environment_listing(is_user_run=True))
+    )
 
-        metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
-
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-
-        _LOGGER.debug(
-            "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
-        )
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+    _LOGGER.debug(
+        "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+    )
 
 
 def get_unique_build_software_environment_count():
     """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
-    try:
-        graph_db = GraphDatabase()
-        graph_db.connect()
+    graph_db = GraphDatabase()
+    graph_db.connect()
 
-        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+    thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
 
-        metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
-
-        metrics.graphdb_connection_error_status.set(0)
-        _LOGGER.debug("graphdb_connection_error_status=%r", 0)
-
-        _LOGGER.debug(
-            "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
-        )
-
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
+    metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
+    _LOGGER.debug(
+        "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
+    )
 
 
 def get_observations_count_per_framework():
     """Get the total number of PI per framework in Thoth Knowledge Graph."""
+    graph_db = GraphDatabase()
+    graph_db.connect()
+    thoth_number_of_pi_per_type = {}
+
+    frameworks = ["tensorflow"]
+
+    for framework in frameworks:
+        thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+
+        for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
+            metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+
+    _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+
+
+def get_graphdb_connection_error_status():
+    """Raise a flag if there is an error connecting to database."""
+    graph_db = GraphDatabase()
     try:
-        graph_db = GraphDatabase()
         graph_db.connect()
-        thoth_number_of_pi_per_type = {}
-
-        frameworks = ["tensorflow"]
-
-        for framework in frameworks:
-            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
-
-            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
-                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
-
-        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
-
     except Exception as excptn:
         metrics.graphdb_connection_error_status.set(1)
         _LOGGER.exception(excptn)
+    else:
+        metrics.graphdb_connection_error_status.set(0)
+
+
+def get_ceph_connection_error_status():
+    """Check connection to Ceph instance."""
+    inspections = InspectionResultsStore()
+    try:
+        inspections.connect()
+    except Exception as excptn:
+        metrics.ceph_connection_error_status.set(1)
+        _LOGGER.exception(excptn)
+    else:
+        metrics.ceph_connection_error_status.set(0)
 
 
 ALL_REGISTERED_JOBS = frozenset(
@@ -346,5 +301,7 @@ ALL_REGISTERED_JOBS = frozenset(
         get_user_unique_run_software_environment_count,
         get_unique_build_software_environment_count,
         get_observations_count_per_framework,
+        get_graphdb_connection_error_status,
+        get_ceph_connection_error_status(),
     )
 )
