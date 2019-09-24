@@ -303,6 +303,6 @@ ALL_REGISTERED_JOBS = frozenset(
         get_unique_build_software_environment_count,
         get_observations_count_per_framework,
         get_graphdb_connection_error_status,
-        get_ceph_connection_error_status(),
+        get_ceph_connection_error_status,
     )
 )
