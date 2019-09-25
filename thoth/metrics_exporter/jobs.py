@@ -112,11 +112,10 @@ def get_configmaps_per_namespace_per_label():
     namespaces = get_namespaces()
 
     _OPENSHIFT = OpenShift()
-    labels = ["operator=workload", "operator=graph-sync", "component=graph-sync", "component=solver"]
     for namespace in namespaces:
         _LOGGER.info("Evaluating configmaps metrics for Thoth namespace: %r", namespace)
 
-        for label in labels:
+        for label in _JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
             config_maps_items = _OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
             number_configmaps = count_configmaps(config_maps_items)
             metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
