@@ -37,47 +37,36 @@ init_logging()
 
 _LOGGER = logging.getLogger(__name__)
 
-_MONITORED_STORES = (
-    AdvisersResultsStore(),
-    AnalysisResultsStore(),
-    InspectionResultsStore(),
-    ProvenanceResultsStore(),
-    PackageAnalysisResultsStore(),
-    SolverResultsStore(),
-    DependencyMonkeyReportsStore(),
-)
-
-_NAMESPACES_VARIABLES = [
-    "THOTH_FRONTEND_NAMESPACE",
-    "THOTH_MIDDLETIER_NAMESPACE",
-    "THOTH_BACKEND_NAMESPACE",
-    "THOTH_AMUN_NAMESPACE",
-    "THOTH_AMUN_INSPECTION_NAMESPACE",
-]
-
-_JOBS_LABELS = [
-    "component=dependency-monkey",
-    "component=amun-inspection-job",
-    "component=solver",
-    "component=package-extract",
-    "component=package-analyzer",
-    "component=provenance-checker",
-    "component=adviser",
-    "graph-sync-type=adviser",
-    "graph-sync-type=dependency-monkey",
-    "graph-sync-type=inspection",
-    "graph-sync-type=package-analyzer",
-    "graph-sync-type=package-extract",
-    "graph-sync-type=provenance-checker",
-    "graph-sync-type=solver",
-]
-
-
-_OPENSHIFT = OpenShift()
-
 
 class OpenshiftMetrics:
     """Class to evaluate Metrics for Openshift."""
+
+    _OPENSHIFT = OpenShift()
+
+    _NAMESPACES_VARIABLES = [
+        "THOTH_FRONTEND_NAMESPACE",
+        "THOTH_MIDDLETIER_NAMESPACE",
+        "THOTH_BACKEND_NAMESPACE",
+        "THOTH_AMUN_NAMESPACE",
+        "THOTH_AMUN_INSPECTION_NAMESPACE",
+    ]
+
+    _JOBS_LABELS = [
+        "component=dependency-monkey",
+        "component=amun-inspection-job",
+        "component=solver",
+        "component=package-extract",
+        "component=package-analyzer",
+        "component=provenance-checker",
+        "component=adviser",
+        "graph-sync-type=adviser",
+        "graph-sync-type=dependency-monkey",
+        "graph-sync-type=inspection",
+        "graph-sync-type=package-analyzer",
+        "graph-sync-type=package-extract",
+        "graph-sync-type=provenance-checker",
+        "graph-sync-type=solver",
+    ]
 
     @staticmethod
     def get_namespaces() -> set:
@@ -115,7 +104,6 @@ class OpenshiftMetrics:
         """Get the total number of configmaps in the namespace based on labels."""
         namespaces = self.get_namespaces()
 
-        _OPENSHIFT = OpenShift()
         for namespace in namespaces:
 
             for label in _JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
@@ -131,16 +119,26 @@ class OpenshiftMetrics:
 class CephMetrics:
     """Class to evaluate Metrics for Ceph."""
 
+    _MONITORED_STORES = (
+        AdvisersResultsStore(),
+        AnalysisResultsStore(),
+        InspectionResultsStore(),
+        ProvenanceResultsStore(),
+        PackageAnalysisResultsStore(),
+        SolverResultsStore(),
+        DependencyMonkeyReportsStore(),
+    )
+
     def get_ceph_results_per_type(self):
         """Get the total number of results in Ceph per type."""
         for store in _MONITORED_STORES:
-            _LOGGER.info(f"Check Ceph content for {store.RESULT_TYPE}")
+            _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
             if not store.is_connected():
                 store.connect()
             all_document_ids = store.get_document_listing()
             list_ids = [str(cid) for cid in all_document_ids]
             metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
-            _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
+            _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, len(list_ids))
 
     def get_ceph_connection_error_status(self):
         """Check connection to Ceph instance."""
@@ -154,27 +152,19 @@ class CephMetrics:
             metrics.ceph_connection_error_status.set(0)
 
 
-def get_inspection_results_per_identifier():
-    """Get the total number of inspections in Ceph per identifier."""
-    store = InspectionResultsStore()
-    if not store.is_connected():
-        store.connect()
+class DBMetrics:
+    """Class to evaluate Metrics for Thoth Database."""
 
-    specific_list_ids = {}
-    specific_list_ids["without_identifier"] = 0
-    for ids in store.get_document_listing():
-        inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
-        if inspection_filter:
-            if inspection_filter not in specific_list_ids.keys():
-                specific_list_ids[inspection_filter] = 1
-            else:
-                specific_list_ids[inspection_filter] += 1
+    def get_graphdb_connection_error_status(self):
+        """Raise a flag if there is an error connecting to database."""
+        graph_db = GraphDatabase()
+        try:
+            graph_db.connect()
+        except Exception as excptn:
+            metrics.graphdb_connection_error_status.set(1)
+            _LOGGER.exception(excptn)
         else:
-            specific_list_ids["without_identifier"] += 1
-
-    for identifier, identifier_list in specific_list_ids.items():
-        metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
-        _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
+            metrics.graphdb_connection_error_status.set(0)
 
 
 class PythonPackagesMetrics:
@@ -189,7 +179,7 @@ class PythonPackagesMetrics:
         metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
         _LOGGER.debug("graphdb_total_unique_python_packages=%r", total_unique_python_packages)
 
-    def get_number_python_index_urls():
+    def get_number_python_index_urls(self):
         """Get the total number of python indexes in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -198,7 +188,7 @@ class PythonPackagesMetrics:
         metrics.graphdb_total_python_indexes.set(python_urls_count)
         _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
 
-    def get_unique_python_packages_per_index_urls_count():
+    def get_unique_python_packages_per_index_urls_count(self):
         """Get the total number of unique python packages per index URL in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -212,7 +202,7 @@ class PythonPackagesMetrics:
             metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)
             _LOGGER.debug("thoth_graphdb_total_python_packages_per_indexes(%r)=%r", index_url, packages_count)
 
-    def get_python_artifacts_count():
+    def get_python_artifacts_count(self):
         """Get the total number of python artifacts in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -226,7 +216,7 @@ class PythonPackagesMetrics:
 class SolverMetrics:
     """Class to evaluate Metrics for Solvers."""
 
-    def get_unsolved_python_packages_count():
+    def get_unsolved_python_packages_count(self):
         """Get number of unsolved Python packages per solver."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -236,7 +226,7 @@ class SolverMetrics:
             metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
             _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
 
-    def get_python_packages_solver_error_count():
+    def get_python_packages_solver_error_count(self):
         """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -270,10 +260,36 @@ class SolverMetrics:
         )
 
 
+class InspectionMetrics:
+    """Class to evaluate Metrics for Inspections."""
+
+    def get_inspection_results_per_identifier(self):
+        """Get the total number of inspections in Ceph per identifier."""
+        store = InspectionResultsStore()
+        if not store.is_connected():
+            store.connect()
+
+        specific_list_ids = {}
+        specific_list_ids["without_identifier"] = 0
+        for ids in store.get_document_listing():
+            inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
+            if inspection_filter:
+                if inspection_filter not in specific_list_ids.keys():
+                    specific_list_ids[inspection_filter] = 1
+                else:
+                    specific_list_ids[inspection_filter] += 1
+            else:
+                specific_list_ids["without_identifier"] += 1
+
+        for identifier, identifier_list in specific_list_ids.items():
+            metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
+            _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
+
+
 class SoftwareEnvironmentMetrics:
     """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
 
-    def get_unique_run_software_environment_count():
+    def get_unique_run_software_environment_count(self):
         """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -282,7 +298,7 @@ class SoftwareEnvironmentMetrics:
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
-    def get_user_unique_run_software_environment_count():
+    def get_user_unique_run_software_environment_count(self):
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -296,7 +312,7 @@ class SoftwareEnvironmentMetrics:
             "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
         )
 
-    def get_unique_build_software_environment_count():
+    def get_unique_build_software_environment_count(self):
         """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -312,33 +328,18 @@ class SoftwareEnvironmentMetrics:
 class PIMetrics:
     """Class to discover Content for Performance Indicators inside Thoth database."""
 
-    def get_observations_count_per_framework():
+    _ML_FRAMEWORKS = ["tensorflow"]
+
+    def get_observations_count_per_framework(self):
         """Get the total number of PI per framework in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
         thoth_number_of_pi_per_type = {}
 
-        frameworks = ["tensorflow"]
-
-        for framework in frameworks:
+        for framework in _ML_FRAMEWORKS:
             thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
 
             for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
                 metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
 
         _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
-
-
-class DBMetrics:
-    """Class to evaluate Metrics for Thoth Database."""
-
-    def get_graphdb_connection_error_status():
-        """Raise a flag if there is an error connecting to database."""
-        graph_db = GraphDatabase()
-        try:
-            graph_db.connect()
-        except Exception as excptn:
-            metrics.graphdb_connection_error_status.set(1)
-            _LOGGER.exception(excptn)
-        else:
-            metrics.graphdb_connection_error_status.set(0)

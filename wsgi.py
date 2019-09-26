@@ -58,17 +58,10 @@ _DB_METRICS = DBMetrics()
 
 _PYTHON_PACKAGES_METRICS = PythonPackagesMetrics()
 _SOLVER_METRICS = SolverMetrics()
+_INSPECTION_METRICS = InspectionMetrics()
 _SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
 _PI_METRICS = PIMetrics()
 
-# _ALL_REGISTERED_JOBS = frozenset(
-#     (
-#         get_inspection_results_per_identifier,
-
-#         get_observations_count_per_framework,
-#         get_graphdb_connection_error_status,
-#     )
-# )
 
 _ALL_REGISTERED_JOBS = frozenset(
     (
@@ -83,6 +76,7 @@ _ALL_REGISTERED_JOBS = frozenset(
         _PYTHON_PACKAGES_METRICS.get_python_artifacts_count,
         _SOLVER_METRICS.get_unsolved_python_packages_count,
         _SOLVER_METRICS.get_python_packages_solver_error_count,
+        _INSPECTION_METRICS.get_inspection_results_per_identifier,
         _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_user_unique_run_software_environment_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count
