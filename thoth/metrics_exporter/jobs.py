@@ -28,6 +28,7 @@ from thoth.storages import InspectionResultsStore
 from thoth.storages import PackageAnalysisResultsStore
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import DependencyMonkeyReportsStore
+from thoth.storages.graph.models import PythonSoftwareStack
 from thoth.common import init_logging
 from thoth.common import OpenShift
 import thoth.metrics_exporter.metrics as metrics
@@ -166,6 +167,57 @@ class DBMetrics:
         else:
             metrics.graphdb_connection_error_status.set(0)
 
+    def get_tot_records_count(self):
+        """Get the total number of Records in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        main_models_record_count = sum([r for r in graph_db.get_number_main_tables_records().values()])
+        relation_models_record_count = sum([r for r in graph_db.get_number_relation_tables_records().values()])
+        performance_models_record_count = sum([r for r in graph_db.get_number_performance_tables_records().values()])
+
+        for v_label, v_instances_count in v_instances_total.items():
+            metrics.graphdb_total_records.labels(v_label).set(v_instances_count)
+
+        _LOGGER.debug("thoth_graphdb_total_records=%r", v_instances_total)
+
+    def get_tot_main_records_count(self):
+        """Get the total number of Records for Main Tables in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        main_models_records = graph_db.get_number_main_tables_records()
+
+        for main_table, main_table_records_count in main_models_records.items():
+            metrics.graphdb_total_main_records.labels(main_table).set(main_table_records_count)
+
+        _LOGGER.debug("thoth_graphdb_total_main_records=%r", main_models_records)
+
+    def get_tot_relation_records_count(self):
+        """Get the total number of Records for Relation Tables in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        relation_models_records = graph_db.get_number_relation_tables_records()
+
+        for relation_table, relation_table_records_count in relation_models_records.items():
+            metrics.graphdb_total_relation_records.labels(relation_table).set(relation_table_records_count)
+
+        _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
+
+    def get_user_python_software_stack_count(self):
+        """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        python_software_stack = PythonSoftwareStack()
+
+        thoth_graphdb_total_software_stacks = graph_db.python_software_stack_count(
+            software_stack_type=python_software_stack.USER
+        )
+        metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
+        _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
+
 
 class PythonPackagesMetrics:
     """Class to discover Content for PythonPackages inside Thoth database."""
@@ -216,6 +268,8 @@ class PythonPackagesMetrics:
 class SolverMetrics:
     """Class to evaluate Metrics for Solvers."""
 
+    _OPENSHIFT = OpenShift()
+
     def get_unsolved_python_packages_count(self):
         """Get number of unsolved Python packages per solver."""
         graph_db = GraphDatabase()
@@ -260,8 +314,13 @@ class SolverMetrics:
         )
 
 
+class SolverMetrics:
+    """Class to evaluate Metrics for Analyzer."""
+
+
+
 class InspectionMetrics:
-    """Class to evaluate Metrics for Inspections."""
+    """Class to evaluate Metrics for Amun Inspections."""
 
     def get_inspection_results_per_identifier(self):
         """Get the total number of inspections in Ceph per identifier."""
@@ -284,6 +343,36 @@ class InspectionMetrics:
         for identifier, identifier_list in specific_list_ids.items():
             metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
             _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
+
+    def get_inspection_python_software_stack_count(self):
+        """Get the total number of Inspection Python Software Stacks in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        python_software_stack = PythonSoftwareStack()
+
+        thoth_graphdb_total_inspection_software_stacks = graph_db.python_software_stack_count(
+            software_stack_type=python_software_stack.INSPECTION
+        )
+        metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)
+        _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
+
+
+class AdviserMetrics:
+    """Class to evaluate Metrics for Adviser."""
+
+    def get_advised_python_software_stack_count(self):
+        """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        python_software_stack = PythonSoftwareStack()
+
+        thoth_graphdb_total_advised_software_stacks = graph_db.python_software_stack_count(
+            software_stack_type=python_software_stack.ADVISED
+        )
+        metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
+        _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
 
 
 class SoftwareEnvironmentMetrics:
@@ -343,3 +432,15 @@ class PIMetrics:
                 metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
 
         _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+
+    def get_tot_performance_records_count(self):
+        """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        performance_models_records = graph_db.get_number_performance_tables_records()
+
+        for performance_table, performance_table_records_count in performance_models_records.items():
+            metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)
+
+        _LOGGER.debug("thoth_graphdb_total_performance_records=%r", performance_models_records)

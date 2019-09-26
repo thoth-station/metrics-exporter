@@ -40,6 +40,8 @@ from thoth.metrics_exporter.jobs import DBMetrics
 
 from thoth.metrics_exporter.jobs import PythonPackagesMetrics
 from thoth.metrics_exporter.jobs import SolverMetrics
+from thoth.metrics_exporter.jobs import InspectionMetrics
+from thoth.metrics_exporter.jobs import AdviserMetrics
 from thoth.metrics_exporter.jobs import SoftwareEnvironmentMetrics
 from thoth.metrics_exporter.jobs import PIMetrics
 
@@ -59,6 +61,7 @@ _DB_METRICS = DBMetrics()
 _PYTHON_PACKAGES_METRICS = PythonPackagesMetrics()
 _SOLVER_METRICS = SolverMetrics()
 _INSPECTION_METRICS = InspectionMetrics()
+_ADVISER_METRICS = AdviserMetrics()
 _SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
 _PI_METRICS = PIMetrics()
 
@@ -70,6 +73,10 @@ _ALL_REGISTERED_JOBS = frozenset(
         _CEPH_METRICS.get_ceph_results_per_type,
         _CEPH_METRICS.get_ceph_connection_error_status,
         _DB_METRICS.get_graphdb_connection_error_status,
+        _DB_METRICS.get_tot_main_records_count,
+        _DB_METRICS.get_tot_records_count,
+        _DB_METRICS.get_tot_relation_records_count,
+        _DB_METRICS.get_user_python_software_stack_count,
         _PYTHON_PACKAGES_METRICS.get_number_python_index_urls,
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_count,
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_per_index_urls_count,
@@ -77,10 +84,13 @@ _ALL_REGISTERED_JOBS = frozenset(
         _SOLVER_METRICS.get_unsolved_python_packages_count,
         _SOLVER_METRICS.get_python_packages_solver_error_count,
         _INSPECTION_METRICS.get_inspection_results_per_identifier,
+        _INSPECTION_METRICS.get_inspection_python_software_stack_count,
+        _ADVISER_METRICS.get_advised_python_software_stack_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_user_unique_run_software_environment_count,
-        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count
-        _PI_METRICS.get_observations_count_per_framework
+        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count,
+        _PI_METRICS.get_observations_count_per_framework,
+        _PI_METRICS.get_tot_performance_records_count
     )
 )
 

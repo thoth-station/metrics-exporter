@@ -44,15 +44,25 @@ config_maps_number = Gauge(
 )
 
 # Ceph metrics
-
 ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"])
 
-# Inspection Run metrics
+ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Connection error status", [])
+
+# AdviserRun
+graphdb_advised_software_stacks_records = Gauge(
+    "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
+)
+
+# InspectionRun
 inspection_results_ceph = Gauge(
     "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
 )
 
-# Python Packages Solver Error
+graphdb_inspection_software_stacks_records = Gauge(
+    "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
+)
+
+# SolverRun Metrics
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
     "Total number of python packages with solver error True",
@@ -70,6 +80,12 @@ graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
     [],
 )
 
+graphdb_total_number_unsolved_python_packages = Gauge(
+    "thoth_graphdb_total_number_unsolved_python_packages",
+    "Total number of unsolved Python packages per solver",
+    ["solver_name"],
+)
+
 # Python Packages
 graphdb_total_unique_python_packages = Gauge(
     "thoth_graphdb_total_unique_python_packages", "Total number of unique python packages", []
@@ -80,7 +96,7 @@ graphdb_total_python_packages_per_indexes = Gauge(
 )
 graphdb_total_python_artifacts = Gauge("thoth_graphdb_total_python_artifacts", "Total number of python artifacts", [])
 
-# Software environments for run
+# SoftwareEnvironment
 graphdb_total_run_software_environment = Gauge(
     "thoth_graphdb_total_run_software_environment", "Total number of unique software environment for run", []
 )
@@ -89,7 +105,6 @@ graphdb_total_user_run_software_environment = Gauge(
     "thoth_graphdb_total_user_run_software_environment", "Total number of users unique software environment for run", []
 )
 
-# Software environments for build
 graphdb_total_build_software_environment = Gauge(
     "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build", []
 )
@@ -101,15 +116,29 @@ graphdb_total_number_of_pi_per_framework = Gauge(
     ["framework", "pi"],
 )
 
-# Unsolved Python packages per solver_name
-graphdb_total_number_unsolved_python_packages = Gauge(
-    "thoth_graphdb_total_number_unsolved_python_packages",
-    "Total number of unsolved Python packages per solver",
-    ["solver_name"],
+graphdb_total_performance_records = Gauge(
+    "thoth_graphdb_total_performance_records",
+    "Total number of Records for performance tables in Thoth Knowledge Graph",
+    ["performance_table"],
 )
 
-# Graph connection availability
-graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
+# Thoth Database
+graphdb_total_records = Gauge("thoth_graphdb_total_records", "Total number of Records in Thoth Knowledge Graph", [])
 
-# Ceph connection availability
-ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Connection error status", [])
+graphdb_total_main_records = Gauge(
+    "thoth_graphdb_total_main_records",
+    "Total number of Records for main tables in Thoth Knowledge Graph",
+    ["main_table"],
+)
+
+graphdb_total_relation_records = Gauge(
+    "thoth_graphdb_total_relation_records",
+    "Total number of Records for relation tables in Thoth Knowledge Graph",
+    ["relation_table"],
+)
+
+graphdb_user_software_stacks_records = Gauge(
+    "thoth_graphdb_user_software_stacks_records", "Thoth User Software Stacks.", []
+)
+
+graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status", [])
