@@ -75,64 +75,83 @@ _JOBS_LABELS = [
 
 _OPENSHIFT = OpenShift()
 
+class OpenshiftMetrics:
+    """Class to evaluate Metrics for Openshift."""
 
-def get_namespaces() -> set:
-    """Retrieve namespaces that shall be monitored by metrics-exporter."""
-    namespaces = []
-    for environment_varibale in _NAMESPACES_VARIABLES:
-        if os.getenv(environment_varibale):
-            namespaces.append(os.getenv(environment_varibale))
-        else:
-            _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
-    return set(namespaces)
+    @staticmethod
+    def get_namespaces() -> set:
+        """Retrieve namespaces that shall be monitored by metrics-exporter."""
+        namespaces = []
+        for environment_varibale in _NAMESPACES_VARIABLES:
+            if os.getenv(environment_varibale):
+                namespaces.append(os.getenv(environment_varibale))
+            else:
+                _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
+        return set(namespaces)
 
 
-def get_thoth_jobs_per_label():
-    """Get the total number of Jobs per label with corresponding status."""
-    namespaces = get_namespaces()
+    def get_thoth_jobs_per_label(self):
+        """Get the total number of Jobs per label with corresponding status."""
+        namespaces = self.get_namespaces()
 
-    for label_selector in _JOBS_LABELS:
+        for label_selector in _JOBS_LABELS:
+            for namespace in namespaces:
+                _LOGGER.info("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
+                jobs_status_evaluated = _OPENSHIFT.get_job_status_count(label_selector=label_selector, namespace=namespace)
+
+                for j_status, j_counts in jobs_status_evaluated.items():
+                    metrics.jobs_status.labels(label_selector, j_status, namespace).set(j_counts)
+
+                _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
+
+    @staticmethod
+    def count_configmaps(config_map_list_items: list) -> int:
+        """Count the number of ConfigMaps for a certain label in a specific namespace."""
+        return len(config_map_list_items["items"])
+
+
+    def get_configmaps_per_namespace_per_label(self):
+        """Get the total number of configmaps in the namespace based on labels."""
+        namespaces = self.get_namespaces()
+
+        _OPENSHIFT = OpenShift()
         for namespace in namespaces:
-            _LOGGER.info("Evaluating jobs metrics for Thoth namespace: %r", namespace)
-            jobs_status_evaluated = _OPENSHIFT.get_job_status_count(label_selector=label_selector, namespace=namespace)
 
-            for j_status, j_counts in jobs_status_evaluated.items():
-                metrics.jobs_status.labels(label_selector, j_status, namespace).set(j_counts)
-
-            _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
-
-
-def count_configmaps(config_map_list_items: list) -> int:
-    """Count the number of ConfigMaps for a certain label in a specific namespace."""
-    return len(config_map_list_items["items"])
+            for label in _JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
+                _LOGGER.info("Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label, namespace)
+                config_maps_items = _OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
+                number_configmaps = self.count_configmaps(config_maps_items)
+                metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
+                _LOGGER.debug(
+                    "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
+                )
 
 
-def get_configmaps_per_namespace_per_label():
-    """Get the total number of configmaps in the namespace based on labels."""
-    namespaces = get_namespaces()
+class CephMetrics:
+    """Class to evaluate Metrics for Ceph."""
 
-    _OPENSHIFT = OpenShift()
-    for namespace in namespaces:
-        _LOGGER.info("Evaluating configmaps metrics for Thoth namespace: %r", namespace)
-
-        for label in _JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
-            config_maps_items = _OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
-            number_configmaps = count_configmaps(config_maps_items)
-            metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
-            _LOGGER.debug(
-                "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
-            )
+    def get_ceph_results_per_type(self):
+        """Get the total number of results in Ceph per type."""
+        for store in _MONITORED_STORES:
+            _LOGGER.info(f"Check Ceph content for {store.RESULT_TYPE}")
+            if not store.is_connected():
+                store.connect()
+            all_document_ids = store.get_document_listing()
+            list_ids = [str(cid) for cid in all_document_ids]
+            metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
+            _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
 
 
-def get_ceph_results_per_type():
-    """Get the total number of results in Ceph per type."""
-    for store in _MONITORED_STORES:
-        if not store.is_connected():
-            store.connect()
-        all_document_ids = store.get_document_listing()
-        list_ids = [str(cid) for cid in all_document_ids]
-        metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
-        _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
+    def get_ceph_connection_error_status(self):
+        """Check connection to Ceph instance."""
+        inspections = InspectionResultsStore()
+        try:
+            inspections.connect()
+        except Exception as excptn:
+            metrics.ceph_connection_error_status.set(1)
+            _LOGGER.exception(excptn)
+        else:
+            metrics.ceph_connection_error_status.set(0)
 
 
 def get_inspection_results_per_identifier():
@@ -158,114 +177,161 @@ def get_inspection_results_per_identifier():
         _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
 
 
-def get_python_packages_solver_error_count():
-    """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
 
-    total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
-    total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
+class PythonPackagesMetrics:
+    """Class to discover Content for PythonPackages inside Thoth database."""
 
-    metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
-        total_python_packages_with_solver_error_unparsable
-    )
-    metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
-        total_python_packages_with_solver_error_unsolvable
-    )
-    metrics.graphdb_total_python_packages_with_solver_error.set(
-        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
-    )
+    def get_unique_python_packages_count(self):
+        """Get the total number of unique python packages in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-    _LOGGER.debug(
-        "graphdb_total_python_packages_with_solver_error=%r",
-        total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
-    )
-
-    _LOGGER.debug(
-        "graphdb_total_python_packages_with_solver_error_unparsable=%r",
-        total_python_packages_with_solver_error_unparsable,
-    )
-
-    _LOGGER.debug(
-        "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
-        total_python_packages_with_solver_error_unsolvable,
-    )
+        total_unique_python_packages = len(graph_db.get_python_packages())
+        metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
+        _LOGGER.debug("graphdb_total_unique_python_packages=%r", total_unique_python_packages)
 
 
-def get_unique_python_packages_count():
-    """Get the total number of unique python packages in Thoth Knowledge Graph."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
+    def get_number_python_index_urls():
+        """Get the total number of python indexes in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-    total_unique_python_packages = len(graph_db.get_python_packages())
-    metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
-    _LOGGER.debug("graphdb_total_unique_python_packages=%r", len(graph_db.get_python_packages()))
-
-
-def get_unsolved_python_packages_count():
-    """Get number of unsolved Python packages per solver."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
-
-    for solver_name in _OPENSHIFT.get_solver_names():
-        count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
-        metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
-        _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
+        python_urls_count = len(graph_db.get_python_package_index_urls())
+        metrics.graphdb_total_python_indexes.set(python_urls_count)
+        _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
 
 
-def get_unique_run_software_environment_count():
-    """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
+    def get_unique_python_packages_per_index_urls_count():
+        """Get the total number of unique python packages per index URL in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-    thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
-    metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
-    _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
+        python_urls_list = list(graph_db.get_python_package_index_urls())
 
+        for index_url in python_urls_list:
 
-def get_user_unique_run_software_environment_count():
-    """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
+            packages_count = len(graph_db.get_python_packages_for_index(index_url=index_url))
 
-    thoth_graphdb_total_user_run_software_environment = len(
-        set(graph_db.run_software_environment_listing(is_user_run=True))
-    )
-
-    metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
-    _LOGGER.debug(
-        "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
-    )
+            metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)
+            _LOGGER.debug("thoth_graphdb_total_python_packages_per_indexes(%r)=%r", index_url, packages_count)
 
 
-def get_unique_build_software_environment_count():
-    """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
+    def get_python_artifacts_count():
+        """Get the total number of python artifacts in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-    thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+        python_artifacts_count = len(graph_db.get_python_package_index_urls())
 
-    metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
-    _LOGGER.debug(
-        "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
-    )
+        metrics.graphdb_total_python_artifacts.set(python_artifacts_count)
+        _LOGGER.debug("thoth_graphdb_total_python_artifacts=%r", python_artifacts_count)
 
 
-def get_observations_count_per_framework():
-    """Get the total number of PI per framework in Thoth Knowledge Graph."""
-    graph_db = GraphDatabase()
-    graph_db.connect()
-    thoth_number_of_pi_per_type = {}
 
-    frameworks = ["tensorflow"]
+class SolverMetrics:
+    """Class to evaluate Metrics for Solvers."""
 
-    for framework in frameworks:
-        thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+    def get_unsolved_python_packages_count():
+        """Get number of unsolved Python packages per solver."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
 
-        for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
-            metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+        for solver_name in _OPENSHIFT.get_solver_names():
+            count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
+            metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
+            _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
 
-    _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+    def get_python_packages_solver_error_count():
+        """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
+        total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
+
+        metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
+            total_python_packages_with_solver_error_unparsable
+        )
+        metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
+            total_python_packages_with_solver_error_unsolvable
+        )
+        metrics.graphdb_total_python_packages_with_solver_error.set(
+            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
+        )
+
+        _LOGGER.debug(
+            "graphdb_total_python_packages_with_solver_error=%r",
+            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
+        )
+
+        _LOGGER.debug(
+            "graphdb_total_python_packages_with_solver_error_unparsable=%r",
+            total_python_packages_with_solver_error_unparsable,
+        )
+
+        _LOGGER.debug(
+            "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
+            total_python_packages_with_solver_error_unsolvable,
+        )
+
+
+class SoftwareEnvironmentMetrics:
+    def get_unique_run_software_environment_count():
+        """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
+        metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
+        _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
+
+
+    def get_user_unique_run_software_environment_count():
+        """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_user_run_software_environment = len(
+            set(graph_db.run_software_environment_listing(is_user_run=True))
+        )
+
+        metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+        _LOGGER.debug(
+            "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+        )
+
+
+    def get_unique_build_software_environment_count():
+        """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+
+        metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
+        _LOGGER.debug(
+            "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
+        )
+
+
+class PIMetrics:
+    """Class to discover Content for Performance Indicators inside Thoth database."""
+
+    def get_observations_count_per_framework():
+        """Get the total number of PI per framework in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+        thoth_number_of_pi_per_type = {}
+
+        frameworks = ["tensorflow"]
+
+        for framework in frameworks:
+            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+
+            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
+                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+
+        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
 
 
 def get_graphdb_connection_error_status():
@@ -278,34 +344,3 @@ def get_graphdb_connection_error_status():
         _LOGGER.exception(excptn)
     else:
         metrics.graphdb_connection_error_status.set(0)
-
-
-def get_ceph_connection_error_status():
-    """Check connection to Ceph instance."""
-    inspections = InspectionResultsStore()
-    try:
-        inspections.connect()
-    except Exception as excptn:
-        metrics.ceph_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
-    else:
-        metrics.ceph_connection_error_status.set(0)
-
-
-ALL_REGISTERED_JOBS = frozenset(
-    (
-        get_thoth_jobs_per_label,
-        get_configmaps_per_namespace_per_label,
-        get_ceph_results_per_type,
-        get_inspection_results_per_identifier,
-        get_python_packages_solver_error_count,
-        get_unique_python_packages_count,
-        get_unique_run_software_environment_count,
-        get_unsolved_python_packages_count,
-        get_user_unique_run_software_environment_count,
-        get_unique_build_software_environment_count,
-        get_observations_count_per_framework,
-        get_graphdb_connection_error_status,
-        get_ceph_connection_error_status,
-    )
-)

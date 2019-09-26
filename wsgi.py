@@ -22,6 +22,7 @@ import logging
 from datetime import datetime
 import typing
 from functools import partial
+import itertools
 
 from flask_apscheduler import APScheduler
 from flask import Flask
@@ -32,7 +33,14 @@ from prometheus_client import generate_latest
 
 from thoth.common import init_logging
 from thoth.metrics_exporter import __version__
-from thoth.metrics_exporter.jobs import ALL_REGISTERED_JOBS
+
+from thoth.metrics_exporter.jobs import OpenshiftMetrics
+from thoth.metrics_exporter.jobs import CephMetrics
+
+from thoth.metrics_exporter.jobs import PythonPackagesMetrics
+from thoth.metrics_exporter.jobs import SolverMetrics
+from thoth.metrics_exporter.jobs import SoftwareEnvironmentMetrics
+from thoth.metrics_exporter.jobs import PIMetrics
 
 init_logging()
 
@@ -42,6 +50,39 @@ _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL
 _JOBS_RUN = 0
 _INITIALIZED = False
 _FIRST_RUN_TIME = datetime.now()
+
+_OPENSHIFT_METRICS = OpenshiftMetrics()
+_CEPH_METRICS = CephMetrics()
+_PYTHON_PACKAGES_METRICS = PythonPackagesMetrics()
+_SOLVER_METRICS = SolverMetrics()
+_SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
+_PI_METRICS = PIMetrics()
+
+# _ALL_REGISTERED_JOBS = frozenset(
+#     (
+#         get_inspection_results_per_identifier,
+#         get_unique_build_software_environment_count,
+#         get_unique_run_software_environment_count,
+#         get_user_unique_run_software_environment_count,
+#         get_python_packages_solver_error_count,
+#         get_unsolved_python_packages_count,
+#         get_observations_count_per_framework,
+#         get_graphdb_connection_error_status,
+#     )
+# )
+
+_ALL_REGISTERED_JOBS = frozenset(
+    (
+        _OPENSHIFT_METRICS.get_thoth_jobs_per_label,
+        _OPENSHIFT_METRICS.get_configmaps_per_namespace_per_label,
+        _CEPH_METRICS.get_ceph_results_per_type,
+        _CEPH_METRICS.get_ceph_connection_error_status,
+        _PYTHON_PACKAGES_METRICS.get_number_python_index_urls,
+        _PYTHON_PACKAGES_METRICS.get_unique_python_packages_count,
+        _PYTHON_PACKAGES_METRICS.get_unique_python_packages_per_index_urls_count,
+        _PYTHON_PACKAGES_METRICS.get_python_artifacts_count,
+    )
+)
 
 
 def func_wrapper(func: typing.Callable) -> None:
@@ -73,7 +114,7 @@ class _Config:
             'next_run_time': _FIRST_RUN_TIME,
             'max_instances': 1,
         }
-        for func in ALL_REGISTERED_JOBS
+        for func in _ALL_REGISTERED_JOBS
     ]
 
     SCHEDULER_API_ENABLED = True

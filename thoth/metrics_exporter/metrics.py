@@ -32,20 +32,22 @@ metrics_exporter_info.labels(__version__).inc()
 
 # SERVICE METRICS
 
+# Openshift metrics
+
 # Jobs
 jobs_status = Gauge(
     "thoth_jobs_status", "Jobs status overview per label.", ["label_selector", "job_status", "namespace"]
 )
 
-# ConfigMaps
 config_maps_number = Gauge(
     "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
 )
 
-# Ceph results stored
+# Ceph metrics
+
 ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"])
 
-# Inspection results stored in Ceph per identifier
+# Inspection Run metrics
 inspection_results_ceph = Gauge(
     "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
 )
@@ -71,6 +73,15 @@ graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
 # Python Packages
 graphdb_total_unique_python_packages = Gauge(
     "thoth_graphdb_total_unique_python_packages", "Total number of unique python packages", []
+)
+graphdb_total_python_indexes = Gauge(
+    "thoth_graphdb_total_python_indexes", "Total number of python indexes", []
+)
+graphdb_total_python_packages_per_indexes = Gauge(
+    "thoth_graphdb_total_python_packages_per_indexes", "Total number of unique python packages per index", ["index_url"]
+)
+graphdb_total_python_artifacts = Gauge(
+    "thoth_graphdb_total_python_artifacts", "Total number of python artifacts", []
 )
 
 # Software environments for run
