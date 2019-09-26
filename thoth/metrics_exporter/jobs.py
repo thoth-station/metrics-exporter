@@ -75,6 +75,7 @@ _JOBS_LABELS = [
 
 _OPENSHIFT = OpenShift()
 
+
 class OpenshiftMetrics:
     """Class to evaluate Metrics for Openshift."""
 
@@ -89,7 +90,6 @@ class OpenshiftMetrics:
                 _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
         return set(namespaces)
 
-
     def get_thoth_jobs_per_label(self):
         """Get the total number of Jobs per label with corresponding status."""
         namespaces = self.get_namespaces()
@@ -97,7 +97,9 @@ class OpenshiftMetrics:
         for label_selector in _JOBS_LABELS:
             for namespace in namespaces:
                 _LOGGER.info("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
-                jobs_status_evaluated = _OPENSHIFT.get_job_status_count(label_selector=label_selector, namespace=namespace)
+                jobs_status_evaluated = _OPENSHIFT.get_job_status_count(
+                    label_selector=label_selector, namespace=namespace
+                )
 
                 for j_status, j_counts in jobs_status_evaluated.items():
                     metrics.jobs_status.labels(label_selector, j_status, namespace).set(j_counts)
@@ -108,7 +110,6 @@ class OpenshiftMetrics:
     def count_configmaps(config_map_list_items: list) -> int:
         """Count the number of ConfigMaps for a certain label in a specific namespace."""
         return len(config_map_list_items["items"])
-
 
     def get_configmaps_per_namespace_per_label(self):
         """Get the total number of configmaps in the namespace based on labels."""
@@ -140,7 +141,6 @@ class CephMetrics:
             list_ids = [str(cid) for cid in all_document_ids]
             metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
             _LOGGER.debug(f"ceph_results_number for {store.RESULT_TYPE} ={len(list_ids)}")
-
 
     def get_ceph_connection_error_status(self):
         """Check connection to Ceph instance."""
@@ -177,7 +177,6 @@ def get_inspection_results_per_identifier():
         _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
 
 
-
 class PythonPackagesMetrics:
     """Class to discover Content for PythonPackages inside Thoth database."""
 
@@ -190,7 +189,6 @@ class PythonPackagesMetrics:
         metrics.graphdb_total_unique_python_packages.set(total_unique_python_packages)
         _LOGGER.debug("graphdb_total_unique_python_packages=%r", total_unique_python_packages)
 
-
     def get_number_python_index_urls():
         """Get the total number of python indexes in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
@@ -199,7 +197,6 @@ class PythonPackagesMetrics:
         python_urls_count = len(graph_db.get_python_package_index_urls())
         metrics.graphdb_total_python_indexes.set(python_urls_count)
         _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
-
 
     def get_unique_python_packages_per_index_urls_count():
         """Get the total number of unique python packages per index URL in Thoth Knowledge Graph."""
@@ -215,7 +212,6 @@ class PythonPackagesMetrics:
             metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)
             _LOGGER.debug("thoth_graphdb_total_python_packages_per_indexes(%r)=%r", index_url, packages_count)
 
-
     def get_python_artifacts_count():
         """Get the total number of python artifacts in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
@@ -225,7 +221,6 @@ class PythonPackagesMetrics:
 
         metrics.graphdb_total_python_artifacts.set(python_artifacts_count)
         _LOGGER.debug("thoth_graphdb_total_python_artifacts=%r", python_artifacts_count)
-
 
 
 class SolverMetrics:
@@ -276,6 +271,8 @@ class SolverMetrics:
 
 
 class SoftwareEnvironmentMetrics:
+    """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
+
     def get_unique_run_software_environment_count():
         """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
@@ -284,7 +281,6 @@ class SoftwareEnvironmentMetrics:
         thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
-
 
     def get_user_unique_run_software_environment_count():
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
@@ -299,7 +295,6 @@ class SoftwareEnvironmentMetrics:
         _LOGGER.debug(
             "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
         )
-
 
     def get_unique_build_software_environment_count():
         """Get the total number of unique software environment for build in Thoth Knowledge Graph."""

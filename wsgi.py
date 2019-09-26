@@ -61,11 +61,7 @@ _PI_METRICS = PIMetrics()
 # _ALL_REGISTERED_JOBS = frozenset(
 #     (
 #         get_inspection_results_per_identifier,
-#         get_unique_build_software_environment_count,
-#         get_unique_run_software_environment_count,
-#         get_user_unique_run_software_environment_count,
-#         get_python_packages_solver_error_count,
-#         get_unsolved_python_packages_count,
+
 #         get_observations_count_per_framework,
 #         get_graphdb_connection_error_status,
 #     )
@@ -81,6 +77,11 @@ _ALL_REGISTERED_JOBS = frozenset(
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_count,
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_per_index_urls_count,
         _PYTHON_PACKAGES_METRICS.get_python_artifacts_count,
+        _SOLVER_METRICS.get_unsolved_python_packages_count,
+        _SOLVER_METRICS.get_python_packages_solver_error_count,
+        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
+        _SOFTWARE_ENVIRONMENT_METRICS.get_user_unique_run_software_environment_count,
+        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count
     )
 )
 

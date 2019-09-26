@@ -74,15 +74,11 @@ graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
 graphdb_total_unique_python_packages = Gauge(
     "thoth_graphdb_total_unique_python_packages", "Total number of unique python packages", []
 )
-graphdb_total_python_indexes = Gauge(
-    "thoth_graphdb_total_python_indexes", "Total number of python indexes", []
-)
+graphdb_total_python_indexes = Gauge("thoth_graphdb_total_python_indexes", "Total number of python indexes", [])
 graphdb_total_python_packages_per_indexes = Gauge(
     "thoth_graphdb_total_python_packages_per_indexes", "Total number of unique python packages per index", ["index_url"]
 )
-graphdb_total_python_artifacts = Gauge(
-    "thoth_graphdb_total_python_artifacts", "Total number of python artifacts", []
-)
+graphdb_total_python_artifacts = Gauge("thoth_graphdb_total_python_artifacts", "Total number of python artifacts", [])
 
 # Software environments for run
 graphdb_total_run_software_environment = Gauge(
