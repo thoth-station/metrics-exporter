@@ -329,13 +329,16 @@ class PIMetrics:
         _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
 
 
-def get_graphdb_connection_error_status():
-    """Raise a flag if there is an error connecting to database."""
-    graph_db = GraphDatabase()
-    try:
-        graph_db.connect()
-    except Exception as excptn:
-        metrics.graphdb_connection_error_status.set(1)
-        _LOGGER.exception(excptn)
-    else:
-        metrics.graphdb_connection_error_status.set(0)
+class DBMetrics:
+    """Class to evaluate Metrics for Thoth Database."""
+
+    def get_graphdb_connection_error_status():
+        """Raise a flag if there is an error connecting to database."""
+        graph_db = GraphDatabase()
+        try:
+            graph_db.connect()
+        except Exception as excptn:
+            metrics.graphdb_connection_error_status.set(1)
+            _LOGGER.exception(excptn)
+        else:
+            metrics.graphdb_connection_error_status.set(0)

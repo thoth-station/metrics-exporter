@@ -36,6 +36,7 @@ from thoth.metrics_exporter import __version__
 
 from thoth.metrics_exporter.jobs import OpenshiftMetrics
 from thoth.metrics_exporter.jobs import CephMetrics
+from thoth.metrics_exporter.jobs import DBMetrics
 
 from thoth.metrics_exporter.jobs import PythonPackagesMetrics
 from thoth.metrics_exporter.jobs import SolverMetrics
@@ -53,6 +54,8 @@ _FIRST_RUN_TIME = datetime.now()
 
 _OPENSHIFT_METRICS = OpenshiftMetrics()
 _CEPH_METRICS = CephMetrics()
+_DB_METRICS = DBMetrics()
+
 _PYTHON_PACKAGES_METRICS = PythonPackagesMetrics()
 _SOLVER_METRICS = SolverMetrics()
 _SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
@@ -73,6 +76,7 @@ _ALL_REGISTERED_JOBS = frozenset(
         _OPENSHIFT_METRICS.get_configmaps_per_namespace_per_label,
         _CEPH_METRICS.get_ceph_results_per_type,
         _CEPH_METRICS.get_ceph_connection_error_status,
+        _DB_METRICS.get_graphdb_connection_error_status,
         _PYTHON_PACKAGES_METRICS.get_number_python_index_urls,
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_count,
         _PYTHON_PACKAGES_METRICS.get_unique_python_packages_per_index_urls_count,
@@ -82,6 +86,7 @@ _ALL_REGISTERED_JOBS = frozenset(
         _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_user_unique_run_software_environment_count,
         _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count
+        _PI_METRICS.get_observations_count_per_framework
     )
 )
 
