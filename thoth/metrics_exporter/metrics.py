@@ -63,10 +63,6 @@ graphdb_total_relation_records = Gauge(
     ["relation_table"],
 )
 
-graphdb_user_software_stacks_records = Gauge(
-    "thoth_graphdb_user_software_stacks_records", "Thoth User Software Stacks.", []
-)
-
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status.", [])
 
 # CONTENT METRICS
@@ -74,10 +70,6 @@ graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Conn
 # Python Packages
 graphdb_number_python_package_versions = Gauge(
     "thoth_graphdb_number_python_package_versions", "Total number of Python package versions.", []
-)
-
-graphdb_number_python_package_version_entities = Gauge(
-    "thoth_graphdb_number_python_package_version_entities", "Total number of Python package version entities.", []
 )
 
 graphdb_total_python_indexes = Gauge("thoth_graphdb_total_python_indexes", "Total number of Python indexes.", [])
@@ -88,65 +80,6 @@ graphdb_total_python_packages_per_indexes = Gauge(
 )
 graphdb_sum_python_packages_per_indexes = Gauge(
     "thoth_graphdb_sum_python_packages_per_indexes", "Sum of number of Python packages per index.", []
-)
-
-# AnalyzerRun
-graphdb_total_number_unanalyzed_python_packages = Gauge(
-    "thoth_graphdb_total_number_unanalyzed_python_packages", "Total number of unanalyzed Python packages.", []
-)
-
-
-# SolverRun
-graphdb_total_python_packages_with_solver_error = Gauge(
-    "thoth_graphdb_total_python_packages_with_solver_error",
-    "Total number of python packages with solver error True.",
-    [],
-)
-graphdb_total_python_packages_with_solver_error_unparsable = Gauge(
-    "thoth_graphdb_total_python_packages_with_solver_error_unparsable",
-    "Total number of python packages with solver error True and error_unparsable True.",
-    [],
-)
-
-graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
-    "thoth_graphdb_total_python_packages_with_solver_error_unsolvable",
-    "Total number of python packages with solver error True and error_unsolvable True.",
-    [],
-)
-
-graphdb_total_number_unsolved_python_packages = Gauge(
-    "thoth_graphdb_total_number_unsolved_python_packages",
-    "Total number of unsolved Python packages per solver.",
-    ["solver_name"],
-)
-
-# InspectionRun
-inspection_results_ceph = Gauge(
-    "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
-)
-
-graphdb_inspection_software_stacks_records = Gauge(
-    "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
-)
-
-# AdviserRun
-graphdb_advised_software_stacks_records = Gauge(
-    "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
-)
-
-# SoftwareEnvironment
-graphdb_total_run_software_environment = Gauge(
-    "thoth_graphdb_total_run_software_environment", "Total number of unique software environment for run.", []
-)
-
-graphdb_total_user_run_software_environment = Gauge(
-    "thoth_graphdb_total_user_run_software_environment",
-    "Total number of users unique software environment for run.",
-    [],
-)
-
-graphdb_total_build_software_environment = Gauge(
-    "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build.", []
 )
 
 # Performance Indicators
@@ -160,4 +93,80 @@ graphdb_total_performance_records = Gauge(
     "thoth_graphdb_total_performance_records",
     "Total number of Records for performance tables in Thoth Knowledge Graph.",
     ["performance_table"],
+)
+
+# External Information
+graphdb_user_software_stacks_records = Gauge(
+    "thoth_graphdb_user_software_stacks_records", "Thoth User Software Stacks.", []
+)
+
+graphdb_total_user_run_software_environment = Gauge(
+    "thoth_graphdb_total_user_run_software_environment",
+    "Total number of users unique software environment for run.",
+    [],
+)
+
+# SoftwareEnvironment
+graphdb_total_run_software_environment = Gauge(
+    "thoth_graphdb_total_run_software_environment", "Total number of unique software environment for run.", []
+)
+
+graphdb_total_build_software_environment = Gauge(
+    "thoth_graphdb_total_build_software_environment", "Total number of unique software environment for build.", []
+)
+
+# AdviserRun
+graphdb_advised_software_stacks_records = Gauge(
+    "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
+)
+
+# InspectionRun
+inspection_results_ceph = Gauge(
+    "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
+)
+
+graphdb_inspection_software_stacks_records = Gauge(
+    "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
+)
+
+# PackageAnalyzerRun
+graphdb_total_number_analyzed_python_packages = Gauge(
+    "thoth_graphdb_total_number_analyzed_python_packages", "Total number of analyzed Python packages.", []
+)
+graphdb_total_number_analyzed_error_python_packages = Gauge(
+    "thoth_graphdb_total_number_analyzed_error_python_packages",
+    "Total number of analyzed Python packages with error.",
+    []
+)
+graphdb_total_number_unanalyzed_python_packages = Gauge(
+    "thoth_graphdb_total_number_unanalyzed_python_packages", "Total number of unanalyzed Python packages.", []
+)
+
+# SolverRun
+graphdb_total_number_solvers = Gauge(
+    "thoth_graphdb_total_number_solvers",
+    "Total number of solvers in Thoth Infra namespace.",
+    [],
+)
+graphdb_total_python_packages_with_solver_error = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error",
+    "Total number of python packages with solver error True.",
+    [],
+)
+graphdb_total_python_packages_with_solver_error_unparseable = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error_unparseable",
+    "Total number of python packages with solver error True and error_unparseable True.",
+    [],
+)
+
+graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
+    "thoth_graphdb_total_python_packages_with_solver_error_unsolvable",
+    "Total number of python packages with solver error True and error_unsolvable True.",
+    [],
+)
+
+graphdb_total_number_unsolved_python_packages = Gauge(
+    "thoth_graphdb_total_number_unsolved_python_packages",
+    "Total number of unsolved Python packages per solver.",
+    ["solver_name"],
 )

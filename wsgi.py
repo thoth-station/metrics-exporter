@@ -38,8 +38,10 @@ from thoth.metrics_exporter.jobs import OpenshiftMetrics
 from thoth.metrics_exporter.jobs import CephMetrics
 from thoth.metrics_exporter.jobs import DBMetrics
 
+from thoth.metrics_exporter.jobs import ExternalInformation
 from thoth.metrics_exporter.jobs import PythonPackagesMetrics
 from thoth.metrics_exporter.jobs import SolverMetrics
+from thoth.metrics_exporter.jobs import AnalyzerMetrics
 from thoth.metrics_exporter.jobs import InspectionMetrics
 from thoth.metrics_exporter.jobs import AdviserMetrics
 from thoth.metrics_exporter.jobs import SoftwareEnvironmentMetrics
@@ -58,12 +60,14 @@ _OPENSHIFT_METRICS = OpenshiftMetrics()
 _CEPH_METRICS = CephMetrics()
 _DB_METRICS = DBMetrics()
 
+_EXTERNAL_INFORMATION = ExternalInformation()
 _PYTHON_PACKAGES_METRICS = PythonPackagesMetrics()
-_SOLVER_METRICS = SolverMetrics()
-_INSPECTION_METRICS = InspectionMetrics()
-_ADVISER_METRICS = AdviserMetrics()
-_SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
 _PI_METRICS = PIMetrics()
+_SOFTWARE_ENVIRONMENT_METRICS = SoftwareEnvironmentMetrics()
+_ADVISER_METRICS = AdviserMetrics()
+_INSPECTION_METRICS = InspectionMetrics()
+_PACKAGE_ANALYZER_METRICS = PackageAnalyzerMetrics()
+_SOLVER_METRICS = SolverMetrics()
 
 
 _ALL_REGISTERED_JOBS = frozenset(
@@ -76,21 +80,24 @@ _ALL_REGISTERED_JOBS = frozenset(
         _DB_METRICS.get_tot_main_records_count,
         _DB_METRICS.get_tot_records_count,
         _DB_METRICS.get_tot_relation_records_count,
-        _DB_METRICS.get_user_python_software_stack_count,
+        _EXTERNAL_INFORMATION.get_user_python_software_stack_count,
+        _EXTERNAL_INFORMATION.get_user_unique_run_software_environment_count,
         _PYTHON_PACKAGES_METRICS.get_number_python_index_urls,
         _PYTHON_PACKAGES_METRICS.get_python_packages_versions_count,
-        _PYTHON_PACKAGES_METRICS.get_python_package_version_entities_count,
         _PYTHON_PACKAGES_METRICS.get_python_packages_per_index_urls_count,
-        _SOLVER_METRICS.get_unsolved_python_packages_count,
-        _SOLVER_METRICS.get_python_packages_solver_error_count,
+        _PI_METRICS.get_observations_count_per_framework,
+        _PI_METRICS.get_tot_performance_records_count,
+        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
+        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count,
+        _ADVISER_METRICS.get_advised_python_software_stack_count,
+        _PACKAGE_ANALYZER_METRICS.get_analyzed_python_packages_count,
+        _PACKAGE_ANALYZER_METRICS.get_unanalyzed_python_packages_count,
+        _PACKAGE_ANALYZER_METRICS.get_analyzed_error_python_packages_count,
         _INSPECTION_METRICS.get_inspection_results_per_identifier,
         _INSPECTION_METRICS.get_inspection_python_software_stack_count,
-        _ADVISER_METRICS.get_advised_python_software_stack_count,
-        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_run_software_environment_count,
-        _SOFTWARE_ENVIRONMENT_METRICS.get_user_unique_run_software_environment_count,
-        _SOFTWARE_ENVIRONMENT_METRICS.get_unique_build_software_environment_count,
-        _PI_METRICS.get_observations_count_per_framework,
-        _PI_METRICS.get_tot_performance_records_count
+        _SOLVER_METRICS.get_solver_count,
+        _SOLVER_METRICS.get_unsolved_python_packages_count,
+        _SOLVER_METRICS.get_python_packages_solver_error_count
     )
 )
 

@@ -172,9 +172,9 @@ class DBMetrics:
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        main_models_record_count = sum([r for r in graph_db.get_number_main_tables_records().values()])
-        relation_models_record_count = sum([r for r in graph_db.get_number_relation_tables_records().values()])
-        performance_models_record_count = sum([r for r in graph_db.get_number_performance_tables_records().values()])
+        main_models_record_count = sum(graph_db.get_number_main_tables_records().values())
+        relation_models_record_count = sum(graph_db.get_number_relation_tables_records().values())
+        performance_models_record_count = sum(graph_db.get_number_performance_tables_records().values())
 
         total_records_count = main_models_record_count + relation_models_record_count + performance_models_record_count
         metrics.graphdb_total_records.set(total_records_count)
@@ -205,16 +205,32 @@ class DBMetrics:
 
         _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
 
+
+class ExternalInformation:
+    """Class to discover information from Users."""
+
     def get_user_python_software_stack_count(self):
         """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_software_stacks = graph_db.python_software_stack_count(
-            software_stack_type="USER"
-        )
+        thoth_graphdb_total_software_stacks = graph_db.python_software_stack_count(software_stack_type="USER")
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
+
+    def get_user_unique_run_software_environment_count(self):
+        """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_user_run_software_environment = len(
+            set(graph_db.run_software_environment_listing(is_external_run=True))
+        )
+
+        metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+        _LOGGER.debug(
+            "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+        )
 
 
 class PythonPackagesMetrics:
@@ -228,15 +244,6 @@ class PythonPackagesMetrics:
         number_python_package_versions = graph_db.get_python_package_versions_count_all()
         metrics.graphdb_number_python_package_versions.set(number_python_package_versions)
         _LOGGER.debug("graphdb_number_python_package_versions=%r", number_python_package_versions)
-
-    def get_python_package_version_entities_count(self):
-        """Get the total number of Python package version entities in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        number_python_package_version_entities = graph_db.get_python_package_version_entities_count_all()
-        metrics.graphdb_number_python_package_version_entities.set(number_python_package_version_entities)
-        _LOGGER.debug("graphdb_number_python_package_version_entities=%r", number_python_package_version_entities)
 
     def get_number_python_index_urls(self):
         """Get the total number of python indexes in Thoth Knowledge Graph."""
@@ -266,66 +273,76 @@ class PythonPackagesMetrics:
         _LOGGER.debug("thoth_graphdb_sum_python_packages_per_indexes=%r", tot_packages)
 
 
-class SolverMetrics:
-    """Class to evaluate Metrics for Solvers."""
+class PIMetrics:
+    """Class to discover Content for Performance Indicators inside Thoth database."""
 
-    _OPENSHIFT = OpenShift()
+    _ML_FRAMEWORKS = ["tensorflow"]
 
-    def get_unsolved_python_packages_count(self):
-        """Get number of unsolved Python packages per solver."""
+    def get_observations_count_per_framework(self):
+        """Get the total number of PI per framework in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+        thoth_number_of_pi_per_type = {}
+
+        for framework in self._ML_FRAMEWORKS:
+            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+
+            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
+                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+
+        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+
+    def get_tot_performance_records_count(self):
+        """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        for solver_name in self._OPENSHIFT.get_solver_names():
-            count = graph_db.retrieve_unsolved_python_packages_count(solver_name)
-            metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
-            _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
+        performance_models_records = graph_db.get_number_performance_tables_records()
 
-    def get_python_packages_solver_error_count(self):
-        """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
+        for performance_table, performance_table_records_count in performance_models_records.items():
+            metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)
+
+        _LOGGER.debug("thoth_graphdb_total_performance_records=%r", performance_models_records)
+
+
+class SoftwareEnvironmentMetrics:
+    """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
+
+    def get_unique_run_software_environment_count(self):
+        """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        total_python_packages_with_solver_error_unparsable = graph_db.get_error_python_packages_count(unparseable=True)
-        total_python_packages_with_solver_error_unsolvable = graph_db.get_error_python_packages_count(unsolvable=True)
+        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
+        metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
+        _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
-        metrics.graphdb_total_python_packages_with_solver_error_unparsable.set(
-            total_python_packages_with_solver_error_unparsable
-        )
-        metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
-            total_python_packages_with_solver_error_unsolvable
-        )
-        metrics.graphdb_total_python_packages_with_solver_error.set(
-            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable
-        )
-
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error=%r",
-            total_python_packages_with_solver_error_unparsable + total_python_packages_with_solver_error_unsolvable,
-        )
-
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error_unparsable=%r",
-            total_python_packages_with_solver_error_unparsable,
-        )
-
-        _LOGGER.debug(
-            "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
-            total_python_packages_with_solver_error_unsolvable,
-        )
-
-
-class AnalyzerMetrics:
-    """Class to evaluate Metrics for Analyzer."""
-
-    def get_unanalyzed_python_packages_count(self):
-        """Get number of unanlyzed Python packages."""
+    def get_unique_build_software_environment_count(self):
+        """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        count = graph_db.retrieve_unanalyzed_python_packages_count()
-        metrics.graphdb_total_number_unanalyzed_python_packages.labels(solver_name).set(count)
-        _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", solver_name, count)
+        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+
+        metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
+        _LOGGER.debug(
+            "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
+        )
+
+
+class AdviserMetrics:
+    """Class to evaluate Metrics for Adviser."""
+
+    def get_advised_python_software_stack_count(self):
+        """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        thoth_graphdb_total_advised_software_stacks = graph_db.python_software_stack_count(
+            software_stack_type="ADVISED"
+        )
+        metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
+        _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
 
 
 class InspectionMetrics:
@@ -365,87 +382,95 @@ class InspectionMetrics:
         _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
 
 
-class AdviserMetrics:
-    """Class to evaluate Metrics for Adviser."""
+class PackageAnalyzerMetrics:
+    """Class to evaluate Metrics for Package Analyzer."""
 
-    def get_advised_python_software_stack_count(self):
-        """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
+    def get_analyzed_python_packages_count(self):
+        """Get number of unanlyzed Python packages."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_advised_software_stacks = graph_db.python_software_stack_count(
-            software_stack_type="ADVISED"
+        count = graph_db.get_analyzed_python_package_versions_count_all()
+        metrics.graphdb_total_number_analyzed_python_packages.set(count)
+        _LOGGER.debug("graphdb_total_number_analyzed_python_packages=%r", count)
+
+    def get_analyzed_error_python_packages_count(self):
+        """Get number of unanlyzed Python packages."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        count = graph_db.get_analyzed_error_python_package_versions_count_all()
+        metrics.graphdb_total_number_analyzed_error_python_packages.set(count)
+        _LOGGER.debug("graphdb_total_number_analyzed_error_python_packages=%r", count)
+
+    def get_unanalyzed_python_packages_count(self):
+        """Get number of unanlyzed Python packages."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        count = graph_db.get_unanalyzed_python_package_versions_count_all()
+        metrics.graphdb_total_number_unanalyzed_python_packages.set(count)
+        _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", count)
+
+
+class SolverMetrics:
+    """Class to evaluate Metrics for Solvers."""
+
+    _OPENSHIFT = OpenShift()
+
+    def get_solver_count(self):
+        """Get number of solvers in Thoth Infra namespace."""
+        solvers = len(self._OPENSHIFT.get_solver_names())
+
+        metrics.graphdb_total_number_solvers.set(solvers)
+        _LOGGER.debug("graphdb_total_number_solvers(%r)=%r", solvers)
+
+    def get_unsolved_python_packages_count(self):
+        """Get number of unsolved Python packages per solver."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        for solver_name in self._OPENSHIFT.get_solver_names():
+            solver_info = graph_db.parse_python_solver_name(solver_name)
+
+            count = graph_db.get_unsolved_python_package_versions_count_all(
+                os_name=solver_info["os_name"],
+                os_version=solver_info["os_version"],
+                python_version=solver_info["python_version"],
+            )
+
+            metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
+            _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
+
+    def get_python_packages_solver_error_count(self):
+        """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+
+        total_python_packages_solver_error = graph_db.get_error_solved_python_package_versions_count_all()
+        total_python_packages_solver_error_unparseable = graph_db.get_error_solved_python_package_versions_count_all(
+            unparseable=True
         )
-        metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
-        _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
-
-
-class SoftwareEnvironmentMetrics:
-    """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
-
-    def get_unique_run_software_environment_count(self):
-        """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
-        metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
-        _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
-
-    def get_user_unique_run_software_environment_count(self):
-        """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_user_run_software_environment = len(
-            set(graph_db.run_software_environment_listing(is_user_run=True))
+        total_python_packages_solver_error_unsolvable = graph_db.get_error_solved_python_package_versions_count_all(
+            unsolvable=True
         )
 
-        metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
+        metrics.graphdb_total_python_packages_with_solver_error_unparseable.set(
+            total_python_packages_solver_error_unparseable
+        )
+        metrics.graphdb_total_python_packages_with_solver_error_unsolvable.set(
+            total_python_packages_solver_error_unsolvable
+        )
+        metrics.graphdb_total_python_packages_with_solver_error.set(total_python_packages_solver_error)
+
+        _LOGGER.debug("graphdb_total_python_packages_with_solver_error=%r", total_python_packages_solver_error)
+
         _LOGGER.debug(
-            "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+            "graphdb_total_python_packages_with_solver_error_unparseable=%r",
+            total_python_packages_solver_error_unparseable,
         )
 
-    def get_unique_build_software_environment_count(self):
-        """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
-
-        metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
         _LOGGER.debug(
-            "graphdb_total_unique_build_software_environment=%r", thoth_graphdb_total_build_software_environment
+            "graphdb_total_python_packages_with_solver_error_unsolvable=%r",
+            total_python_packages_solver_error_unsolvable,
         )
-
-
-class PIMetrics:
-    """Class to discover Content for Performance Indicators inside Thoth database."""
-
-    _ML_FRAMEWORKS = ["tensorflow"]
-
-    def get_observations_count_per_framework(self):
-        """Get the total number of PI per framework in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-        thoth_number_of_pi_per_type = {}
-
-        for framework in self._ML_FRAMEWORKS:
-            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
-
-            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
-                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
-
-        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
-
-    def get_tot_performance_records_count(self):
-        """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        performance_models_records = graph_db.get_number_performance_tables_records()
-
-        for performance_table, performance_table_records_count in performance_models_records.items():
-            metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)
-
-        _LOGGER.debug("thoth_graphdb_total_performance_records=%r", performance_models_records)
