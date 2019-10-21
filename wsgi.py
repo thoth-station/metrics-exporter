@@ -37,6 +37,8 @@ from thoth.metrics_exporter.jobs import ALL_REGISTERED_JOBS
 init_logging()
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
+_LOGGER.info(f"Thoth Metrics Exporter v{__version__}")
+
 _DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
 _JOBS_RUN = 0
@@ -120,5 +122,4 @@ def metrics():
 
 if __name__ == "__main__":
     _LOGGER.debug("Debug mode is on")
-    _LOGGER.info(f"Thoth Metrics Exporter v{__version__} starting...")
     application.run(host="0.0.0.0", port=8080)
