@@ -41,7 +41,7 @@ from thoth.metrics_exporter.jobs import DBMetrics
 from thoth.metrics_exporter.jobs import ExternalInformation
 from thoth.metrics_exporter.jobs import PythonPackagesMetrics
 from thoth.metrics_exporter.jobs import SolverMetrics
-from thoth.metrics_exporter.jobs import AnalyzerMetrics
+from thoth.metrics_exporter.jobs import PackageAnalyzerMetrics
 from thoth.metrics_exporter.jobs import InspectionMetrics
 from thoth.metrics_exporter.jobs import AdviserMetrics
 from thoth.metrics_exporter.jobs import SoftwareEnvironmentMetrics
