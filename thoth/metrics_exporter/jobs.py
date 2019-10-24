@@ -19,9 +19,9 @@
 
 import os
 import logging
-from functools import wraps
 from typing import Set
 from typing import Callable
+from decorator import decorator
 
 from thoth.storages import GraphDatabase
 from thoth.storages import SolverResultsStore
@@ -44,16 +44,12 @@ _LOGGER = logging.getLogger(__name__)
 REGISTERED_JOBS = []
 
 
-def register_metric_job(method: Callable) -> Callable:
+@decorator
+def register_metric_job(method: Callable, *args, **kwargs):
     """A decorator for adding a metric job."""
     global REGISTERED_JOBS
     REGISTERED_JOBS.append(method)
-
-    @wraps(method)
-    def wrapper(*args, **kwargs):
-        return method(*args, **kwargs)
-
-    return wrapper
+    return method(*args, **kwargs)
 
 
 _NAMESPACES_VARIABLES = [
