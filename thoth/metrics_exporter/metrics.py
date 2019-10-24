@@ -170,3 +170,9 @@ graphdb_total_number_unsolved_python_packages = Gauge(
     "Total number of unsolved Python packages per solver.",
     ["solver_name"],
 )
+
+graphdb_is_schema_up2date = Gauge(
+    "thoth_graphdb_is_schema_up2date",
+    "Check whether the schema is up2date with the schema present in metrics-exporter",
+    [],
+)

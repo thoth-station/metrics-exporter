@@ -82,6 +82,7 @@ _ALL_REGISTERED_JOBS = frozenset(
         _DB_METRICS.get_tot_main_records_count,
         _DB_METRICS.get_tot_records_count,
         _DB_METRICS.get_tot_relation_records_count,
+        _DB_METRICS.get_is_schema_up2date,
         _EXTERNAL_INFORMATION.get_user_python_software_stack_count,
         _EXTERNAL_INFORMATION.get_user_unique_run_software_environment_count,
         _PYTHON_PACKAGES_METRICS.get_number_python_index_urls,

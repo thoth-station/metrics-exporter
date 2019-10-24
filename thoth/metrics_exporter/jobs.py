@@ -205,6 +205,12 @@ class DBMetrics:
 
         _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
 
+    def get_is_schema_up2date(self):
+        """Check if the schema running on metrics-exporter is same as the schema present in the database."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+        metrics.graphdb_is_schema_up2date.set(int(graph_db.is_schema_up2date()))
+
 
 class ExternalInformation:
     """Class to discover information from Users."""
