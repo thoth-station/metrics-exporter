@@ -19,6 +19,9 @@
 
 import os
 import logging
+from functools import wraps
+from typing import Set
+from typing import Callable
 
 from thoth.storages import GraphDatabase
 from thoth.storages import SolverResultsStore
@@ -37,6 +40,21 @@ init_logging()
 
 _LOGGER = logging.getLogger(__name__)
 
+# Registered jobs run by metrics-exporter periodically.
+REGISTERED_JOBS = []
+
+
+def register_metric_job(method: Callable) -> Callable:
+    """A decorator for adding a metric job."""
+    global REGISTERED_JOBS
+    REGISTERED_JOBS.append(method)
+
+    @wraps(method)
+    def wrapper(*args, **kwargs):
+        return method(*args, **kwargs)
+
+    return wrapper
+
 
 _NAMESPACES_VARIABLES = [
     "THOTH_FRONTEND_NAMESPACE",
@@ -47,8 +65,16 @@ _NAMESPACES_VARIABLES = [
 ]
 
 
-class OpenshiftMetrics:
-    """Class to evaluate Metrics for Openshift."""
+class MetricsBase:
+    """A base class for grouping metrics."""
+
+    def __init__(self):
+        """Do not instantiate this class."""
+        raise NotImplemented
+
+
+class OpenshiftMetrics(MetricsBase):
+    """Class to evaluate Metrics for OpenShift."""
 
     _OPENSHIFT = OpenShift()
 
@@ -70,7 +96,7 @@ class OpenshiftMetrics:
     ]
 
     @staticmethod
-    def get_namespaces() -> set:
+    def get_namespaces() -> Set[str]:
         """Retrieve namespaces that shall be monitored by metrics-exporter."""
         namespaces = []
         for environment_varibale in _NAMESPACES_VARIABLES:
@@ -80,14 +106,16 @@ class OpenshiftMetrics:
                 _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
         return set(namespaces)
 
-    def get_thoth_jobs_per_label(self):
+    @classmethod
+    @register_metric_job
+    def get_thoth_jobs_per_label(cls) -> None:
         """Get the total number of Jobs per label with corresponding status."""
-        namespaces = self.get_namespaces()
+        namespaces = cls.get_namespaces()
 
-        for label_selector in self._JOBS_LABELS:
+        for label_selector in cls._JOBS_LABELS:
             for namespace in namespaces:
                 _LOGGER.info("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
-                jobs_status_evaluated = self._OPENSHIFT.get_job_status_count(
+                jobs_status_evaluated = cls._OPENSHIFT.get_job_status_count(
                     label_selector=label_selector, namespace=namespace
                 )
 
@@ -97,27 +125,29 @@ class OpenshiftMetrics:
                 _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
 
     @staticmethod
-    def count_configmaps(config_map_list_items: list) -> int:
+    def count_configmaps(config_map_list_items: dict) -> int:
         """Count the number of ConfigMaps for a certain label in a specific namespace."""
         return len(config_map_list_items["items"])
 
-    def get_configmaps_per_namespace_per_label(self):
+    @classmethod
+    @register_metric_job
+    def get_configmaps_per_namespace_per_label(cls) -> None:
         """Get the total number of configmaps in the namespace based on labels."""
-        namespaces = self.get_namespaces()
+        namespaces = cls.get_namespaces()
 
         for namespace in namespaces:
 
-            for label in self._JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
+            for label in cls._JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
                 _LOGGER.info("Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label, namespace)
-                config_maps_items = self._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
-                number_configmaps = self.count_configmaps(config_maps_items)
+                config_maps_items = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
+                number_configmaps = cls.count_configmaps(config_maps_items)
                 metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
                 _LOGGER.debug(
                     "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
                 )
 
 
-class CephMetrics:
+class CephMetrics(MetricsBase):
     """Class to evaluate Metrics for Ceph."""
 
     _MONITORED_STORES = (
@@ -130,9 +160,11 @@ class CephMetrics:
         DependencyMonkeyReportsStore(),
     )
 
-    def get_ceph_results_per_type(self):
+    @classmethod
+    @register_metric_job
+    def get_ceph_results_per_type(cls) -> None:
         """Get the total number of results in Ceph per type."""
-        for store in self._MONITORED_STORES:
+        for store in cls._MONITORED_STORES:
             _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
             if not store.is_connected():
                 store.connect()
@@ -141,7 +173,9 @@ class CephMetrics:
             metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
             _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, len(list_ids))
 
-    def get_ceph_connection_error_status(self):
+    @staticmethod
+    @register_metric_job
+    def get_ceph_connection_error_status() -> None:
         """Check connection to Ceph instance."""
         inspections = InspectionResultsStore()
         try:
@@ -153,10 +187,12 @@ class CephMetrics:
             metrics.ceph_connection_error_status.set(0)
 
 
-class DBMetrics:
+class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
-    def get_graphdb_connection_error_status(self):
+    @staticmethod
+    @register_metric_job
+    def get_graphdb_connection_error_status() -> None:
         """Raise a flag if there is an error connecting to database."""
         graph_db = GraphDatabase()
         try:
@@ -167,7 +203,9 @@ class DBMetrics:
         else:
             metrics.graphdb_connection_error_status.set(0)
 
-    def get_tot_records_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_tot_records_count() -> None:
         """Get the total number of Records in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -181,7 +219,9 @@ class DBMetrics:
 
         _LOGGER.debug("thoth_graphdb_total_records=%r", total_records_count)
 
-    def get_tot_main_records_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_tot_main_records_count() -> None:
         """Get the total number of Records for Main Tables in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -193,7 +233,9 @@ class DBMetrics:
 
         _LOGGER.debug("thoth_graphdb_total_main_records=%r", main_models_records)
 
-    def get_tot_relation_records_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_tot_relation_records_count() -> None:
         """Get the total number of Records for Relation Tables in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -205,11 +247,21 @@ class DBMetrics:
 
         _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
 
+    @staticmethod
+    @register_metric_job
+    def get_is_schema_up2date() -> None:
+        """Check if the schema running on metrics-exporter is same as the schema present in the database."""
+        graph_db = GraphDatabase()
+        graph_db.connect()
+        metrics.graphdb_is_schema_up2date.set(int(graph_db.is_schema_up2date()))
 
-class ExternalInformation:
+
+class ExternalInformation(MetricsBase):
     """Class to discover information from Users."""
 
-    def get_user_python_software_stack_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_user_python_software_stack_count() -> None:
         """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -218,7 +270,9 @@ class ExternalInformation:
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
 
-    def get_user_unique_run_software_environment_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_user_unique_run_software_environment_count() -> None:
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -233,10 +287,12 @@ class ExternalInformation:
         )
 
 
-class PythonPackagesMetrics:
+class PythonPackagesMetrics(MetricsBase):
     """Class to discover Content for PythonPackages inside Thoth database."""
 
-    def get_python_packages_versions_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_python_packages_versions_count() -> None:
         """Get the total number of Python packages versions in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -245,7 +301,9 @@ class PythonPackagesMetrics:
         metrics.graphdb_number_python_package_versions.set(number_python_package_versions)
         _LOGGER.debug("graphdb_number_python_package_versions=%r", number_python_package_versions)
 
-    def get_number_python_index_urls(self):
+    @staticmethod
+    @register_metric_job
+    def get_number_python_index_urls() -> None:
         """Get the total number of python indexes in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -254,7 +312,9 @@ class PythonPackagesMetrics:
         metrics.graphdb_total_python_indexes.set(python_urls_count)
         _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
 
-    def get_python_packages_per_index_urls_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_python_packages_per_index_urls_count() -> None:
         """Get the total number of unique python packages per index URL in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -273,18 +333,20 @@ class PythonPackagesMetrics:
         _LOGGER.debug("thoth_graphdb_sum_python_packages_per_indexes=%r", tot_packages)
 
 
-class PIMetrics:
+class PIMetrics(MetricsBase):
     """Class to discover Content for Performance Indicators inside Thoth database."""
 
     _ML_FRAMEWORKS = ["tensorflow"]
 
-    def get_observations_count_per_framework(self):
+    @classmethod
+    @register_metric_job
+    def get_observations_count_per_framework(cls) -> None:
         """Get the total number of PI per framework in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
         thoth_number_of_pi_per_type = {}
 
-        for framework in self._ML_FRAMEWORKS:
+        for framework in cls._ML_FRAMEWORKS:
             thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
 
             for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
@@ -292,7 +354,9 @@ class PIMetrics:
 
         _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
 
-    def get_tot_performance_records_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_tot_performance_records_count() -> None:
         """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -305,10 +369,12 @@ class PIMetrics:
         _LOGGER.debug("thoth_graphdb_total_performance_records=%r", performance_models_records)
 
 
-class SoftwareEnvironmentMetrics:
+class SoftwareEnvironmentMetrics(MetricsBase):
     """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
 
-    def get_unique_run_software_environment_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_unique_run_software_environment_count() -> None:
         """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -317,7 +383,9 @@ class SoftwareEnvironmentMetrics:
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
-    def get_unique_build_software_environment_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_unique_build_software_environment_count() -> None:
         """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -330,10 +398,12 @@ class SoftwareEnvironmentMetrics:
         )
 
 
-class AdviserMetrics:
+class AdviserMetrics(MetricsBase):
     """Class to evaluate Metrics for Adviser."""
 
-    def get_advised_python_software_stack_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_advised_python_software_stack_count() -> None:
         """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -345,17 +415,18 @@ class AdviserMetrics:
         _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
 
 
-class InspectionMetrics:
+class InspectionMetrics(MetricsBase):
     """Class to evaluate Metrics for Amun Inspections."""
 
-    def get_inspection_results_per_identifier(self):
+    @staticmethod
+    @register_metric_job
+    def get_inspection_results_per_identifier() -> None:
         """Get the total number of inspections in Ceph per identifier."""
         store = InspectionResultsStore()
         if not store.is_connected():
             store.connect()
 
-        specific_list_ids = {}
-        specific_list_ids["without_identifier"] = 0
+        specific_list_ids = {"without_identifier": 0}
         for ids in store.get_document_listing():
             inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
             if inspection_filter:
@@ -370,7 +441,9 @@ class InspectionMetrics:
             metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
             _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
 
-    def get_inspection_python_software_stack_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_inspection_python_software_stack_count() -> None:
         """Get the total number of Inspection Python Software Stacks in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -382,10 +455,12 @@ class InspectionMetrics:
         _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
 
 
-class PackageAnalyzerMetrics:
+class PackageAnalyzerMetrics(MetricsBase):
     """Class to evaluate Metrics for Package Analyzer."""
 
-    def get_analyzed_python_packages_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_analyzed_python_packages_count() -> None:
         """Get number of unanlyzed Python packages."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -394,7 +469,9 @@ class PackageAnalyzerMetrics:
         metrics.graphdb_total_number_analyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_python_packages=%r", count)
 
-    def get_analyzed_error_python_packages_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_analyzed_error_python_packages_count() -> None:
         """Get number of unanlyzed Python packages."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -403,7 +480,9 @@ class PackageAnalyzerMetrics:
         metrics.graphdb_total_number_analyzed_error_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_error_python_packages=%r", count)
 
-    def get_unanalyzed_python_packages_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_unanalyzed_python_packages_count() -> None:
         """Get number of unanlyzed Python packages."""
         graph_db = GraphDatabase()
         graph_db.connect()
@@ -413,24 +492,28 @@ class PackageAnalyzerMetrics:
         _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", count)
 
 
-class SolverMetrics:
+class SolverMetrics(MetricsBase):
     """Class to evaluate Metrics for Solvers."""
 
     _OPENSHIFT = OpenShift()
 
-    def get_solver_count(self):
+    @classmethod
+    @register_metric_job
+    def get_solver_count(cls) -> None:
         """Get number of solvers in Thoth Infra namespace."""
-        solvers = len(self._OPENSHIFT.get_solver_names())
+        solvers = len(cls._OPENSHIFT.get_solver_names())
 
         metrics.graphdb_total_number_solvers.set(solvers)
         _LOGGER.debug("graphdb_total_number_solvers(%r)=%r", solvers)
 
-    def get_unsolved_python_packages_count(self):
+    @classmethod
+    @register_metric_job
+    def get_unsolved_python_packages_count(cls) -> None:
         """Get number of unsolved Python packages per solver."""
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        for solver_name in self._OPENSHIFT.get_solver_names():
+        for solver_name in cls._OPENSHIFT.get_solver_names():
             solver_info = graph_db.parse_python_solver_name(solver_name)
 
             count = graph_db.get_unsolved_python_package_versions_count_all(
@@ -442,7 +525,9 @@ class SolverMetrics:
             metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
             _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
 
-    def get_python_packages_solver_error_count(self):
+    @staticmethod
+    @register_metric_job
+    def get_python_packages_solver_error_count() -> None:
         """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
         graph_db = GraphDatabase()
         graph_db.connect()
