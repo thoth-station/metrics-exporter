@@ -31,6 +31,7 @@ from thoth.storages import InspectionResultsStore
 from thoth.storages import PackageAnalysisResultsStore
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import DependencyMonkeyReportsStore
+from thoth.storages.exception import DatabaseNotInitialized
 from thoth.common import init_logging
 from thoth.common import OpenShift
 import thoth.metrics_exporter.metrics as metrics
@@ -253,7 +254,11 @@ class DBMetrics(MetricsBase):
         """Check if the schema running on metrics-exporter is same as the schema present in the database."""
         graph_db = GraphDatabase()
         graph_db.connect()
-        metrics.graphdb_is_schema_up2date.set(int(graph_db.is_schema_up2date()))
+        try:
+            metrics.graphdb_is_schema_up2date.set(int(graph_db.is_schema_up2date()))
+        except DatabaseNotInitialized as exc:
+            _LOGGER.warning("Database schema is not initialized yet: %s", str(exc))
+            metrics.graphdb_is_schema_up2date.set(0)
 
 
 class ExternalInformation(MetricsBase):
