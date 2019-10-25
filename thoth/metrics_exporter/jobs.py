@@ -17,11 +17,14 @@
 
 """This is a Prometheus exporter for Thoth."""
 
+import ast
 import os
 import logging
-from typing import Set
 from typing import Callable
+from typing import Set
 from decorator import decorator
+import inspect
+import textwrap
 
 from thoth.storages import GraphDatabase
 from thoth.storages import SolverResultsStore
@@ -45,11 +48,9 @@ REGISTERED_JOBS = []
 
 
 @decorator
-def register_metric_job(method: Callable, *args, **kwargs):
+def register_metric_job(method: Callable, *args, **kwargs) -> None:
     """A decorator for adding a metric job."""
-    global REGISTERED_JOBS
-    REGISTERED_JOBS.append(method)
-    return method(*args, **kwargs)
+    method(*args, **kwargs)
 
 
 _NAMESPACES_VARIABLES = [
@@ -61,10 +62,35 @@ _NAMESPACES_VARIABLES = [
 ]
 
 
-class MetricsBase:
+class MetricsType(type):
+    """A metaclass for implementing metrics classes."""
+
+    def __init__(cls, class_name: str, bases: tuple, attrs: dict):
+        """Initialize metrics type."""
+
+        def _is_register_metric_job_decorator_present(node: ast.FunctionDef) -> None:
+            """Check if the given function has assigned decorator to register a new metric job."""
+            for n in node.decorator_list:
+                if n.id == register_metric_job.__name__:
+                    _LOGGER.info("Registering job %r implemented in %r", method_name, class_name)
+                    REGISTERED_JOBS.append((class_name, method_name))
+
+        global REGISTERED_JOBS
+
+        _LOGGER.debug("Checking class %r for registered metric jobs", class_name)
+        node_iter = ast.NodeVisitor()
+        node_iter.visit_FunctionDef = _is_register_metric_job_decorator_present
+        for method_name, item in attrs.items():
+            # Metrics classes are not instantiable.
+            if isinstance(item, (staticmethod, classmethod)):
+                source = textwrap.dedent(inspect.getsource(item.__func__))
+                node_iter.visit(ast.parse(source))
+
+
+class MetricsBase(metaclass=MetricsType):
     """A base class for grouping metrics."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Do not instantiate this class."""
         raise NotImplemented
 
@@ -97,7 +123,7 @@ class OpenshiftMetrics(MetricsBase):
         namespaces = []
         for environment_varibale in _NAMESPACES_VARIABLES:
             if os.getenv(environment_varibale):
-                namespaces.append(os.getenv(environment_varibale))
+                namespaces.append(os.environ[environment_varibale])
             else:
                 _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
         return set(namespaces)

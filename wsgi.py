@@ -34,6 +34,7 @@ from thoth.common import init_logging
 from thoth.metrics_exporter import __version__
 
 from thoth.metrics_exporter.jobs import REGISTERED_JOBS
+import thoth.metrics_exporter.jobs as jobs
 
 init_logging()
 
@@ -70,14 +71,14 @@ class _Config:
 
     JOBS = [
         {
-            'id': func.__name__,
-            'func': partial(func_wrapper, func),
+            'id': method_name,
+            'func': partial(func_wrapper, getattr(getattr(jobs, class_name), method_name)),
             'trigger': 'interval',
             'seconds': _UPDATE_INTERVAL_SECONDS,
             'next_run_time': _FIRST_RUN_TIME,
             'max_instances': 1,
         }
-        for func in REGISTERED_JOBS
+        for class_name, method_name in REGISTERED_JOBS
     ]
 
     SCHEDULER_API_ENABLED = True
