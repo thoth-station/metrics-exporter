@@ -42,6 +42,7 @@ _LOGGER.info(f"Thoth Metrics Exporter v{__version__}")
 
 _DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
+_GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")
 _JOBS_RUN = 0
 _INITIALIZED = False
 _FIRST_RUN_TIME = datetime.now()
@@ -101,7 +102,7 @@ def extend_response_headers(response):
 @application.route("/")
 def main():
     """Show this to humans."""
-    return redirect("https://grafana.datahub.redhat.com", code=308)
+    return redirect(_GRAFANA_REDIRECT_URL, code=308)
 
 
 @application.route("/metrics")

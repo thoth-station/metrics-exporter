@@ -82,6 +82,8 @@ objects:
                   value: "1"
                 - name: "THOTH_METRICS_EXPORTER_UPDATE_INTERVAL"
                   value: "20"
+                - name: "THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL"
+                  value: "https://grafana.datahub.redhat.com/"
                 - name: "THOTH_FRONTEND_NAMESPACE"
                   valueFrom:
                     configMapKeyRef:
