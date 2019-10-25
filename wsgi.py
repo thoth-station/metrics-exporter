@@ -40,7 +40,6 @@ init_logging()
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
 _LOGGER.info(f"Thoth Metrics Exporter v{__version__}")
 
-_DEBUG = os.getenv("METRICS_EXPORTER_DEBUG", False)
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
 _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")
 _JOBS_RUN = 0
