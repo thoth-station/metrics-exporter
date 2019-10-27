@@ -7,13 +7,14 @@ metadata:
       This is Thoth Metrics Exporter Deployment, this template is meant to be used by
       Bots, but could also be used by humans...
     openshift.io/display-name: 'Thoth Metrics Exporter Deployment'
-    version: 0.3.0
+    version: 0.4.0
     tags: thoth,thoth-metrics,thoth-metrics-exporter,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This is Thoth Metrics Exporter Deployment, this template is meant to be used
       by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
+    thoth-station.ninja/template-version: 0.4.0
   labels:
     template: thoth-metrics-exporter-deployment
     app: thoth
@@ -35,6 +36,8 @@ objects:
     apiVersion: v1
     metadata:
       name: metrics-exporter
+      annotations:
+        thoth-station.ninja/template-version: 0.4.0
       labels:
         app: thoth
         component: metrics-exporter
@@ -46,6 +49,8 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.4.0
       labels:
         app: thoth
         component: metrics-exporter
@@ -61,6 +66,8 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.4.0
       labels:
         app: thoth
         component: metrics-exporter
