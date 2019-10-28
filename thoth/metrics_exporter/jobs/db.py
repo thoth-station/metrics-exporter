@@ -39,10 +39,10 @@ class DBMetrics(MetricsBase):
         try:
             graph_db.connect()
         except Exception as excptn:
-            metrics.graphdb_connection_error_status.set(1)
+            metrics.graphdb_connection_error_status.set(0)
             _LOGGER.exception(excptn)
         else:
-            metrics.graphdb_connection_error_status.set(0)
+            metrics.graphdb_connection_error_status.set(1)
 
     @staticmethod
     @register_metric_job
