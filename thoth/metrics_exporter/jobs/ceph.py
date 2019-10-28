@@ -68,7 +68,7 @@ class CephMetrics(MetricsBase):
         try:
             inspections.connect()
         except Exception as excptn:
-            metrics.ceph_connection_error_status.set(1)
+            metrics.ceph_connection_error_status.set(0)
             _LOGGER.exception(excptn)
         else:
-            metrics.ceph_connection_error_status.set(0)
+            metrics.ceph_connection_error_status.set(1)
