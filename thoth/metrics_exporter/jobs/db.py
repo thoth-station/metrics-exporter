@@ -20,7 +20,7 @@
 import logging
 
 from thoth.storages import GraphDatabase
-from thoth.storages.exception import DatabaseNotInitialized
+from thoth.storages.exceptions import DatabaseNotInitialized
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
