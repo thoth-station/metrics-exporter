@@ -18,7 +18,11 @@
 """This is a Prometheus Metrics exporter for Thoth."""
 
 from thoth.common import __version__ as __common__version__
+from thoth.common import init_logging
 from thoth.storages import __version__ as __storages__version__
 
 
 __version__ = f"0.7.0+storage.{__storages__version__}.common.{__common__version__}"
+
+# Init logging here when gunicorn import this application.
+init_logging()
