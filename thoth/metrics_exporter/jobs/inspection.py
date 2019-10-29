@@ -62,7 +62,7 @@ class InspectionMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_inspection_software_stacks = graph_db.python_software_stack_count(
+        thoth_graphdb_total_inspection_software_stacks = graph_db.get_python_software_stack_count_all(
             software_stack_type="INSPECTION"
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)

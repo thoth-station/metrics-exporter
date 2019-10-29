@@ -52,9 +52,9 @@ class DBMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        main_models_record_count = sum(graph_db.get_number_main_tables_records().values())
-        relation_models_record_count = sum(graph_db.get_number_relation_tables_records().values())
-        performance_models_record_count = sum(graph_db.get_number_performance_tables_records().values())
+        main_models_record_count = sum(graph_db.get_main_table_count().values())
+        relation_models_record_count = sum(graph_db.get_relation_table_count().values())
+        performance_models_record_count = sum(graph_db.get_performance_table_count().values())
 
         total_records_count = main_models_record_count + relation_models_record_count + performance_models_record_count
         metrics.graphdb_total_records.set(total_records_count)
@@ -68,7 +68,7 @@ class DBMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        main_models_records = graph_db.get_number_main_tables_records()
+        main_models_records = graph_db.get_main_table_count()
 
         for main_table, main_table_records_count in main_models_records.items():
             metrics.graphdb_total_main_records.labels(main_table).set(main_table_records_count)
@@ -82,7 +82,7 @@ class DBMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        relation_models_records = graph_db.get_number_relation_tables_records()
+        relation_models_records = graph_db.get_relation_table_count()
 
         for relation_table, relation_table_records_count in relation_models_records.items():
             metrics.graphdb_total_relation_records.labels(relation_table).set(relation_table_records_count)

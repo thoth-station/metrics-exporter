@@ -38,7 +38,7 @@ class UserInformationMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_software_stacks = graph_db.python_software_stack_count(software_stack_type="USER")
+        thoth_graphdb_total_software_stacks = graph_db.get_python_software_stack_count_all(software_stack_type="USER")
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
 
@@ -50,7 +50,7 @@ class UserInformationMetrics(MetricsBase):
         graph_db.connect()
 
         thoth_graphdb_total_user_run_software_environment = len(
-            set(graph_db.run_software_environment_listing(is_external_run=True))
+            set(graph_db.get_run_software_environment_all(is_external=True))
         )
 
         metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
