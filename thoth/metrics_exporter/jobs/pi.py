@@ -31,18 +31,18 @@ _LOGGER = logging.getLogger(__name__)
 class PIMetrics(MetricsBase):
     """Class to discover Content for Performance Indicators inside Thoth database."""
 
-    _ML_FRAMEWORKS = ["tensorflow"]
-
     @classmethod
     @register_metric_job
     def get_observations_count_per_framework(cls) -> None:
         """Get the total number of PI per framework in Thoth Knowledge Graph."""
         graph_db = GraphDatabase()
         graph_db.connect()
+
+        ML_FRAMEWORKS = graph_db.get_ml_frameworks_all()
         thoth_number_of_pi_per_type = {}
 
-        for framework in cls._ML_FRAMEWORKS:
-            thoth_number_of_pi_per_type[framework] = graph_db.get_all_pi_per_framework_count(framework=framework)
+        for framework in ML_FRAMEWORKS:
+            thoth_number_of_pi_per_type[framework] = graph_db.get_pi_count(framework=framework)
 
             for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
                 metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
@@ -56,7 +56,7 @@ class PIMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        performance_models_records = graph_db.get_number_performance_tables_records()
+        performance_models_records = graph_db.get_performance_table_count()
 
         for performance_table, performance_table_records_count in performance_models_records.items():
             metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)

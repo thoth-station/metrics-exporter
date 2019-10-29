@@ -49,7 +49,7 @@ class PythonPackagesMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        python_urls_count = len(graph_db.get_python_package_index_urls())
+        python_urls_count = len(graph_db.get_python_package_index_urls_all())
         metrics.graphdb_total_python_indexes.set(python_urls_count)
         _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
 
@@ -60,7 +60,7 @@ class PythonPackagesMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        python_urls_list = list(graph_db.get_python_package_index_urls())
+        python_urls_list = list(graph_db.get_python_package_index_urls_all())
         tot_packages = 0
         for index_url in python_urls_list:
 

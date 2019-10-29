@@ -38,7 +38,7 @@ class SoftwareEnvironmentMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_run_software_environment = len(set(graph_db.run_software_environment_listing()))
+        thoth_graphdb_total_run_software_environment = len(set(graph_db.get_run_software_environment_all()))
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
@@ -49,7 +49,7 @@ class SoftwareEnvironmentMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_build_software_environment = len(set(graph_db.build_software_environment_listing()))
+        thoth_graphdb_total_build_software_environment = len(set(graph_db.get_build_software_environment_all()))
 
         metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
         _LOGGER.debug(

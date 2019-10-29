@@ -38,7 +38,7 @@ class AdviserMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_advised_software_stacks = graph_db.python_software_stack_count(
+        thoth_graphdb_total_advised_software_stacks = graph_db.get_python_software_stack_count_all(
             software_stack_type="ADVISED"
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
