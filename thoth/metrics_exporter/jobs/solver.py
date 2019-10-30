@@ -69,12 +69,12 @@ class SolverMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        total_python_packages_solver_error = graph_db.get_error_solved_python_package_versions_count_all()
+        total_python_packages_solver_error = graph_db.get_error_solved_python_package_versions_count_all(distinct=True)
         total_python_packages_solver_error_unparseable = graph_db.get_error_solved_python_package_versions_count_all(
-            unparseable=True
+            unparseable=True, distinct=True
         )
         total_python_packages_solver_error_unsolvable = graph_db.get_error_solved_python_package_versions_count_all(
-            unsolvable=True
+            unsolvable=True, distinct=True
         )
 
         metrics.graphdb_total_python_packages_with_solver_error_unparseable.set(
