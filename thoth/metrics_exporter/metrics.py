@@ -148,6 +148,11 @@ graphdb_total_number_solvers = Gauge(
     "Total number of solvers in Thoth Infra namespace.",
     [],
 )
+graphdb_total_python_packages_solved_with_no_error = Gauge(
+    "thoth_graphdb_total_python_packages_with_no_error",
+    "Total number of python packages solved with no error.",
+    [],
+)
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
     "Total number of python packages with solver error True.",
