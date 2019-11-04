@@ -21,6 +21,7 @@ import logging
 
 from thoth.storages import GraphDatabase
 from thoth.storages import InspectionResultsStore
+from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -63,7 +64,7 @@ class InspectionMetrics(MetricsBase):
         graph_db.connect()
 
         thoth_graphdb_total_inspection_software_stacks = graph_db.get_python_software_stack_count_all(
-            software_stack_type="INSPECTION"
+            software_stack_type=SoftwareStackTypeEnum.INSPECTION.value
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)
         _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
