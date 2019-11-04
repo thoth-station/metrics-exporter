@@ -20,6 +20,7 @@
 import logging
 
 from thoth.storages import GraphDatabase
+from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -39,7 +40,7 @@ class AdviserMetrics(MetricsBase):
         graph_db.connect()
 
         thoth_graphdb_total_advised_software_stacks = graph_db.get_python_software_stack_count_all(
-            software_stack_type="ADVISED"
+            software_stack_type=SoftwareStackTypeEnum.ADVISED.value
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
         _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)

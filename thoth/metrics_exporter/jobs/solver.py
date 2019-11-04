@@ -81,9 +81,7 @@ class SolverMetrics(MetricsBase):
 
         total_python_packages_solved_with_no_error = total_python_packages_solved - total_python_packages_solver_error
 
-        metrics.graphdb_total_python_packages_solved_with_no_error.set(
-            total_python_packages_solved_with_no_error
-        )
+        metrics.graphdb_total_python_packages_solved_with_no_error.set(total_python_packages_solved_with_no_error)
         metrics.graphdb_total_python_packages_with_solver_error_unparseable.set(
             total_python_packages_solver_error_unparseable
         )
@@ -93,8 +91,7 @@ class SolverMetrics(MetricsBase):
         metrics.graphdb_total_python_packages_with_solver_error.set(total_python_packages_solver_error)
 
         _LOGGER.debug(
-            "graphdb_total_python_packages_solved_with_no_error=%r",
-            total_python_packages_solved_with_no_error,
+            "graphdb_total_python_packages_solved_with_no_error=%r", total_python_packages_solved_with_no_error
         )
 
         _LOGGER.debug("graphdb_total_python_packages_with_solver_error=%r", total_python_packages_solver_error)

@@ -20,6 +20,7 @@
 import logging
 
 from thoth.storages import GraphDatabase
+from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -38,7 +39,9 @@ class UserInformationMetrics(MetricsBase):
         graph_db = GraphDatabase()
         graph_db.connect()
 
-        thoth_graphdb_total_software_stacks = graph_db.get_python_software_stack_count_all(software_stack_type="USER")
+        thoth_graphdb_total_software_stacks = graph_db.get_python_software_stack_count_all(
+            software_stack_type=SoftwareStackTypeEnum.USER.value
+        )
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
 
