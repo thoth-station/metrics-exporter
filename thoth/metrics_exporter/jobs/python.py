@@ -64,7 +64,7 @@ class PythonPackagesMetrics(MetricsBase):
         tot_packages = 0
         for index_url in python_urls_list:
 
-            packages_count = len(graph_db.get_python_packages_per_index(index_url=index_url)[index_url])
+            packages_count = len(graph_db.get_python_package_versions_per_index(index_url=index_url)[index_url])
             tot_packages += packages_count
 
             metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)
