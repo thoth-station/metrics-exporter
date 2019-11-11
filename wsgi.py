@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 """This is a Prometheus exporter for Thoth."""
+
 
 import os
 import logging
@@ -24,19 +26,20 @@ import typing
 from functools import partial
 
 from flask_apscheduler import APScheduler
-from flask import Flask
-from flask import redirect
-from flask import make_response
-from flask import jsonify
+from flask import Flask, redirect, make_response, jsonify
+from flask_cors import CORS
 from prometheus_client import generate_latest
 
 from thoth.common import init_logging
-from thoth.metrics_exporter import __version__
 
+from thoth.metrics_exporter import __version__
 from thoth.metrics_exporter.jobs import REGISTERED_JOBS
+
 import thoth.metrics_exporter.jobs as jobs
 
+
 init_logging()
+
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
 _LOGGER.info(f"Thoth Metrics Exporter v{__version__}")
@@ -86,6 +89,9 @@ class _Config:
 
 application = Flask("thoth.metrics_exporter")
 application.config.from_object(_Config())
+
+# Add Cross Origin Request Policy to all
+CORS(application)
 
 # Init scheduler.
 scheduler = APScheduler()

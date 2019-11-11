@@ -9,6 +9,7 @@ thoth-storages = "*"
 thoth-common = "*"
 responder = "==1.1.1"
 flask-apscheduler = "*"
+flask-cors = "*"
 gunicorn = "*"
 decorator = "*"
 
