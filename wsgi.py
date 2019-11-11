@@ -90,7 +90,7 @@ application = Flask("thoth.metrics_exporter")
 application.config.from_object(_Config())
 
 # Add Cross Origin Request Policy to all
-CORS(application.app)
+CORS(application)
 
 # Init scheduler.
 scheduler = APScheduler()
