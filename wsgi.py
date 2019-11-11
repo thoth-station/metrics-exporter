@@ -73,12 +73,13 @@ class _Config:
 
     JOBS = [
         {
-            "id": method_name,
-            "func": partial(func_wrapper, getattr(getattr(jobs, class_name), method_name)),
-            "trigger": "interval",
-            "seconds": _UPDATE_INTERVAL_SECONDS,
-            "next_run_time": _FIRST_RUN_TIME,
-            "max_instances": 1,
+            'id': method_name,
+            'func': partial(func_wrapper, getattr(getattr(jobs, class_name), method_name)),
+            'trigger': 'interval',
+            'seconds': _UPDATE_INTERVAL_SECONDS,
+            'next_run_time': _FIRST_RUN_TIME,
+            'max_instances': 1,
+            'coalesce': True,
         }
         for class_name, method_name in REGISTERED_JOBS
     ]
