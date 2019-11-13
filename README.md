@@ -2,9 +2,28 @@
 
 This is a Promotheus Metrics exporter for Thoth.
 
+## Metrics exporter API
+
+Metrics exporter exposes two main endpoints:
+
+  * **/metrics** - used by Prometheus to scrape metrics
+  * **/scheduler** - used to check available jobs in the sceduler
+
+The scheduler endpoint provides the following list of operations:
+
+  * **GET /scheduler** - exposes main info about the scheduler
+  * **GET /scheduler/jobs** - get listing of available jobs
+  * **GET /scheduler/jobs/<job-id>** - get information about the given job
+  * **PATCH /scheduler/jobs/<job-id>** - adjust the given job
+  * **POST /scheduler/jobs/<job-id>/pause** - pause the given job
+  * **POST /scheduler/jobs/<job-id>/resume** - resume the given job
+  * **POST /scheduler/jobs/<job-id>/run** - run the given job (manual trigger)
+  * **DELETE /scheduler/jobs/<job-id>** - remove the given job (do not use, use pause instead)
+  * **POST /scheduler/jobs** - adds a job to metrics-exporter scheduler (do not use)
+
 ## Copyright
 
-Copyright (C) 2018 Red Hat Inc.
+Copyright (C) 2018, 2019 Red Hat Inc.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
