@@ -88,6 +88,7 @@ class _Config:
     SCHEDULER_JOB_DEFAULTS = {
         'coalesce': True,
         'max_instances': 1,
+        'misfire_grace_time': 3600,
     }
 
 
