@@ -18,7 +18,7 @@
 """Metrics related to OpenShift resources and objects."""
 
 import logging
-from typing import Set
+from typing import Set, Dict, List
 import os
 
 from thoth.common import OpenShift
@@ -35,50 +35,58 @@ class OpenshiftMetrics(MetricsBase):
 
     _OPENSHIFT = OpenShift()
 
-    _JOBS_LABELS = [
+    _MIDDLETIER_JOBS_LABELS = [
         "component=dependency-monkey",
-        "component=amun-inspection-job",
-        "component=solver",
         "component=package-extract",
         "component=package-analyzer",
-        "component=provenance-checker",
-        "component=adviser",
-        "graph-sync-type=adviser",
+        "component=solver",
         "graph-sync-type=dependency-monkey",
-        "graph-sync-type=inspection",
         "graph-sync-type=package-analyzer",
         "graph-sync-type=package-extract",
-        "graph-sync-type=provenance-checker",
-        "graph-sync-type=solver",
+        "graph-sync-type=solver"
     ]
 
-    _NAMESPACES_VARIABLES = [
-        "THOTH_FRONTEND_NAMESPACE",
-        "THOTH_MIDDLETIER_NAMESPACE",
-        "THOTH_BACKEND_NAMESPACE",
-        "THOTH_AMUN_NAMESPACE",
-        "THOTH_AMUN_INSPECTION_NAMESPACE",
+    _AMUN_INSPECTION_JOBS_LABELS = [
+        "component=amun-inspection-job",
+        "graph-sync-type=inspection"
     ]
+
+    _BACKEND_JOBS_LABELS = [
+        "component=adviser",
+        "component=provenance-checker",
+        "graph-sync-type=adviser",
+        "graph-sync-type=provenance-checker"
+    ]
+
+    _NAMESPACES_VARIABLES_JOBS_MAP = {
+        "THOTH_MIDDLETIER_NAMESPACE": _MIDDLETIER_JOBS_LABELS,
+        "THOTH_BACKEND_NAMESPACE": _BACKEND_JOBS_LABELS,
+        "THOTH_AMUN_INSPECTION_NAMESPACE": _AMUN_INSPECTION_JOBS_LABELS,
+    }
 
     @classmethod
-    def get_namespaces(cls) -> Set[str]:
-        """Retrieve namespaces that shall be monitored by metrics-exporter."""
-        namespaces = []
-        for environment_varibale in cls._NAMESPACES_VARIABLES:
-            if os.getenv(environment_varibale):
-                namespaces.append(os.environ[environment_varibale])
+    def get_namespace_job_labels_map(cls) -> Dict[str, List[str]]:
+        """Retrieve namespace/jobs map that shall be monitored by metrics-exporter."""
+        namespace_jobs_map = {}
+        for environment_variable, job_labels in cls._NAMESPACES_VARIABLES_JOBS_MAP.items():
+            if os.getenv(environment_variable):
+                if os.getenv(environment_variable) not in namespace_jobs_map.keys():
+                    namespace_jobs_map[os.environ[environment_variable]] = job_labels
+                else:
+                    namespace_jobs_map[os.environ[environment_variable]] += job_labels
             else:
-                _LOGGER.warning("Namespace variable not provided for %r", environment_varibale)
-        return set(namespaces)
+                _LOGGER.warning("Namespace variable not provided for %r", environment_variable)
+
+        return namespace_jobs_map
 
     @classmethod
     @register_metric_job
-    def get_thoth_jobs_per_label(cls) -> None:
-        """Get the total number of Jobs per label with corresponding status."""
-        namespaces = cls.get_namespaces()
+    def get_thoth_jobs_per_namespace_per_label(cls) -> None:
+        """Get the total number of Jobs per label per namespace with corresponding status."""
+        namespace_jobs_map = cls.get_namespace_job_labels_map()
 
-        for label_selector in cls._JOBS_LABELS:
-            for namespace in namespaces:
+        for namespace, job_labels in namespace_jobs_map.items():
+            for label_selector in job_labels:
                 _LOGGER.info("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
                 jobs_status_evaluated = cls._OPENSHIFT.get_job_status_count(
                     label_selector=label_selector, namespace=namespace
@@ -98,15 +106,19 @@ class OpenshiftMetrics(MetricsBase):
     @register_metric_job
     def get_configmaps_per_namespace_per_label(cls) -> None:
         """Get the total number of configmaps in the namespace based on labels."""
-        namespaces = cls.get_namespaces()
+        namespace_jobs_map = cls.get_namespace_job_labels_map()
 
-        for namespace in namespaces:
-
-            for label in cls._JOBS_LABELS + ["operator=graph-sync", "operator=workload"]:
-                _LOGGER.info("Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label, namespace)
-                config_maps_items = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label)
+        for namespace, job_labels in namespace_jobs_map.items():
+            for label_selector in job_labels + ["operator=graph-sync", "operator=workload"]:
+                _LOGGER.info(
+                    "Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label_selector, namespace
+                    )
+                config_maps_items = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label_selector)
                 number_configmaps = cls.count_configmaps(config_maps_items)
-                metrics.config_maps_number.labels(namespace, label).set(number_configmaps)
+                metrics.config_maps_number.labels(namespace, label_selector).set(number_configmaps)
                 _LOGGER.debug(
-                    "thoth_config_maps_number=%r, in namespace=%r for label=%r", number_configmaps, namespace, label
+                    "thoth_config_maps_number=%r, in namespace=%r for label_selector=%r",
+                    number_configmaps,
+                    namespace,
+                    label_selector
                 )
