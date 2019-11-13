@@ -79,12 +79,16 @@ class _Config:
             'seconds': _UPDATE_INTERVAL_SECONDS,
             'next_run_time': _FIRST_RUN_TIME,
             'max_instances': 1,
-            'coalesce': True,
         }
         for class_name, method_name in REGISTERED_JOBS
     ]
 
     SCHEDULER_API_ENABLED = True
+
+    SCHEDULER_JOB_DEFAULTS = {
+        'coalesce': True,
+        'max_instances': 1,
+    }
 
 
 application = Flask("thoth.metrics_exporter")
