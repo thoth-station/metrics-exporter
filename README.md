@@ -23,7 +23,7 @@ The scheduler endpoint provides the following list of operations:
 
 ## Copyright
 
-Copyright (C) 2018 Red Hat Inc.
+Copyright (C) 2018, 2019 Red Hat Inc.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
