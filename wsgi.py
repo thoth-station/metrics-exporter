@@ -86,6 +86,11 @@ class _Config:
 
     SCHEDULER_API_ENABLED = True
 
+    SCHEDULER_JOB_DEFAULTS = {
+        'coalesce': True,
+        'max_instances': 1,
+    }
+
 
 application = Flask("thoth.metrics_exporter")
 application.config.from_object(_Config())
