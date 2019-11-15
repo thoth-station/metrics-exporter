@@ -126,6 +126,7 @@ def metrics():
 
     if not _INITIALIZED:
         if _JOBS_RUN < len(_Config.JOBS):
+            _LOGGER.warning("Not all metrics were gathered, the service is not ready yet")
             return make_response(jsonify({"error": "Metrics are not ready yet"}), 503)
 
         # Torn on the switch, we do not need to keep track of not-ready jobs.
