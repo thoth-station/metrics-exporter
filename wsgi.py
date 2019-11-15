@@ -26,6 +26,7 @@ import typing
 from functools import partial
 
 from flask_apscheduler import APScheduler
+from apscheduler.executors.pool import ThreadPoolExecutor
 from flask import Flask, redirect, make_response, jsonify
 from flask_cors import CORS
 from prometheus_client import generate_latest
@@ -85,6 +86,10 @@ class _Config:
     ]
 
     SCHEDULER_API_ENABLED = True
+
+    SCHEDULER_EXECUTORS = {
+        'default': ThreadPoolExecutor(16)
+    }
 
     SCHEDULER_JOB_DEFAULTS = {
         'coalesce': True,
