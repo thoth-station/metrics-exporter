@@ -41,13 +41,17 @@ class PIMetrics(MetricsBase):
         ML_FRAMEWORKS = graph_db.get_ml_frameworks_all()
         thoth_number_of_pi_per_type = {}
 
-        for framework in ML_FRAMEWORKS:
-            thoth_number_of_pi_per_type[framework] = graph_db.get_pi_count(framework=framework)
+        if ML_FRAMEWORKS:
+            for framework in ML_FRAMEWORKS:
+                thoth_number_of_pi_per_type[framework] = graph_db.get_pi_count(framework=framework)
 
-            for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
-                metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
-
-        _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+                for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
+                    metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
+            _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+        else:
+            thoth_number_of_pi_per_type["No framework"] = 0
+            metrics.graphdb_total_number_of_pi_per_framework.labels("No framework", "No pi").set(0)
+            _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
 
     @staticmethod
     @register_metric_job
