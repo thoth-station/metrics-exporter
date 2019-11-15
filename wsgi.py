@@ -130,6 +130,7 @@ def metrics():
             return make_response(jsonify({"error": "Metrics are not ready yet"}), 503)
 
         # Torn on the switch, we do not need to keep track of not-ready jobs.
+        _LOGGER.info("All metrics were gathered, the service is ready now")
         _INITIALIZED = True
 
     return generate_latest().decode("utf-8")
