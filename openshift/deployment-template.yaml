@@ -207,7 +207,7 @@ objects:
                   path: "/metrics"
                   port: 8080
                   scheme: HTTP
-                initialDelaySeconds: 120
+                initialDelaySeconds: 600
                 periodSeconds: 10
                 timeoutSeconds: 10
               livenessProbe:
@@ -215,7 +215,7 @@ objects:
                   path: "/metrics"
                   port: 8080
                   scheme: HTTP
-                initialDelaySeconds: 180
+                initialDelaySeconds: 600
                 periodSeconds: 10
                 timeoutSeconds: 10
       test: false
