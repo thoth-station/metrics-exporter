@@ -19,6 +19,7 @@
 
 
 import ast
+import time
 import logging
 from typing import Callable
 from decorator import decorator
@@ -36,7 +37,11 @@ REGISTERED_JOBS = []
 @decorator
 def register_metric_job(method: Callable, *args, **kwargs) -> None:
     """A decorator for adding a metric job."""
-    method(*args, **kwargs)
+    start_time = time.monotonic()
+    try:
+        method(*args, **kwargs)
+    finally:
+        _LOGGER.info("Gathering metrics by job %r took %g seconds", method.__name__, time.monotonic() - start_time)
 
 
 class _MetricsType(type):
