@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
 
@@ -32,28 +31,22 @@ _LOGGER = logging.getLogger(__name__)
 class UserInformationMetrics(MetricsBase):
     """Class to discover information from Users."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_user_python_software_stack_count() -> None:
+    def get_user_python_software_stack_count(cls) -> None:
         """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_software_stacks = graph_db.get_python_software_stack_count_all(
+        thoth_graphdb_total_software_stacks = cls.GRAPH.get_python_software_stack_count_all(
             software_stack_type=SoftwareStackTypeEnum.USER.value
         )
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_user_unique_run_software_environment_count() -> None:
+    def get_user_unique_run_software_environment_count(cls) -> None:
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
         thoth_graphdb_total_user_run_software_environment = len(
-            set(graph_db.get_run_software_environment_all(is_external=True))
+            set(cls.GRAPH.get_run_software_environment_all(is_external=True))
         )
 
         metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)

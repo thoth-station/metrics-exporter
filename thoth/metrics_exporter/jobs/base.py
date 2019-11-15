@@ -25,6 +25,8 @@ from decorator import decorator
 import inspect
 import textwrap
 
+from thoth.storages import GraphDatabase
+
 _LOGGER = logging.getLogger(__name__)
 
 # Registered jobs run by metrics-exporter periodically.
@@ -64,6 +66,13 @@ class _MetricsType(type):
 class MetricsBase(metaclass=_MetricsType):
     """A base class for grouping metrics."""
 
+    GRAPH = GraphDatabase()
+
     def __init__(self) -> None:
         """Do not instantiate this class."""
         raise NotImplemented
+
+
+# Maintain one connection per metrics-exporter.
+if not MetricsBase.GRAPH.is_connected():
+    MetricsBase.GRAPH.connect()

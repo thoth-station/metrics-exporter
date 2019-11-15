@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 import thoth.metrics_exporter.metrics as metrics
 
@@ -32,71 +31,59 @@ _LOGGER = logging.getLogger(__name__)
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_graphdb_connection_error_status() -> None:
+    def get_graphdb_connection_error_status(cls) -> None:
         """Raise a flag if there is an error connecting to database."""
-        graph_db = GraphDatabase()
         try:
-            graph_db.connect()
+            cls.GRAPH._engine.execute("SELECT 1")
         except Exception as excptn:
             metrics.graphdb_connection_error_status.set(0)
             _LOGGER.exception(excptn)
         else:
             metrics.graphdb_connection_error_status.set(1)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_tot_records_count() -> None:
+    def get_tot_records_count(cls) -> None:
         """Get the total number of Records in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        main_models_record_count = sum(graph_db.get_main_table_count().values())
-        relation_models_record_count = sum(graph_db.get_relation_table_count().values())
-        performance_models_record_count = sum(graph_db.get_performance_table_count().values())
+        main_models_record_count = sum(cls.GRAPH.get_main_table_count().values())
+        relation_models_record_count = sum(cls.GRAPH.get_relation_table_count().values())
+        performance_models_record_count = sum(cls.GRAPH.get_performance_table_count().values())
 
         total_records_count = main_models_record_count + relation_models_record_count + performance_models_record_count
         metrics.graphdb_total_records.set(total_records_count)
 
         _LOGGER.debug("thoth_graphdb_total_records=%r", total_records_count)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_tot_main_records_count() -> None:
+    def get_tot_main_records_count(cls) -> None:
         """Get the total number of Records for Main Tables in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        main_models_records = graph_db.get_main_table_count()
+        main_models_records = cls.GRAPH.get_main_table_count()
 
         for main_table, main_table_records_count in main_models_records.items():
             metrics.graphdb_total_main_records.labels(main_table).set(main_table_records_count)
 
         _LOGGER.debug("thoth_graphdb_total_main_records=%r", main_models_records)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_tot_relation_records_count() -> None:
+    def get_tot_relation_records_count(cls) -> None:
         """Get the total number of Records for Relation Tables in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        relation_models_records = graph_db.get_relation_table_count()
+        relation_models_records = cls.GRAPH.get_relation_table_count()
 
         for relation_table, relation_table_records_count in relation_models_records.items():
             metrics.graphdb_total_relation_records.labels(relation_table).set(relation_table_records_count)
 
         _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_is_schema_up2date() -> None:
+    def get_is_schema_up2date(cls) -> None:
         """Check if the schema running on metrics-exporter is same as the schema present in the database."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
         try:
-            metrics.graphdb_is_schema_up2date.set(int(graph_db.is_schema_up2date()))
+            metrics.graphdb_is_schema_up2date.set(int(cls.GRAPH.is_schema_up2date()))
         except DatabaseNotInitialized as exc:
             _LOGGER.warning("Database schema is not initialized yet: %s", str(exc))
             metrics.graphdb_is_schema_up2date.set(0)

@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -31,35 +30,26 @@ _LOGGER = logging.getLogger(__name__)
 class PackageAnalyzerMetrics(MetricsBase):
     """Class to evaluate Metrics for Package Analyzer."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_analyzed_python_packages_count() -> None:
+    def get_analyzed_python_packages_count(cls) -> None:
         """Get number of unanlyzed Python packages."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        count = graph_db.get_analyzed_python_package_versions_count_all()
+        count = cls.GRAPH.get_analyzed_python_package_versions_count_all()
         metrics.graphdb_total_number_analyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_python_packages=%r", count)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_analyzed_error_python_packages_count() -> None:
+    def get_analyzed_error_python_packages_count(cls) -> None:
         """Get number of unalyzed Python packages."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        count = graph_db.get_analyzed_error_python_package_versions_count_all()
+        count = cls.GRAPH.get_analyzed_error_python_package_versions_count_all()
         metrics.graphdb_total_number_analyzed_error_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_error_python_packages=%r", count)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_unanalyzed_python_packages_count() -> None:
+    def get_unanalyzed_python_packages_count(cls) -> None:
         """Get number of unanlyzed Python packages."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        count = graph_db.get_unanalyzed_python_package_versions_count_all()
+        count = cls.GRAPH.get_unanalyzed_python_package_versions_count_all()
         metrics.graphdb_total_number_unanalyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", count)
