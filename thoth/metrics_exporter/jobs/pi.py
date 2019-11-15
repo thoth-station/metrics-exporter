@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -35,15 +34,12 @@ class PIMetrics(MetricsBase):
     @register_metric_job
     def get_observations_count_per_framework(cls) -> None:
         """Get the total number of PI per framework in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        ML_FRAMEWORKS = graph_db.get_ml_frameworks_all()
+        ML_FRAMEWORKS = cls.GRAPH.get_ml_frameworks_all()
         thoth_number_of_pi_per_type = {}
 
         if ML_FRAMEWORKS:
             for framework in ML_FRAMEWORKS:
-                thoth_number_of_pi_per_type[framework] = graph_db.get_pi_count(framework=framework)
+                thoth_number_of_pi_per_type[framework] = cls.GRAPH.get_pi_count(framework=framework)
 
                 for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
                     metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
@@ -53,14 +49,11 @@ class PIMetrics(MetricsBase):
             metrics.graphdb_total_number_of_pi_per_framework.labels("No framework", "No pi").set(0)
             _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_tot_performance_records_count() -> None:
+    def get_tot_performance_records_count(cls) -> None:
         """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        performance_models_records = graph_db.get_performance_table_count()
+        performance_models_records = cls.GRAPH.get_performance_table_count()
 
         for performance_table, performance_table_records_count in performance_models_records.items():
             metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)

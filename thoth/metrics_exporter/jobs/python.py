@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -31,40 +30,31 @@ _LOGGER = logging.getLogger(__name__)
 class PythonPackagesMetrics(MetricsBase):
     """Class to discover Content for PythonPackages inside Thoth database."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_python_packages_versions_count() -> None:
+    def get_python_packages_versions_count(cls) -> None:
         """Get the total number of Python packages versions in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        number_python_package_versions = graph_db.get_python_package_versions_count_all()
+        number_python_package_versions = cls.GRAPH.get_python_package_versions_count_all()
         metrics.graphdb_number_python_package_versions.set(number_python_package_versions)
         _LOGGER.debug("graphdb_number_python_package_versions=%r", number_python_package_versions)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_number_python_index_urls() -> None:
+    def get_number_python_index_urls(cls) -> None:
         """Get the total number of python indexes in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        python_urls_count = len(graph_db.get_python_package_index_urls_all())
+        python_urls_count = len(cls.GRAPH.get_python_package_index_urls_all())
         metrics.graphdb_total_python_indexes.set(python_urls_count)
         _LOGGER.debug("thoth_graphdb_total_python_indexes=%r", python_urls_count)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_python_packages_per_index_urls_count() -> None:
+    def get_python_packages_per_index_urls_count(cls) -> None:
         """Get the total number of unique python packages per index URL in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        python_urls_list = list(graph_db.get_python_package_index_urls_all())
+        python_urls_list = list(cls.GRAPH.get_python_package_index_urls_all())
         tot_packages = 0
         for index_url in python_urls_list:
 
-            packages_count = len(graph_db.get_python_package_versions_per_index(index_url=index_url)[index_url])
+            packages_count = len(cls.GRAPH.get_python_package_versions_per_index(index_url=index_url)[index_url])
             tot_packages += packages_count
 
             metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)

@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 from thoth.common import OpenShift
 import thoth.metrics_exporter.metrics as metrics
 
@@ -47,13 +46,10 @@ class SolverMetrics(MetricsBase):
     @register_metric_job
     def get_unsolved_python_packages_count(cls) -> None:
         """Get number of unsolved Python packages per solver."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
         for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = graph_db.parse_python_solver_name(solver_name)
+            solver_info = cls.GRAPH.parse_python_solver_name(solver_name)
 
-            count = graph_db.get_unsolved_python_package_versions_count_all(
+            count = cls.GRAPH.get_unsolved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
@@ -62,20 +58,17 @@ class SolverMetrics(MetricsBase):
             metrics.graphdb_total_number_unsolved_python_packages.labels(solver_name).set(count)
             _LOGGER.debug("graphdb_total_number_unsolved_python_packages(%r)=%r", solver_name, count)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_python_packages_solver_error_count() -> None:
+    def get_python_packages_solver_error_count(cls) -> None:
         """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
+        total_python_packages_solved = cls.GRAPH.get_solved_python_packages_count_all(distinct=True)
 
-        total_python_packages_solved = graph_db.get_solved_python_packages_count_all(distinct=True)
-
-        total_python_packages_solver_error = graph_db.get_error_solved_python_package_versions_count_all(distinct=True)
-        total_python_packages_solver_error_unparseable = graph_db.get_error_solved_python_package_versions_count_all(
+        total_python_packages_solver_error = cls.GRAPH.get_error_solved_python_package_versions_count_all(distinct=True)
+        total_python_packages_solver_error_unparseable = cls.GRAPH.get_error_solved_python_package_versions_count_all(
             unparseable=True, distinct=True
         )
-        total_python_packages_solver_error_unsolvable = graph_db.get_error_solved_python_package_versions_count_all(
+        total_python_packages_solver_error_unsolvable = cls.GRAPH.get_error_solved_python_package_versions_count_all(
             unsolvable=True, distinct=True
         )
 

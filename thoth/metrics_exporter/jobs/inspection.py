@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 from thoth.storages import InspectionResultsStore
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
@@ -56,14 +55,11 @@ class InspectionMetrics(MetricsBase):
             metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
             _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_inspection_python_software_stack_count() -> None:
+    def get_inspection_python_software_stack_count(cls) -> None:
         """Get the total number of Inspection Python Software Stacks in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_inspection_software_stacks = graph_db.get_python_software_stack_count_all(
+        thoth_graphdb_total_inspection_software_stacks = cls.GRAPH.get_python_software_stack_count_all(
             software_stack_type=SoftwareStackTypeEnum.INSPECTION.value
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)

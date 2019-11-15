@@ -32,14 +32,11 @@ _LOGGER = logging.getLogger(__name__)
 class AdviserMetrics(MetricsBase):
     """Class to evaluate Metrics for Adviser."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_advised_python_software_stack_count() -> None:
+    def get_advised_python_software_stack_count(cls) -> None:
         """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_advised_software_stacks = graph_db.get_python_software_stack_count_all(
+        thoth_graphdb_total_advised_software_stacks = cls.GRAPH.get_python_software_stack_count_all(
             software_stack_type=SoftwareStackTypeEnum.ADVISED.value
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)

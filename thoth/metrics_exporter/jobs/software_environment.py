@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages import GraphDatabase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -31,25 +30,19 @@ _LOGGER = logging.getLogger(__name__)
 class SoftwareEnvironmentMetrics(MetricsBase):
     """Class to discover Content for Software Environment (Build and Run) inside Thoth database."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_unique_run_software_environment_count() -> None:
+    def get_unique_run_software_environment_count(cls) -> None:
         """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_run_software_environment = len(set(graph_db.get_run_software_environment_all()))
+        thoth_graphdb_total_run_software_environment = len(set(cls.GRAPH.get_run_software_environment_all()))
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_unique_build_software_environment_count() -> None:
+    def get_unique_build_software_environment_count(cls) -> None:
         """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
-        graph_db = GraphDatabase()
-        graph_db.connect()
-
-        thoth_graphdb_total_build_software_environment = len(set(graph_db.get_build_software_environment_all()))
+        thoth_graphdb_total_build_software_environment = len(set(cls.GRAPH.get_build_software_environment_all()))
 
         metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
         _LOGGER.debug(
