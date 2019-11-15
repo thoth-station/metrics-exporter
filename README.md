@@ -13,12 +13,12 @@ The scheduler endpoint provides the following list of operations:
 
   * **GET /scheduler** - exposes main info about the scheduler
   * **GET /scheduler/jobs** - get listing of available jobs
-  * **GET /scheduler/jobs/<job-id>** - get information about the given job
-  * **PATCH /scheduler/jobs/<job-id>** - adjust the given job
-  * **POST /scheduler/jobs/<job-id>/pause** - pause the given job
-  * **POST /scheduler/jobs/<job-id>/resume** - resume the given job
-  * **POST /scheduler/jobs/<job-id>/run** - run the given job (manual trigger)
-  * **DELETE /scheduler/jobs/<job-id>** - remove the given job (do not use, use pause instead)
+  * **GET /scheduler/jobs/&lt;job-id&gt;** - get information about the given job
+  * **PATCH /scheduler/jobs/&lt;job-id&gt;** - adjust the given job
+  * **POST /scheduler/jobs/&lt;job-id&gt;/pause** - pause the given job
+  * **POST /scheduler/jobs/&lt;job-id&gt;/resume** - resume the given job
+  * **POST /scheduler/jobs/&lt;job-id&gt;/run** - run the given job (manual trigger)
+  * **DELETE /scheduler/jobs/&lt;job-id&gt;** - remove the given job (do not use, use pause instead)
   * **POST /scheduler/jobs** - adds a job to metrics-exporter scheduler (do not use)
 
 ## Copyright
