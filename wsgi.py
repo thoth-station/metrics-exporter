@@ -61,11 +61,12 @@ def func_wrapper(func: typing.Callable) -> None:
     global _JOBS_RUN
     global _INITIALIZED
 
-    func()
-
-    if not _INITIALIZED:
-        # Increment/keep track only until we are not initialized.
-        _JOBS_RUN += 1
+    try:
+        func()
+    finally:
+        if not _INITIALIZED:
+            # Increment/keep track only until we are not initialized.
+            _JOBS_RUN += 1
 
 
 class _Config:
