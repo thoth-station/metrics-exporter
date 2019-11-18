@@ -34,7 +34,7 @@ class PackageAnalyzerMetrics(MetricsBase):
     @register_metric_job
     def get_analyzed_python_packages_count(cls) -> None:
         """Get number of unanlyzed Python packages."""
-        count = cls.GRAPH.get_analyzed_python_package_versions_count_all()
+        count = cls.graph().get_analyzed_python_package_versions_count_all()
         metrics.graphdb_total_number_analyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_python_packages=%r", count)
 
@@ -42,7 +42,7 @@ class PackageAnalyzerMetrics(MetricsBase):
     @register_metric_job
     def get_analyzed_error_python_packages_count(cls) -> None:
         """Get number of unalyzed Python packages."""
-        count = cls.GRAPH.get_analyzed_error_python_package_versions_count_all()
+        count = cls.graph().get_analyzed_error_python_package_versions_count_all()
         metrics.graphdb_total_number_analyzed_error_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_analyzed_error_python_packages=%r", count)
 
@@ -50,6 +50,6 @@ class PackageAnalyzerMetrics(MetricsBase):
     @register_metric_job
     def get_unanalyzed_python_packages_count(cls) -> None:
         """Get number of unanlyzed Python packages."""
-        count = cls.GRAPH.get_unanalyzed_python_package_versions_count_all()
+        count = cls.graph().get_unanalyzed_python_package_versions_count_all()
         metrics.graphdb_total_number_unanalyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", count)

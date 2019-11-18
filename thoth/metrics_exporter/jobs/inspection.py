@@ -59,7 +59,7 @@ class InspectionMetrics(MetricsBase):
     @register_metric_job
     def get_inspection_python_software_stack_count(cls) -> None:
         """Get the total number of Inspection Python Software Stacks in Thoth Knowledge Graph."""
-        thoth_graphdb_total_inspection_software_stacks = cls.GRAPH.get_python_software_stack_count_all(
+        thoth_graphdb_total_inspection_software_stacks = cls.graph().get_python_software_stack_count_all(
             software_stack_type=SoftwareStackTypeEnum.INSPECTION.value
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)

@@ -25,6 +25,7 @@ from typing import Callable
 from decorator import decorator
 import inspect
 import textwrap
+from typing import Any
 
 from thoth.storages import GraphDatabase
 
@@ -71,13 +72,16 @@ class _MetricsType(type):
 class MetricsBase(metaclass=_MetricsType):
     """A base class for grouping metrics."""
 
-    GRAPH = GraphDatabase()
+    _GRAPH = None
 
     def __init__(self) -> None:
         """Do not instantiate this class."""
         raise NotImplemented
 
+    @classmethod
+    def graph(cls):
+        if not cls._GRAPH:
+            cls._GRAPH = GraphDatabase()
+            cls._GRAPH.connect()
 
-# Maintain one connection per metrics-exporter.
-if not MetricsBase.GRAPH.is_connected():
-    MetricsBase.GRAPH.connect()
+        return cls._GRAPH
