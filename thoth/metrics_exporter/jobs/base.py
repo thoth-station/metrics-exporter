@@ -50,7 +50,6 @@ class _MetricsType(type):
 
     def __init__(cls, class_name: str, bases: tuple, attrs: dict):
         """Initialize metrics type."""
-
         def _is_register_metric_job_decorator_present(node: ast.FunctionDef) -> None:
             """Check if the given function has assigned decorator to register a new metric job."""
             for n in node.decorator_list:
@@ -81,6 +80,7 @@ class MetricsBase(metaclass=_MetricsType):
 
     @classmethod
     def graph(cls):
+        """Get instantiated graph database with shared connection pool."""
         if not cls._GRAPH:
             cls._GRAPH = GraphDatabase()
             cls._GRAPH.connect()
