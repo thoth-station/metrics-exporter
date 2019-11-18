@@ -85,7 +85,7 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
         _LOGGER.info("Metrics gathering done in %s.%s took %g", class_name, method_name, time.monotonic() - start_time)
         _LOGGER.debug("Resubmitting job %s.%s", class_name, method_name)
         # Register self for the next execution run.
-        _EXECUTOR.submit(func_wrapper, class_name, method_name)
+        _EXECUTOR.submit(func_wrapper, class_name, method_name, start_time)
 
     # We turn on the switch only if all the metrics were gathered successfully.
     if not _INITIALIZED:
