@@ -38,11 +38,7 @@ REGISTERED_JOBS = []
 @decorator
 def register_metric_job(method: Callable, *args, **kwargs) -> None:
     """A decorator for adding a metric job."""
-    start_time = time.monotonic()
-    try:
-        method(*args, **kwargs)
-    finally:
-        _LOGGER.info("Gathering metrics by job %r took %g seconds", method.__name__, time.monotonic() - start_time)
+    method(*args, **kwargs)
 
 
 class _MetricsType(type):
