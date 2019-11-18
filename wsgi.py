@@ -72,7 +72,9 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
 
     if last_schedule and time.monotonic() - last_schedule < _UPDATE_INTERVAL_SECONDS:
         # Let's be nice to database, we don't need to update metrics each second...
-        _LOGGER.debug("Sleeping for %g to prevent from overloading", _UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule))
+        _LOGGER.debug(
+            "Sleeping for %g to prevent from overloading", _UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule)
+        )
         time.sleep(_UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule))
 
     _LOGGER.debug("Running metrics job %s.%s", class_name, method_name)

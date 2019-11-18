@@ -42,7 +42,7 @@ class InspectionMetrics(MetricsBase):
 
         specific_list_ids = {"without_identifier": 0}
         for ids in store.get_document_listing():
-            inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
+            inspection_filter = "_".join(ids.split("-")[1 : (len(ids.split("-")) - 1)])
             if inspection_filter:
                 if inspection_filter not in specific_list_ids.keys():
                     specific_list_ids[inspection_filter] = 1

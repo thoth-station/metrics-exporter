@@ -64,7 +64,9 @@ class SolverMetrics(MetricsBase):
         """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
         total_python_packages_solved = cls.graph().get_solved_python_packages_count_all(distinct=True)
 
-        total_python_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(distinct=True)
+        total_python_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(
+            distinct=True
+        )
         total_python_packages_solver_error_unparseable = cls.graph().get_error_solved_python_package_versions_count_all(
             unparseable=True, distinct=True
         )

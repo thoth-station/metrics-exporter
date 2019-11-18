@@ -136,7 +136,7 @@ graphdb_total_number_analyzed_python_packages = Gauge(
 graphdb_total_number_analyzed_error_python_packages = Gauge(
     "thoth_graphdb_total_number_analyzed_error_python_packages",
     "Total number of analyzed Python packages with error.",
-    []
+    [],
 )
 graphdb_total_number_unanalyzed_python_packages = Gauge(
     "thoth_graphdb_total_number_unanalyzed_python_packages", "Total number of unanalyzed Python packages.", []
@@ -144,14 +144,10 @@ graphdb_total_number_unanalyzed_python_packages = Gauge(
 
 # SolverRun
 graphdb_total_number_solvers = Gauge(
-    "thoth_graphdb_total_number_solvers",
-    "Total number of solvers in Thoth Infra namespace.",
-    [],
+    "thoth_graphdb_total_number_solvers", "Total number of solvers in Thoth Infra namespace.", []
 )
 graphdb_total_python_packages_solved_with_no_error = Gauge(
-    "thoth_graphdb_total_python_packages_with_no_error",
-    "Total number of python packages solved with no error.",
-    [],
+    "thoth_graphdb_total_python_packages_with_no_error", "Total number of python packages solved with no error.", []
 )
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
@@ -178,7 +174,5 @@ graphdb_total_number_unsolved_python_packages = Gauge(
 
 
 graphdb_is_schema_up2date = Gauge(
-    "thoth_graphdb_is_schema_up2date",
-    "Exposing information if database schema is up2date",
-    [],
+    "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
 )
