@@ -47,9 +47,9 @@ class SolverMetrics(MetricsBase):
     def get_unsolved_python_packages_count(cls) -> None:
         """Get number of unsolved Python packages per solver."""
         for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls.GRAPH.parse_python_solver_name(solver_name)
+            solver_info = cls.graph().parse_python_solver_name(solver_name)
 
-            count = cls.GRAPH.get_unsolved_python_package_versions_count_all(
+            count = cls.graph().get_unsolved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
@@ -62,13 +62,15 @@ class SolverMetrics(MetricsBase):
     @register_metric_job
     def get_python_packages_solver_error_count(cls) -> None:
         """Get the total number of python packages with solver error True and how many are unparsable or unsolvable."""
-        total_python_packages_solved = cls.GRAPH.get_solved_python_packages_count_all(distinct=True)
+        total_python_packages_solved = cls.graph().get_solved_python_packages_count_all(distinct=True)
 
-        total_python_packages_solver_error = cls.GRAPH.get_error_solved_python_package_versions_count_all(distinct=True)
-        total_python_packages_solver_error_unparseable = cls.GRAPH.get_error_solved_python_package_versions_count_all(
+        total_python_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(
+            distinct=True
+        )
+        total_python_packages_solver_error_unparseable = cls.graph().get_error_solved_python_package_versions_count_all(
             unparseable=True, distinct=True
         )
-        total_python_packages_solver_error_unsolvable = cls.GRAPH.get_error_solved_python_package_versions_count_all(
+        total_python_packages_solver_error_unsolvable = cls.graph().get_error_solved_python_package_versions_count_all(
             unsolvable=True, distinct=True
         )
 

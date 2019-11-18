@@ -34,7 +34,7 @@ class SoftwareEnvironmentMetrics(MetricsBase):
     @register_metric_job
     def get_unique_run_software_environment_count(cls) -> None:
         """Get the total number of unique software environment for run in Thoth Knowledge Graph."""
-        thoth_graphdb_total_run_software_environment = len(set(cls.GRAPH.get_run_software_environment_all()))
+        thoth_graphdb_total_run_software_environment = len(set(cls.graph().get_run_software_environment_all()))
         metrics.graphdb_total_run_software_environment.set(thoth_graphdb_total_run_software_environment)
         _LOGGER.debug("graphdb_total_unique_run_software_environment=%r", thoth_graphdb_total_run_software_environment)
 
@@ -42,7 +42,7 @@ class SoftwareEnvironmentMetrics(MetricsBase):
     @register_metric_job
     def get_unique_build_software_environment_count(cls) -> None:
         """Get the total number of unique software environment for build in Thoth Knowledge Graph."""
-        thoth_graphdb_total_build_software_environment = len(set(cls.GRAPH.get_build_software_environment_all()))
+        thoth_graphdb_total_build_software_environment = len(set(cls.graph().get_build_software_environment_all()))
 
         metrics.graphdb_total_build_software_environment.set(thoth_graphdb_total_build_software_environment)
         _LOGGER.debug(

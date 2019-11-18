@@ -34,12 +34,12 @@ class PIMetrics(MetricsBase):
     @register_metric_job
     def get_observations_count_per_framework(cls) -> None:
         """Get the total number of PI per framework in Thoth Knowledge Graph."""
-        ML_FRAMEWORKS = cls.GRAPH.get_ml_frameworks_all()
+        ML_FRAMEWORKS = cls.graph().get_ml_frameworks_all()
         thoth_number_of_pi_per_type = {}
 
         if ML_FRAMEWORKS:
             for framework in ML_FRAMEWORKS:
-                thoth_number_of_pi_per_type[framework] = cls.GRAPH.get_pi_count(framework=framework)
+                thoth_number_of_pi_per_type[framework] = cls.graph().get_pi_count(framework=framework)
 
                 for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
                     metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
@@ -53,7 +53,7 @@ class PIMetrics(MetricsBase):
     @register_metric_job
     def get_tot_performance_records_count(cls) -> None:
         """Get the total number of Records for Performance tables in Thoth Knowledge Graph."""
-        performance_models_records = cls.GRAPH.get_performance_table_count()
+        performance_models_records = cls.graph().get_performance_table_count()
 
         for performance_table, performance_table_records_count in performance_models_records.items():
             metrics.graphdb_total_performance_records.labels(performance_table).set(performance_table_records_count)

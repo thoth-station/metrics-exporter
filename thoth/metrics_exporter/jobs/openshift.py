@@ -43,19 +43,16 @@ class OpenshiftMetrics(MetricsBase):
         "graph-sync-type=dependency-monkey",
         "graph-sync-type=package-analyzer",
         "graph-sync-type=package-extract",
-        "graph-sync-type=solver"
+        "graph-sync-type=solver",
     ]
 
-    _AMUN_INSPECTION_JOBS_LABELS = [
-        "component=amun-inspection-job",
-        "graph-sync-type=inspection"
-    ]
+    _AMUN_INSPECTION_JOBS_LABELS = ["component=amun-inspection-job", "graph-sync-type=inspection"]
 
     _BACKEND_JOBS_LABELS = [
         "component=adviser",
         "component=provenance-checker",
         "graph-sync-type=adviser",
-        "graph-sync-type=provenance-checker"
+        "graph-sync-type=provenance-checker",
     ]
 
     _NAMESPACES_VARIABLES_JOBS_MAP = {
@@ -112,7 +109,7 @@ class OpenshiftMetrics(MetricsBase):
             for label_selector in job_labels + ["operator=graph-sync", "operator=workload"]:
                 _LOGGER.info(
                     "Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label_selector, namespace
-                    )
+                )
                 config_maps_items = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label_selector)
                 number_configmaps = cls.count_configmaps(config_maps_items)
                 metrics.config_maps_number.labels(namespace, label_selector).set(number_configmaps)
@@ -120,5 +117,5 @@ class OpenshiftMetrics(MetricsBase):
                     "thoth_config_maps_number=%r, in namespace=%r for label_selector=%r",
                     number_configmaps,
                     namespace,
-                    label_selector
+                    label_selector,
                 )

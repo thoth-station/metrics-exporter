@@ -21,21 +21,20 @@
 
 import os
 import logging
-from datetime import datetime
-import typing
-from functools import partial
+import time
+from threading import RLock
+from typing import Optional
+from concurrent.futures.thread import ThreadPoolExecutor
 
-from flask_apscheduler import APScheduler
-from apscheduler.executors.pool import ThreadPoolExecutor
-from flask import Flask, redirect, make_response, jsonify
 from flask_cors import CORS
+from flask import Flask
+from flask import jsonify
+from flask import make_response
+from flask import redirect
 from prometheus_client import generate_latest
-
 from thoth.common import init_logging
-
 from thoth.metrics_exporter import __version__
 from thoth.metrics_exporter.jobs import REGISTERED_JOBS
-
 import thoth.metrics_exporter.jobs as jobs
 
 
@@ -43,71 +42,74 @@ init_logging()
 
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_LOGGER.info(f"Thoth Metrics Exporter v{__version__}")
+_LOGGER.info(f"Thoth Metrics Exporter v%s", __version__)
 
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
 _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")
-_JOBS_RUN = 0
+_MAX_WORKERS = int(os.getenv("THOTH_METRICS_EXPORTER_MAX_WORKERS", 16))
+
 _INITIALIZED = False
-_FIRST_RUN_TIME = datetime.now()
+_INITIALIZED_LOCK = RLock()
+_EXECUTED = dict.fromkeys((f"{class_name}.{method_name}" for class_name, method_name in REGISTERED_JOBS), 0)
 
 
-def func_wrapper(func: typing.Callable) -> None:
-    """A wrapper which counts how many jobs were run."""
-    # This simple wrapper wraps the actual function which does metrics
-    # gathering to count how many functions were called. If we reach number of
-    # all jobs, we know we gathered all metrics and we can expose metrics on
-    # /metrics endpoint. Otherwise the application keeps returning HTTP status
-    # code 503 signalizing its not ready yet.
-    global _JOBS_RUN
+def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int] = None) -> None:
+    """A wrapper which counts how many jobs were run and notes down some metrics statistics.
+
+    Make sure you do not run metrics-exporter with preload set (gunicorn configuration),
+    otherwise each worker process would run its own metrics job gathering.
+
+    This simple wrapper wraps the actual function which does metrics
+    gathering to count how many functions were called. If we reach number of
+    all jobs, we know we gathered all metrics and we can expose metrics on
+    /metrics endpoint. Otherwise the application keeps returning HTTP status
+    code 503 signalizing its not ready yet.
+    """
     global _INITIALIZED
+    global _INITIALIZED_LOCK
 
+    job = getattr(getattr(jobs, class_name), method_name)
+
+    if last_schedule and time.monotonic() - last_schedule < _UPDATE_INTERVAL_SECONDS:
+        # Let's be nice to database, we don't need to update metrics each second...
+        _LOGGER.debug(
+            "Sleeping for %g to prevent from overloading", _UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule)
+        )
+        time.sleep(_UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule))
+
+    _LOGGER.debug("Running metrics job %s.%s", class_name, method_name)
+    start_time = time.monotonic()
     try:
-        func()
+        job()
     finally:
-        if not _INITIALIZED:
-            # Increment/keep track only until we are not initialized.
-            _JOBS_RUN += 1
+        _LOGGER.info("Metrics gathering done in %s.%s took %g", class_name, method_name, time.monotonic() - start_time)
+        _LOGGER.debug("Resubmitting job %s.%s", class_name, method_name)
+        # Register self for the next execution run.
+        _EXECUTOR.submit(func_wrapper, class_name, method_name, start_time)
 
+    # We turn on the switch only if all the metrics were gathered successfully.
+    if not _INITIALIZED:
+        with _INITIALIZED_LOCK:
+            # Increment/keep track only until we are not initialized and another thread did not turned the switch.
+            if not _INITIALIZED:
+                _EXECUTED[f"{class_name}.{method_name}"] = 1
+                _INITIALIZED = sum(_EXECUTED.values()) == len(REGISTERED_JOBS)
 
-class _Config:
-    """Configuration of APScheduler for updating metrics."""
-
-    JOBS = [
-        {
-            'id': method_name,
-            'func': partial(func_wrapper, getattr(getattr(jobs, class_name), method_name)),
-            'trigger': 'interval',
-            'seconds': _UPDATE_INTERVAL_SECONDS,
-            'next_run_time': _FIRST_RUN_TIME,
-            'max_instances': 1,
-        }
-        for class_name, method_name in REGISTERED_JOBS
-    ]
-
-    SCHEDULER_API_ENABLED = True
-
-    SCHEDULER_EXECUTORS = {
-        'default': ThreadPoolExecutor(16)
-    }
-
-    SCHEDULER_JOB_DEFAULTS = {
-        'coalesce': True,
-        'max_instances': 1,
-        'misfire_grace_time': 3600,
-    }
+            if _INITIALIZED:
+                # Turn on the switch, we do not need to keep track of not-ready jobs.
+                _LOGGER.info("All metrics were gathered, the service is ready now")
 
 
 application = Flask("thoth.metrics_exporter")
-application.config.from_object(_Config())
 
 # Add Cross Origin Request Policy to all
 CORS(application)
 
-# Init scheduler.
-scheduler = APScheduler()
-scheduler.init_app(application)
-scheduler.start()
+
+_EXECUTOR = ThreadPoolExecutor(max_workers=_MAX_WORKERS or None)
+for class_name, method_name in REGISTERED_JOBS:
+    _LOGGER.info("Registering metrics job gathering %s.%s", class_name, method_name)
+    _EXECUTOR.submit(func_wrapper, class_name, method_name)
 
 
 @application.after_request
@@ -128,16 +130,16 @@ def metrics():
     """Return the Prometheus Metrics."""
     _LOGGER.debug("Exporting metrics registry...")
     global _INITIALIZED
-    global _JOBS_RUN
+    global _INITIALIZED_LOCK
 
     if not _INITIALIZED:
-        if _JOBS_RUN < len(_Config.JOBS):
-            _LOGGER.warning("Not all metrics were gathered, the service is not ready yet")
+        with _INITIALIZED_LOCK:
+            _LOGGER.warning(
+                "Not all metrics were gathered, the service is not ready yet (%d/%d)",
+                sum(_EXECUTED.values()),
+                len(REGISTERED_JOBS),
+            )
             return make_response(jsonify({"error": "Metrics are not ready yet"}), 503)
-
-        # Turn on the switch, we do not need to keep track of not-ready jobs.
-        _LOGGER.info("All metrics were gathered, the service is ready now")
-        _INITIALIZED = True
 
     return generate_latest().decode("utf-8")
 
