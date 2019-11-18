@@ -40,7 +40,7 @@ class SolverMetrics(MetricsBase):
         solvers = len(cls._OPENSHIFT.get_solver_names())
 
         metrics.graphdb_total_number_solvers.set(solvers)
-        _LOGGER.debug("graphdb_total_number_solvers(%r)=%r", solvers)
+        _LOGGER.debug("graphdb_total_number_solvers=%r", solvers)
 
     @classmethod
     @register_metric_job
