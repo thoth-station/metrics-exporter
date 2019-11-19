@@ -11,6 +11,8 @@ responder = "==1.1.1"
 flask-cors = "*"
 gunicorn = "*"
 decorator = "*"
+sentry-sdk = {extras = ["flask"],version = "*"}
+aiocontextvars = "*"
 
 [dev-packages]
 
