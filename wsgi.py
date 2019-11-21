@@ -22,7 +22,7 @@
 import os
 import logging
 import time
-from threading import RLock
+import threading
 from typing import Optional
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -49,7 +49,7 @@ _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL",
 _MAX_WORKERS = int(os.getenv("THOTH_METRICS_EXPORTER_MAX_WORKERS", 16))
 
 _INITIALIZED = False
-_INITIALIZED_LOCK = RLock()
+_INITIALIZED_LOCK = threading.RLock()
 _EXECUTED = dict.fromkeys((f"{class_name}.{method_name}" for class_name, method_name in REGISTERED_JOBS), 0)
 
 
@@ -83,7 +83,7 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
             if missed_times:
                 _LOGGER.warning("Metrics job %s.%s missed %d runs", class_name, method_name, missed_times)
 
-    _LOGGER.debug("Running metrics job %s.%s", class_name, method_name)
+    _LOGGER.debug("Running metrics job %s.%s on worker %d", class_name, method_name, threading.get_ident())
     start_time = time.monotonic()
     try:
         job()
