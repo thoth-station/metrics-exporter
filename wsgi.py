@@ -48,7 +48,7 @@ _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL
 _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")
 _MAX_WORKERS = int(os.getenv("THOTH_METRICS_EXPORTER_MAX_WORKERS", 16))
 
-_INITIALIZED = False
+_INITIALIZED = bool(int(os.getenv("THOTH_METRICS_EXPORTER_WEAK_READINESS", 0)))
 _INITIALIZED_LOCK = threading.RLock()
 _EXECUTED = dict.fromkeys((f"{class_name}.{method_name}" for class_name, method_name in REGISTERED_JOBS), 0)
 
