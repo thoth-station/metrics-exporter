@@ -87,6 +87,9 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
     start_time = time.monotonic()
     try:
         job()
+    except Exception:
+        _LOGGER.exception("Failed to run metrics gathering job %s.%s", class_name, method_name)
+        raise
     finally:
         _LOGGER.info("Metrics gathering done in %s.%s took %g", class_name, method_name, time.monotonic() - start_time)
         _LOGGER.debug("Resubmitting job %s.%s", class_name, method_name)
