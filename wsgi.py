@@ -141,9 +141,10 @@ def metrics():
     if not _INITIALIZED:
         with _INITIALIZED_LOCK:
             _LOGGER.warning(
-                "Not all metrics were gathered, the service is not ready yet (%d/%d)",
+                "Not all metrics were gathered, the service is not ready yet (%d/%d), missing: %s",
                 sum(_EXECUTED.values()),
                 len(REGISTERED_JOBS),
+                [k for k, v in _EXECUTED if v == 0],
             )
             return make_response(jsonify({"error": "Metrics are not ready yet"}), 503)
 
