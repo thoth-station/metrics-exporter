@@ -89,24 +89,23 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
         job()
     except Exception:
         _LOGGER.exception("Failed to run metrics gathering job %s.%s", class_name, method_name)
-        raise
+    else:
+        # We turn on the switch only if all the metrics were gathered successfully.
+        if not _INITIALIZED:
+            with _INITIALIZED_LOCK:
+                # Increment/keep track only until we are not initialized and another thread did not turned the switch.
+                if not _INITIALIZED:
+                    _EXECUTED[f"{class_name}.{method_name}"] = 1
+                    _INITIALIZED = sum(_EXECUTED.values()) == len(REGISTERED_JOBS)
+
+                if _INITIALIZED:
+                    # Turn on the switch, we do not need to keep track of not-ready jobs.
+                    _LOGGER.info("All metrics were gathered, the service is ready now")
     finally:
         _LOGGER.info("Metrics gathering done in %s.%s took %g", class_name, method_name, time.monotonic() - start_time)
         _LOGGER.debug("Resubmitting job %s.%s", class_name, method_name)
         # Register self for the next execution run.
         _EXECUTOR.submit(func_wrapper, class_name, method_name, start_time)
-
-    # We turn on the switch only if all the metrics were gathered successfully.
-    if not _INITIALIZED:
-        with _INITIALIZED_LOCK:
-            # Increment/keep track only until we are not initialized and another thread did not turned the switch.
-            if not _INITIALIZED:
-                _EXECUTED[f"{class_name}.{method_name}"] = 1
-                _INITIALIZED = sum(_EXECUTED.values()) == len(REGISTERED_JOBS)
-
-            if _INITIALIZED:
-                # Turn on the switch, we do not need to keep track of not-ready jobs.
-                _LOGGER.info("All metrics were gathered, the service is ready now")
 
 
 application = Flask("thoth.metrics_exporter")
