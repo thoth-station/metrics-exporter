@@ -243,10 +243,10 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:84105be98837fb8436e9d0bcb7a279fd85fa1d97bb35a077e70ba2fb95bcc983",
-                "sha256:baf1b3f8b29a5f96f66753ad848473699322b63f4d68964e510554b12d002443"
+                "sha256:55999a44129bcdf23a9db0b9b2f6a21f7d91d84cb50623a94090029afa7fe923",
+                "sha256:624db00f5cb1c938ea3c4a8aee94b43e69f1a9deadd734ed7d27d00bf3c68ae4"
             ],
-            "version": "==1.7.1"
+            "version": "==1.7.2"
         },
         "graphene": {
             "hashes": [
@@ -790,11 +790,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:501cc37127ede4f0ea21cd7c227ae9c1c5155dae94f4fb7cc7443d1b1302a06d",
-                "sha256:852213992cf856c5431dbcedd49330e8284e20219bedb025e16fa52d137d99d3"
+                "sha256:439c4e4310d71b4c276711f1d68236826d5d276065d370bcc364b0b47797ce39",
+                "sha256:64d9d86f1a541a7dbf439a85bcfe87777a8ec037fabeda0eead1cf502b0a4535"
             ],
             "index": "pypi",
-            "version": "==0.19.25"
+            "version": "==0.19.26"
         },
         "toml": {
             "hashes": [
