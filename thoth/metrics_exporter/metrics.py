@@ -147,31 +147,36 @@ graphdb_total_number_solvers = Gauge(
     "thoth_graphdb_total_number_solvers", "Total number of solvers in Thoth Infra namespace.", []
 )
 graphdb_total_python_packages_solved_with_no_error = Gauge(
-    "thoth_graphdb_total_python_packages_with_no_error", "Total number of python packages solved with no error.", []
+    "thoth_graphdb_total_python_packages_with_no_error",
+    "Total number of python packages solved with no error.",
+    ["solver_name"],
 )
 graphdb_total_python_packages_with_solver_error = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error",
     "Total number of python packages with solver error True.",
-    [],
+    ["solver_name"],
 )
 graphdb_total_python_packages_with_solver_error_unparseable = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error_unparseable",
     "Total number of python packages with solver error True and error_unparseable True.",
-    [],
+    ["solver_name"],
 )
 
 graphdb_total_python_packages_with_solver_error_unsolvable = Gauge(
     "thoth_graphdb_total_python_packages_with_solver_error_unsolvable",
     "Total number of python packages with solver error True and error_unsolvable True.",
-    [],
+    ["solver_name"],
 )
-
+graphdb_total_number_solved_python_packages = Gauge(
+    "thoth_graphdb_total_number_solved_python_packages",
+    "Total number of solved Python packages per solver.",
+    ["solver_name"],
+)
 graphdb_total_number_unsolved_python_packages = Gauge(
     "thoth_graphdb_total_number_unsolved_python_packages",
     "Total number of unsolved Python packages per solver.",
     ["solver_name"],
 )
-
 
 graphdb_is_schema_up2date = Gauge(
     "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
