@@ -12,6 +12,7 @@ gunicorn = "*"
 decorator = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 aiocontextvars = "*"
+prometheus-api-client = "*"
 
 [dev-packages]
 

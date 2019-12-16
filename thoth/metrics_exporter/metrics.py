@@ -19,7 +19,7 @@
 
 
 from thoth.metrics_exporter import __version__
-from prometheus_client import Gauge
+from prometheus_client import Gauge, Counter
 
 
 # Info Metric
@@ -172,10 +172,20 @@ graphdb_total_number_solved_python_packages = Gauge(
     "Total number of solved Python packages per solver.",
     ["solver_name"],
 )
-graphdb_total_number_unsolved_python_packages = Gauge(
-    "thoth_graphdb_total_number_unsolved_python_packages",
+graphdb_total_number_unsolved_python_packages_per_solver = Gauge(
+    "thoth_graphdb_total_number_unsolved_python_packages_per_solver",
     "Total number of unsolved Python packages per solver.",
     ["solver_name"],
+)
+graphdb_total_number_unsolved_python_packages = Gauge(
+    "thoth_graphdb_total_number_unsolved_python_packages",
+    "Total number of unsolved Python packages.",
+    [],
+)
+graphdb_unsolved_python_package_versions_change = Counter(
+    "thoth_graphdb_unsolved_python_package_versions_change",
+    "Unsolved Python package versions increase.",
+    []
 )
 
 graphdb_is_schema_up2date = Gauge(

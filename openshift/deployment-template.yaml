@@ -195,6 +195,11 @@ objects:
                     secretKeyRef:
                       name: postgresql
                       key: database-name
+                - name: PROMETHEUS_SERVICE_ACCOUNT
+                  valueFrom:
+                    secretKeyRef:
+                      name: prometheus_access
+                      key: prometheus_token
               ports:
                 - containerPort: 8080
                   protocol: TCP
