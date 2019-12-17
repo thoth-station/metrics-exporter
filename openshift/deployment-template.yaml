@@ -198,8 +198,8 @@ objects:
                 - name: PROMETHEUS_SERVICE_ACCOUNT
                   valueFrom:
                     secretKeyRef:
-                      name: prometheus_access
-                      key: prometheus_token
+                      name: prometheus-reader
+                      key: token
               ports:
                 - containerPort: 8080
                   protocol: TCP

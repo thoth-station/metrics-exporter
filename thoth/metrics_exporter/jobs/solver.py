@@ -86,10 +86,9 @@ class SolverMetrics(MetricsBase):
             label_config={
                 'instance': f"metrics-exporter-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80"}
                 )[0]['value'][1])
-        number_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all(
-            distinct=True
-        )
-        unsolved_python_package_versions_change = abs(number_python_package_versions - python_package_versions_metric)
+        number_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
+
+        unsolved_python_package_versions_change = abs(python_package_versions_metric - number_python_package_versions)
         metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
         _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
 
@@ -142,20 +141,21 @@ class SolverMetrics(MetricsBase):
             metrics.graphdb_total_python_packages_solved_with_no_error.labels(solver_name).set(
                 python_packages_solved_with_no_error
             )
-            metrics.graphdb_total_python_packages_with_solver_error_unparseable.labels(solver_name).set(
-                python_packages_solver_error_unparseable
-            )
-            metrics.graphdb_total_python_packages_with_solver_error_unsolvable.labels(solver_name).set(
-                python_packages_solver_error_unsolvable
-            )
-            metrics.graphdb_total_python_packages_with_solver_error.labels(solver_name).set(
-                py_packages_solver_error
-            )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_solved_with_no_error(%r)=%r",
                 solver_name,
                 python_packages_solved_with_no_error
+            )
+
+            metrics.graphdb_total_python_packages_with_solver_error.labels(solver_name).set(
+                python_packages_solver_error
+            )
+            metrics.graphdb_total_python_packages_with_solver_error_unparseable.labels(solver_name).set(
+                python_packages_solver_error_unparseable
+            )
+            metrics.graphdb_total_python_packages_with_solver_error_unsolvable.labels(solver_name).set(
+                python_packages_solver_error_unsolvable
             )
 
             _LOGGER.debug(
