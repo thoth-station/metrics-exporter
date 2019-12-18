@@ -61,6 +61,7 @@ class SolverMetrics(MetricsBase):
     @classmethod
     @register_metric_job
     def get_python_packages_solved_count_per_solver(cls) -> None:
+        """Get number of python packages solved per solver."""
         for solver_name in cls._OPENSHIFT.get_solver_names():
             solver_info = cls.graph().parse_python_solver_name(solver_name)
             count_solved = cls.graph().get_solved_python_packages_count_all(
@@ -77,64 +78,67 @@ class SolverMetrics(MetricsBase):
         """Get number of python packages with solver error True and how many are unparsable or unsolvable per solver."""
         for solver_name in cls._OPENSHIFT.get_solver_names():
             solver_info = cls.graph().parse_python_solver_name(solver_name)
-            total_python_packages_solved = cls.graph().get_solved_python_packages_count_all(
+            py_packages_solved = cls.graph().get_solved_python_packages_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
             )
 
-            total_python_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(
+            py_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
             )
-            total_python_packages_solver_error_unparseable = cls.graph().get_error_solved_python_package_versions_count_all(
+            py_packages_solver_error_unparseable = cls.graph().get_error_solved_python_package_versions_count_all(
                 unparseable=True,
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
             )
-            total_python_packages_solver_error_unsolvable = cls.graph().get_error_solved_python_package_versions_count_all(
+            py_packages_solver_error_unsolvable = cls.graph().get_error_solved_python_package_versions_count_all(
                 unsolvable=True,
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
             )
 
-            total_python_packages_solved_with_no_error = total_python_packages_solved - total_python_packages_solver_error
+            py_packages_solved_with_no_error = (
+                py_packages_solved - py_packages_solver_error
+            )
 
             metrics.graphdb_total_python_packages_solved_with_no_error.labels(solver_name).set(
-                total_python_packages_solved_with_no_error
+                py_packages_solved_with_no_error
             )
             metrics.graphdb_total_python_packages_with_solver_error_unparseable.labels(solver_name).set(
-                total_python_packages_solver_error_unparseable
+                py_packages_solver_error_unparseable
             )
             metrics.graphdb_total_python_packages_with_solver_error_unsolvable.labels(solver_name).set(
-                total_python_packages_solver_error_unsolvable
+                py_packages_solver_error_unsolvable
             )
             metrics.graphdb_total_python_packages_with_solver_error.labels(solver_name).set(
-                total_python_packages_solver_error
+                py_packages_solver_error
             )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_solved_with_no_error(%r)=%r",
                 solver_name,
-                total_python_packages_solved_with_no_error
+                py_packages_solved_with_no_error,
             )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_with_solver_error(%r)=%r",
                 solver_name,
-                total_python_packages_solver_error)
+                py_packages_solver_error,
+            )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_with_solver_error_unparseable(%r)=%r",
                 solver_name,
-                total_python_packages_solver_error_unparseable,
+                py_packages_solver_error_unparseable,
             )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_with_solver_error_unsolvable(%r)=%r",
                 solver_name,
-                total_python_packages_solver_error_unsolvable,
+                py_packages_solver_error_unsolvable,
             )
