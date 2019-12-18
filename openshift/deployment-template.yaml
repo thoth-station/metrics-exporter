@@ -7,14 +7,14 @@ metadata:
       This is Thoth Metrics Exporter Deployment, this template is meant to be used by
       Bots, but could also be used by humans...
     openshift.io/display-name: 'Thoth Metrics Exporter Deployment'
-    version: 0.4.0
+    version: 0.5.0
     tags: thoth,thoth-metrics,thoth-metrics-exporter,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This is Thoth Metrics Exporter Deployment, this template is meant to be used
       by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
-    thoth-station.ninja/template-version: 0.4.0
+    thoth-station.ninja/template-version: 0.5.0
   labels:
     template: thoth-metrics-exporter-deployment
     app: thoth
@@ -37,7 +37,7 @@ objects:
     metadata:
       name: metrics-exporter
       annotations:
-        thoth-station.ninja/template-version: 0.4.0
+        thoth-station.ninja/template-version: 0.5.0
       labels:
         app: thoth
         component: metrics-exporter
@@ -50,7 +50,7 @@ objects:
     apiVersion: v1
     metadata:
       annotations:
-        thoth-station.ninja/template-version: 0.4.0
+        thoth-station.ninja/template-version: 0.5.0
       labels:
         app: thoth
         component: metrics-exporter
@@ -67,7 +67,7 @@ objects:
     apiVersion: v1
     metadata:
       annotations:
-        thoth-station.ninja/template-version: 0.4.0
+        thoth-station.ninja/template-version: 0.5.0
       labels:
         app: thoth
         component: metrics-exporter
@@ -195,7 +195,7 @@ objects:
                     secretKeyRef:
                       name: postgresql
                       key: database-name
-                - name: PROMETHEUS_SERVICE_ACCOUNT
+                - name: PROMETHEUS_SERVICE_ACCOUNT_TOKEN
                   valueFrom:
                     secretKeyRef:
                       name: prometheus-reader

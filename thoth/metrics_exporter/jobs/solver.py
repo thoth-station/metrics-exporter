@@ -37,8 +37,8 @@ class SolverMetrics(MetricsBase):
     _OPENSHIFT = OpenShift()
 
     _URL = "https://prometheus-dh-prod-monitoring.cloud.datahub.psi.redhat.com"
-    _PROMETHEUS_SERVICE_ACCOUNT = os.getenv("PROMETHEUS_SERVICE_ACCOUNT")
-    _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT}"}
+    _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.getenv("PROMETHEUS_SERVICE_ACCOUNT_TOKEN")
+    _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
     _NAMESPACE = os.getenv("THOTH_FRONTEND_NAMESPACE")
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
