@@ -70,7 +70,7 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_unsolved_python_packages_versions_change(cls) -> None:
+    def get_unsolved_python_packages_versions(cls) -> None:
         """Get the change in unsolved Python Packages in Thoth Knowledge Graph."""
         metric_name = "thoth_graphdb_total_number_unsolved_python_packages"
         metric = cls._PROM.get_current_metric_value(
@@ -80,18 +80,20 @@ class SolverMetrics(MetricsBase):
                 )
         if metric:
             python_package_versions_metric = int(metric[0]['value'][1])
+
+            count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
+            unsolved_python_package_versions_change = abs(
+                python_package_versions_metric - count_unsolved_python_package_versions
+                )
+
+            metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
+            _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
         else:
             _LOGGER.warning("No metrics identified for %r", metric_name)
-            python_package_versions_metric = 0
+            count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
 
-        count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
-
-        unsolved_python_package_versions_change = abs(
-            python_package_versions_metric - count_unsolved_python_package_versions
-            )
-
-        metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
-        _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
+        metrics.graphdb_total_number_unsolved_python_packages.set(count_unsolved_python_package_versions)
+        _LOGGER.debug("graphdb_total_number_unsolved_python_packages=%r", count_unsolved_python_package_versions)
 
     @classmethod
     @register_metric_job
