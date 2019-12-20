@@ -54,15 +54,6 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_unsolved_python_packages_count(cls) -> None:
-        """Get number of unsolved Python packages per solver."""
-        count = cls.graph().get_unsolved_python_package_versions_count_all()
-
-        metrics.graphdb_total_number_unsolved_python_packages.set(count)
-        _LOGGER.debug("graphdb_total_number_unsolved_python_packages=%r", count)
-
-    @classmethod
-    @register_metric_job
     def get_unsolved_python_packages_count_per_solver(cls) -> None:
         """Get number of unsolved Python packages per solver."""
         for solver_name in cls._OPENSHIFT.get_solver_names():
@@ -86,11 +77,15 @@ class SolverMetrics(MetricsBase):
             label_config={
                 'instance': f"metrics-exporter-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80"}
                 )[0]['value'][1])
-        number_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
+        count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
 
-        unsolved_python_package_versions_change = abs(python_package_versions_metric - number_python_package_versions)
+        unsolved_python_package_versions_change = abs(python_package_versions_metric - count_unsolved_python_package_versions)
+
         metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
         _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
+
+        metrics.graphdb_total_number_unsolved_python_packages.set(count_unsolved_python_package_versions)
+        _LOGGER.debug("graphdb_total_number_unsolved_python_packages=%r", count_unsolved_python_package_versions)
 
     @classmethod
     @register_metric_job
