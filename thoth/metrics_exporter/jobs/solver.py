@@ -54,8 +54,9 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_unsolved_python_packages_count_per_solver(cls) -> None:
-        """Get number of unsolved Python packages per solver."""
+    def get_unsolved_python_packages_versions(cls) -> None:
+        """Get the change in unsolved Python Packages in Thoth Knowledge Graph."""
+        count_unsolved_python_package_versions = 0
         for solver_name in cls._OPENSHIFT.get_solver_names():
             solver_info = cls.graph().parse_python_solver_name(solver_name)
 
@@ -67,11 +68,8 @@ class SolverMetrics(MetricsBase):
 
             metrics.graphdb_total_number_unsolved_python_packages_per_solver.labels(solver_name).set(count)
             _LOGGER.debug("graphdb_total_number_unsolved_python_packages_per_solver(%r)=%r", solver_name, count)
+            count_unsolved_python_package_versions += count
 
-    @classmethod
-    @register_metric_job
-    def get_unsolved_python_packages_versions(cls) -> None:
-        """Get the change in unsolved Python Packages in Thoth Knowledge Graph."""
         metric_name = "thoth_graphdb_total_number_unsolved_python_packages"
         metric = cls._PROM.get_current_metric_value(
             metric_name=metric_name,
@@ -79,18 +77,17 @@ class SolverMetrics(MetricsBase):
                 'instance': f"metrics-exporter-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80"}
                 )
         if metric:
-            python_package_versions_metric = int(metric[0]['value'][1])
+            python_package_versions_metric = float(metric[0]['value'][1])
 
-            count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
             unsolved_python_package_versions_change = abs(
                 python_package_versions_metric - count_unsolved_python_package_versions
                 )
 
             metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
             _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
+
         else:
             _LOGGER.warning("No metrics identified for %r", metric_name)
-            count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
 
         metrics.graphdb_total_number_unsolved_python_packages.set(count_unsolved_python_package_versions)
         _LOGGER.debug("graphdb_total_number_unsolved_python_packages=%r", count_unsolved_python_package_versions)
