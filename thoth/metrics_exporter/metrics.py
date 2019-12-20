@@ -184,7 +184,7 @@ graphdb_total_number_unsolved_python_packages = Gauge(
 )
 graphdb_unsolved_python_package_versions_change = Counter(
     "thoth_graphdb_unsolved_python_package_versions_change",
-    "Unsolved Python package versions increase.",
+    "Unsolved Python package versions change.",
     []
 )
 
