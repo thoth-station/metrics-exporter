@@ -79,7 +79,9 @@ class SolverMetrics(MetricsBase):
                 )[0]['value'][1])
         count_unsolved_python_package_versions = cls.graph().get_unsolved_python_package_versions_count_all()
 
-        unsolved_python_package_versions_change = abs(python_package_versions_metric - count_unsolved_python_package_versions)
+        unsolved_python_package_versions_change = abs(
+            python_package_versions_metric - count_unsolved_python_package_versions
+            )
 
         metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
         _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
