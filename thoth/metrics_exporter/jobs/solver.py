@@ -43,6 +43,8 @@ class SolverMetrics(MetricsBase):
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
+    _SOLVER_CHECK_TIME = 0
+
     @classmethod
     @register_metric_job
     def get_solver_count(cls) -> None:
@@ -174,3 +176,54 @@ class SolverMetrics(MetricsBase):
                 solver_name,
                 python_packages_solver_error_unsolvable,
             )
+
+    @classmethod
+    @register_metric_job
+    def get_solver_evaluation_time(cls) -> None:
+        """Get the time spent for each solver worflow."""
+        workflow_completion_time_metric_name = "argo_workflow_completion_time"
+        workflow_completion_time = cls._PROM.get_current_metric_value(
+            metric_name=workflow_completion_time_metric_name,
+            label_config={
+                'instance': f"workflow-controller-metrics-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80",
+                "namespace": cls._NAMESPACE}
+                )
+
+        if workflow_completion_time:
+            inspection_workflows = {}
+            for metric in workflow_completion_time:
+                if "solver" in metric['metric']['name']:
+                    completion_time = datetime.fromtimestamp(
+                            int(metric['value'][1])
+                            )
+                    new_time = datetime.now()
+
+                    if cls._SOLVER_CHECK_TIME < completion_time < new_time: 
+                        inspection_workflows[metric['metric']['name']] = completion_time
+
+            cls._SOLVER_CHECK_TIME = new_time
+
+            if inspection_workflows:
+                for workflow_name, completion_time in inspection_workflows.items():
+                    workflow_start_time_metric_name = "argo_workflow_start_time"
+                    workflow_start_time = cls._PROM.get_current_metric_value(
+                        metric_name=workflow_start_time_metric_name,
+                        label_config={
+                            'instance': f"workflow-controller-metrics-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80",
+                            "namespace": cls._NAMESPACE,
+                            "name": workflow_name}
+                            )
+
+                    start_time = datetime.fromtimestamp(
+                        int(workflow_start_time[0]['value'][1])
+                        )
+                    metrics.workflow_solver_latency.observe(
+                        (completion_time - start_time).total_seconds()
+                        )
+
+            else:
+                _LOGGER.debug("No adviser workflow identified")
+
+        else:
+            _LOGGER.debug("No metrics identified for %r", workflow_completion_time_metric_name)
+
