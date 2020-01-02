@@ -39,7 +39,7 @@ class AdviserMetrics(MetricsBase):
     _URL = "https://prometheus-dh-prod-monitoring.cloud.datahub.psi.redhat.com"
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    _NAMESPACE = os.environ["THOTH_FRONTEND_NAMESPACE"]
+    _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
