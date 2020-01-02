@@ -38,7 +38,7 @@ class SolverMetrics(MetricsBase):
 
     _OPENSHIFT = OpenShift()
 
-    _URL = "https://prometheus-dh-prod-monitoring.cloud.datahub.psi.redhat.com"
+    _URL = os.environ["PROMETHEUS_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
     _NAMESPACE = os.environ["THOTH_FRONTEND_NAMESPACE"]

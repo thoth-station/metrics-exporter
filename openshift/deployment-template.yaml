@@ -200,6 +200,11 @@ objects:
                     secretKeyRef:
                       name: prometheus-reader
                       key: token
+                - name: PROMETHEUS_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: metrics-prometheus-url
               ports:
                 - containerPort: 8080
                   protocol: TCP

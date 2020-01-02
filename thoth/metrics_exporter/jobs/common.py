@@ -87,9 +87,8 @@ def get_workflow_duration(
                         (completion_time - start_time).total_seconds()
                         )
                     )
-                if new_workflows_count:
-                    pass
-                else:
+
+                if not new_workflows_count:
                     _LOGGER.debug("No new %r workflow identified" % service_name)
 
         return new_time
