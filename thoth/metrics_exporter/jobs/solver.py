@@ -38,14 +38,16 @@ class SolverMetrics(MetricsBase):
 
     _OPENSHIFT = OpenShift()
 
-    _URL = os.environ["PROMETHEUS_URL"]
+    _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
+    _WORKFLOW_INSTANCE = os.environ["PROMETHEUS_INSTANCE_MIDDLETIER"]
+    _METRICS_EXPORTER_INSTANCE = os.environ["PROMETHEUS_INSTANCE_FRONTEND"]
     _NAMESPACE = os.environ["THOTH_FRONTEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _SOLVER_CHECK_TIME = 0
+    _SOLVER_CHECK_TIME = datetime.now()
 
     @classmethod
     @register_metric_job
@@ -78,7 +80,7 @@ class SolverMetrics(MetricsBase):
         metric = cls._PROM.get_current_metric_value(
             metric_name=metric_name,
             label_config={
-                'instance': f"metrics-exporter-{cls._NAMESPACE}.cloud.paas.psi.redhat.com:80"}
+                'instance': cls._METRICS_EXPORTER_INSTANCE}
                 )
         if metric:
             python_package_versions_metric = float(metric[0]['value'][1])
@@ -186,6 +188,7 @@ class SolverMetrics(MetricsBase):
         cls._SOLVER_CHECK_TIME = get_workflow_duration(
             service_name="solver",
             prometheus=cls._PROM,
+            instance=cls._WORKFLOW_INSTANCE,
             namespace=cls._NAMESPACE,
             check_time=cls._SOLVER_CHECK_TIME,
             metric_type=metrics.workflow_solver_latency)

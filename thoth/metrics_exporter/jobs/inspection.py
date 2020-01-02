@@ -37,9 +37,10 @@ _LOGGER = logging.getLogger(__name__)
 class InspectionMetrics(MetricsBase):
     """Class to evaluate Metrics for Amun Inspections."""
 
-    _URL = os.environ["PROMETHEUS_URL"]
+    _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
+    _INSTANCE = os.environ["PROMETHEUS_INSTANCE_AMUN_INSPECTION"]
     _NAMESPACE = os.environ["THOTH_AMUN_INSPECTION_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
@@ -86,6 +87,7 @@ class InspectionMetrics(MetricsBase):
         cls._INSPECTION_CHECK_TIME = get_workflow_duration(
             service_name="inspection",
             prometheus=cls._PROM,
+            instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
             check_time=cls._INSPECTION_CHECK_TIME,
             metric_type=metrics.workflow_inspection_latency)

@@ -200,11 +200,31 @@ objects:
                     secretKeyRef:
                       name: prometheus-reader
                       key: token
-                - name: PROMETHEUS_URL
+                - name: PROMETHEUS_HOST_URL
                   valueFrom:
                     configMapKeyRef:
                       name: thoth
-                      key: metrics-prometheus-url
+                      key: prometheus-host-url
+                - name: PROMETHEUS_INSTANCE_FRONTEND
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-instance-frontend
+                - name: PROMETHEUS_INSTANCE_BACKEND
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-instance-backend
+                - name: PROMETHEUS_INSTANCE_MIDDLETIER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-instance-middletier
+                - name: PROMETHEUS_INSTANCE_AMUN_INSPECTION
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-instance-amun-inspection
               ports:
                 - containerPort: 8080
                   protocol: TCP

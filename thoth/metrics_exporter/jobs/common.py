@@ -29,6 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 def get_workflow_duration(
     service_name: str,
     prometheus: PrometheusConnect,
+    instance: str,
     namespace: str,
     check_time: datetime,
     metric_type: metrics
@@ -38,7 +39,7 @@ def get_workflow_duration(
     workflow_status_metrics = prometheus.get_current_metric_value(
         metric_name=workflow_status_metric_name,
         label_config={
-            'instance': f"workflow-controller-metrics-{namespace}.cloud.paas.psi.redhat.com:80",
+            'instance': instance,
             "namespace": namespace,
             "phase": "Succeeded"}
             )
@@ -57,7 +58,7 @@ def get_workflow_duration(
                 workflow_completion_time = prometheus.get_current_metric_value(
                     metric_name=workflow_completion_time_metric_name,
                     label_config={
-                        'instance': f"workflow-controller-metrics-{namespace}.cloud.paas.psi.redhat.com:80",
+                        'instance': instance,
                         "namespace": namespace,
                         "name": workflow_name}
                         )
@@ -71,7 +72,7 @@ def get_workflow_duration(
                     workflow_start_time = prometheus.get_current_metric_value(
                         metric_name=workflow_start_time_metric_name,
                         label_config={
-                            'instance': f"workflow-controller-metrics-{namespace}.cloud.paas.psi.redhat.com:80",
+                            'instance': instance,
                             "namespace": namespace,
                             "name": workflow_name}
                             )

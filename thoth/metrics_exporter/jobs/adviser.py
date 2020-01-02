@@ -36,9 +36,10 @@ _LOGGER = logging.getLogger(__name__)
 class AdviserMetrics(MetricsBase):
     """Class to evaluate Metrics for Adviser."""
 
-    _URL = os.environ["PROMETHEUS_URL"]
+    _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
+    _INSTANCE = os.environ["PROMETHEUS_INSTANCE_BACKEND"]
     _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
@@ -62,6 +63,7 @@ class AdviserMetrics(MetricsBase):
         cls._ADVISER_CHECK_TIME = get_workflow_duration(
             service_name="adviser",
             prometheus=cls._PROM,
+            instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
             check_time=cls._ADVISER_CHECK_TIME,
-            metric_type=metrics.workflow_solver_latency)
+            metric_type=metrics.workflow_adviser_latency)
