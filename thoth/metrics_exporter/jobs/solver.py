@@ -19,6 +19,7 @@
 
 import logging
 import os
+from datetime import datetime
 
 from thoth.common import OpenShift
 
@@ -190,13 +191,13 @@ class SolverMetrics(MetricsBase):
                 )
 
         if workflow_completion_time:
+            new_time = datetime.now()
             inspection_workflows = {}
             for metric in workflow_completion_time:
                 if "solver" in metric['metric']['name']:
                     completion_time = datetime.fromtimestamp(
                             int(metric['value'][1])
                             )
-                    new_time = datetime.now()
 
                     if cls._SOLVER_CHECK_TIME < completion_time < new_time: 
                         inspection_workflows[metric['metric']['name']] = completion_time
