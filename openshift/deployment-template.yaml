@@ -205,26 +205,26 @@ objects:
                     configMapKeyRef:
                       name: thoth
                       key: prometheus-host-url
-                - name: PROMETHEUS_INSTANCE_FRONTEND
+                - name: METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE
                   valueFrom:
                     configMapKeyRef:
                       name: thoth
-                      key: prometheus-instance-frontend
-                - name: PROMETHEUS_INSTANCE_BACKEND
+                      key: prometheus-instance-metrics-exporter-frontend
+                - name: WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE
                   valueFrom:
                     configMapKeyRef:
                       name: thoth
-                      key: prometheus-instance-backend
-                - name: PROMETHEUS_INSTANCE_MIDDLETIER
+                      key: prometheus-instance-workflow-metrics-backend
+                - name: WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE
                   valueFrom:
                     configMapKeyRef:
                       name: thoth
-                      key: prometheus-instance-middletier
-                - name: PROMETHEUS_INSTANCE_AMUN_INSPECTION
+                      key: prometheus-instance-workflow-metrics-middletier
+                - name: WORKFLOW_METRICS_AMUN_INSPECTION_PROMETHEUS_INSTANCE
                   valueFrom:
                     configMapKeyRef:
                       name: thoth
-                      key: prometheus-instance-amun-inspection
+                      key: prometheus-instance-workflow-metrics-amun-inspection
               ports:
                 - containerPort: 8080
                   protocol: TCP
