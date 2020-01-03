@@ -45,7 +45,7 @@ def get_workflow_duration(
             )
 
     if workflow_status_metrics:
-        new_time = datetime.now()
+        new_time = datetime.utcnow()
         new_workflows_count = 0
 
         for metric in workflow_status_metrics:
