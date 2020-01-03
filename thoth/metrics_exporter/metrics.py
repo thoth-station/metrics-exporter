@@ -19,7 +19,7 @@
 
 
 from thoth.metrics_exporter import __version__
-from prometheus_client import Gauge, Counter
+from prometheus_client import Gauge, Counter, Histogram
 
 
 # Info Metric
@@ -120,6 +120,11 @@ graphdb_advised_software_stacks_records = Gauge(
     "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
 )
 
+workflow_adviser_latency = Histogram(
+    "thoth_workflow_adviser_latency", "Thoth Adviser duration in Argo Workflow.", [],
+    buckets=[120, 240, 360, 480, 600]
+)
+
 # InspectionRun
 inspection_results_ceph = Gauge(
     "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
@@ -127,6 +132,11 @@ inspection_results_ceph = Gauge(
 
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
+)
+
+workflow_inspection_latency = Histogram(
+    "thoth_workflow_inspection_latency", "Thoth Inspection duration in Argo Workflow.", [],
+    buckets=[120, 240, 360, 480, 600]
 )
 
 # PackageAnalyzerRun
@@ -190,4 +200,9 @@ graphdb_unsolved_python_package_versions_change = Counter(
 
 graphdb_is_schema_up2date = Gauge(
     "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
+)
+
+workflow_solver_latency = Histogram(
+    "thoth_workflow_solver_latency", "Thoth Solver duration in Argo Workflow.", [],
+    buckets=[120, 240, 360, 480, 600]
 )
