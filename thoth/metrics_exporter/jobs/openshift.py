@@ -40,10 +40,12 @@ class OpenshiftMetrics(MetricsBase):
         "component=package-extract",
         "component=package-analyzer",
         "component=solver",
+        "component=build-analyze",
         "graph-sync-type=dependency-monkey",
         "graph-sync-type=package-analyzer",
         "graph-sync-type=package-extract",
         "graph-sync-type=solver",
+        "graph-sync-type=build-analyze",
     ]
 
     _AMUN_INSPECTION_JOBS_LABELS = ["component=amun-inspection-job", "graph-sync-type=inspection"]
