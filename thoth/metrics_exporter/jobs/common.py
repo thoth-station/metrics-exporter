@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""A collection of methods that can be resued in different metric classes."""
+"""A collection of methods that can be reused in different metric classes."""
 
 import logging
 
@@ -34,7 +34,7 @@ def get_workflow_duration(
     check_time: datetime,
     metric_type: metrics,
 ) -> datetime:
-    """Get the time spent for each worflow for a certain service."""
+    """Get the time spent for each workflow for a certain service."""
     workflow_status_metric_name = "argo_workflow_status_phase"
     workflow_status_metrics = prometheus.get_current_metric_value(
         metric_name=workflow_status_metric_name,
@@ -73,7 +73,7 @@ def get_workflow_duration(
                 start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
                 metric_type.observe((completion_time - start_time).total_seconds())
                 _LOGGER.debug(
-                    "Worflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
+                    "Workflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
                 )
 
             if not new_workflows_count:
