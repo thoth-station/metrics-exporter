@@ -32,68 +32,51 @@ def get_workflow_duration(
     instance: str,
     namespace: str,
     check_time: datetime,
-    metric_type: metrics
+    metric_type: metrics,
 ) -> datetime:
     """Get the time spent for each worflow for a certain service."""
     workflow_status_metric_name = "argo_workflow_status_phase"
     workflow_status_metrics = prometheus.get_current_metric_value(
         metric_name=workflow_status_metric_name,
-        label_config={
-            'instance': instance,
-            "namespace": namespace,
-            "phase": "Succeeded"}
-            )
+        label_config={"instance": instance, "namespace": namespace, "phase": "Succeeded"},
+    )
 
-    if workflow_status_metrics:
-        new_time = datetime.utcnow()
-        new_workflows_count = 0
-
-        for metric in workflow_status_metrics:
-
-            workflow_status = int(metric['value'][1])
-            workflow_name = metric['metric']['name']
-
-            if service_name in workflow_name and workflow_status == 1:
-                workflow_completion_time_metric_name = "argo_workflow_completion_time"
-                workflow_completion_time = prometheus.get_current_metric_value(
-                    metric_name=workflow_completion_time_metric_name,
-                    label_config={
-                        'instance': instance,
-                        "namespace": namespace,
-                        "name": workflow_name}
-                        )
-                completion_time = datetime.fromtimestamp(
-                        int(workflow_completion_time[0]['value'][1])
-                        )
-
-                if check_time < completion_time < new_time:
-                    new_workflows_count += 1
-                    workflow_start_time_metric_name = "argo_workflow_start_time"
-                    workflow_start_time = prometheus.get_current_metric_value(
-                        metric_name=workflow_start_time_metric_name,
-                        label_config={
-                            'instance': instance,
-                            "namespace": namespace,
-                            "name": workflow_name}
-                            )
-
-                    start_time = datetime.fromtimestamp(
-                        int(workflow_start_time[0]['value'][1])
-                        )
-                    metric_type.observe(
-                        (completion_time - start_time).total_seconds()
-                    )
-                    _LOGGER.debug("Worflow duration for %r is %r s" % (
-                        workflow_name,
-                        (completion_time - start_time).total_seconds()
-                        )
-                    )
-
-                if not new_workflows_count:
-                    _LOGGER.debug("No new %r workflow identified" % service_name)
-
-        return new_time
-
-    else:
+    if not workflow_status_metrics:
         _LOGGER.debug("No metrics identified for %r", workflow_status_metric_name)
         return check_time
+
+    new_time = datetime.utcnow()
+    new_workflows_count = 0
+    workflow_completion_time_metric_name = "argo_workflow_completion_time"
+
+    for metric in workflow_status_metrics:
+
+        workflow_status = int(metric["value"][1])
+        workflow_name = metric["metric"]["name"]
+
+        if service_name in workflow_name and workflow_status == 1:
+            workflow_completion_time = prometheus.get_current_metric_value(
+                metric_name=workflow_completion_time_metric_name,
+                label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
+            )
+
+            completion_time = datetime.fromtimestamp(int(workflow_completion_time[0]["value"][1]))
+
+            if check_time < completion_time < new_time:
+                new_workflows_count += 1
+                workflow_start_time_metric_name = "argo_workflow_start_time"
+                workflow_start_time = prometheus.get_current_metric_value(
+                    metric_name=workflow_start_time_metric_name,
+                    label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
+                )
+
+                start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
+                metric_type.observe((completion_time - start_time).total_seconds())
+                _LOGGER.debug(
+                    "Worflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
+                )
+
+            if not new_workflows_count:
+                _LOGGER.debug("No new %r workflow identified", service_name)
+
+    return new_time
