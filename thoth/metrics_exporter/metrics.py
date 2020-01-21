@@ -83,10 +83,10 @@ graphdb_sum_python_packages_per_indexes = Gauge(
 )
 
 # Performance Indicators
-graphdb_total_number_of_pi_per_framework = Gauge(
-    "thoth_graphdb_total_number_of_pi_per_framework",
-    "Total number of Observations for PI per framework.",
-    ["framework", "pi"],
+graphdb_total_number_of_pi_per_component = Gauge(
+    "thoth_graphdb_total_number_of_pi_per_component",
+    "Total number of Observations for PI per component.",
+    ["component", "pi"],
 )
 
 graphdb_total_performance_records = Gauge(

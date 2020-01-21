@@ -32,22 +32,22 @@ class PIMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_observations_count_per_framework(cls) -> None:
-        """Get the total number of PI per framework in Thoth Knowledge Graph."""
-        ML_FRAMEWORKS = cls.graph().get_ml_frameworks_all()
+    def get_observations_count_per_component(cls) -> None:
+        """Get the total number of PI per component in Thoth Knowledge Graph."""
+        PI_COMPONENTS = cls.graph().get_pi_component_all()
         thoth_number_of_pi_per_type = {}
 
-        if ML_FRAMEWORKS:
-            for framework in ML_FRAMEWORKS:
-                thoth_number_of_pi_per_type[framework] = cls.graph().get_pi_count(framework=framework)
+        if PI_COMPONENTS:
+            for component in PI_COMPONENTS:
+                thoth_number_of_pi_per_type[component] = cls.graph().get_pi_count(component=component)
 
-                for pi, pi_count in thoth_number_of_pi_per_type[framework].items():
-                    metrics.graphdb_total_number_of_pi_per_framework.labels(framework, pi).set(pi_count)
-            _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+                for pi, pi_count in thoth_number_of_pi_per_type[component].items():
+                    metrics.graphdb_total_number_of_pi_per_component.labels(component, pi).set(pi_count)
+            _LOGGER.debug("graphdb_total_number_of_pi_per_component=%r", thoth_number_of_pi_per_type)
         else:
-            thoth_number_of_pi_per_type["No framework"] = 0
-            metrics.graphdb_total_number_of_pi_per_framework.labels("No framework", "No pi").set(0)
-            _LOGGER.debug("graphdb_total_number_of_pi_per_framework=%r", thoth_number_of_pi_per_type)
+            thoth_number_of_pi_per_type["No component"] = 0
+            metrics.graphdb_total_number_of_pi_per_component.labels("No component", "No pi").set(0)
+            _LOGGER.debug("graphdb_total_number_of_pi_per_component=%r", thoth_number_of_pi_per_type)
 
     @classmethod
     @register_metric_job
