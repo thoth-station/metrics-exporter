@@ -748,11 +748,11 @@
         },
         "thoth-common": {
             "hashes": [
-                "sha256:304e1cf54ebcd4c3a18afd8afd75fa8c195a5e3d1ed501bcbbadcac40f846918",
-                "sha256:693f87290c19b64e42f84182059fe1c87e7c675583ff9fbe7bfde8fed8a82303"
+                "sha256:9167fd5147783204ab1e43879a8f43b24a2e5022287e7704e1086be85dfc7f94",
+                "sha256:c354170f25ba11562a3857129e9fb6f015a3201a7e69dabbe8405449180d225f"
             ],
             "index": "pypi",
-            "version": "==0.10.1"
+            "version": "==0.10.2"
         },
         "thoth-python": {
             "hashes": [
@@ -813,10 +813,10 @@
         },
         "werkzeug": {
             "hashes": [
-                "sha256:1e0dedc2acb1f46827daa2e399c1485c8fa17c0d8e70b6b875b4e7f54bf408d2",
-                "sha256:b353856d37dec59d6511359f97f6a4b2468442e454bd1c98298ddce53cac1f04"
+                "sha256:7f91416b2e6902e39190552d5e05bc94c0d5034688753fceb28eaa9d16795027",
+                "sha256:834e6f4828864350b7c173a2be027f0a692512bbe9d7ddd52da8e29ff991a726"
             ],
-            "version": "==0.16.1"
+            "version": "==1.0.0rc1"
         },
         "wirerope": {
             "hashes": [
