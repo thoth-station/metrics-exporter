@@ -122,13 +122,13 @@ class OpenshiftMetrics(MetricsBase):
     def get_image_streams_per_namespace_per_label(cls) -> None:
         """Get the total number of image streams in the namespace based on labels."""
         label_selector = "component=amun-inspection-imagestream"
-        namespace = cls._NAMESPACES_VARIABLES_JOBS_MAP["THOTH_AMUN_INSPECTION_NAMESPACE"]
+        namespace = os.environ["THOTH_AMUN_INSPECTION_NAMESPACE"]
         _LOGGER.info(
             "Evaluating ImageStreams(label_selector=%r) metrics for namespace: %r", label_selector, namespace
         )
         response = cls._OPENSHIFT.get_image_streams(namespace=namespace, label_selector=label_selector)
         number_image_streams = len(response["items"])
-        metrics.image_streams_maps_number.labels(namespace, label_selector).set(number_configmaps)
+        metrics.image_streams_maps_number.labels(namespace, label_selector).set(number_image_streams)
         _LOGGER.debug(
             "thoth_image_streams_number=%r, in namespace=%r for label_selector=%r",
             number_image_streams,
