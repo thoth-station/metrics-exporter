@@ -43,6 +43,10 @@ config_maps_number = Gauge(
     "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
 )
 
+image_streams_maps_number = Gauge(
+    "thoth_image_streams_maps_number", "Thoth ImageStreams per namespace per label.", ["namespace", "label"]
+)
+
 # Ceph metrics
 ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"])
 
