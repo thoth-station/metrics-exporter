@@ -96,11 +96,6 @@ class OpenshiftMetrics(MetricsBase):
 
                 _LOGGER.debug("thoth_jobs=%r", jobs_status_evaluated)
 
-    @staticmethod
-    def count_configmaps(config_map_list_items: dict) -> int:
-        """Count the number of ConfigMaps for a certain label in a specific namespace."""
-        return len(config_map_list_items["items"])
-
     @classmethod
     @register_metric_job
     def get_configmaps_per_namespace_per_label(cls) -> None:
@@ -112,8 +107,8 @@ class OpenshiftMetrics(MetricsBase):
                 _LOGGER.info(
                     "Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label_selector, namespace
                 )
-                config_maps_items = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label_selector)
-                number_configmaps = cls.count_configmaps(config_maps_items)
+                response = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label_selector)
+                number_configmaps = len(response["items"])
                 metrics.config_maps_number.labels(namespace, label_selector).set(number_configmaps)
                 _LOGGER.debug(
                     "thoth_config_maps_number=%r, in namespace=%r for label_selector=%r",
@@ -121,3 +116,22 @@ class OpenshiftMetrics(MetricsBase):
                     namespace,
                     label_selector,
                 )
+
+    @classmethod
+    @register_metric_job
+    def get_image_streams_per_namespace_per_label(cls) -> None:
+        """Get the total number of image streams in the namespace based on labels."""
+        label_selector = "component=amun-inspection-imagestream"
+        namespace = cls._NAMESPACES_VARIABLES_JOBS_MAP["THOTH_AMUN_INSPECTION_NAMESPACE"]
+        _LOGGER.info(
+            "Evaluating ImageStreams(label_selector=%r) metrics for namespace: %r", label_selector, namespace
+        )
+        response = cls._OPENSHIFT.get_image_streams(namespace=namespace, label_selector=label_selector)
+        number_image_streams = len(response["items"])
+        metrics.image_streams_maps_number.labels(namespace, label_selector).set(number_configmaps)
+        _LOGGER.debug(
+            "thoth_image_streams_number=%r, in namespace=%r for label_selector=%r",
+            number_image_streams,
+            namespace,
+            label_selector,
+        )
