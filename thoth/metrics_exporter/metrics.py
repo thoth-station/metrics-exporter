@@ -67,6 +67,18 @@ graphdb_total_relation_records = Gauge(
     ["relation_table"],
 )
 
+graphdb_pct_bloat_data_table = Gauge(
+    "thoth_graphdb_pct_bloat_data_table",
+    "Bloat data (pct_bloat) per table in Thoth Knowledge Graph.",
+    ["table_name"],
+)
+
+graphdb_mb_bloat_data_table = Gauge(
+    "thoth_graphdb_mb_bloat_data_table",
+    "Bloat data (mb_bloat) per table in Thoth Knowledge Graph.",
+    ["table_name"],
+)
+
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status.", [])
 
 # CONTENT METRICS

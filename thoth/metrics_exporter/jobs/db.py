@@ -31,6 +31,8 @@ _LOGGER = logging.getLogger(__name__)
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
+    _CHECK_TIME = datetime.now()
+
     @classmethod
     @register_metric_job
     def get_graphdb_connection_error_status(cls) -> None:
@@ -77,6 +79,19 @@ class DBMetrics(MetricsBase):
             metrics.graphdb_total_relation_records.labels(relation_table).set(relation_table_records_count)
 
         _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
+
+    @classmethod
+    @register_metric_job
+    def get_bloat_data(cls) -> None:
+        """Get bloat data from database."""
+        bloat_data = cls.graph().get_bloat_data()
+
+        for table_data in bloat_data:
+            metrics.graphdb_pct_bloat_data_table.labels(table_data["name"]).set(table_data['pct_bloat'])
+            _LOGGER.debug("graphdb_total_number_unsolved_python_packages_per_solver(%r)=%r", solver_name, count)
+
+            metrics.graphdb_mb_bloat_data_table.labels(table_data["name"]).set(table_data['mb_bloat'])
+            _LOGGER.debug("graphdb_total_number_unsolved_python_packages_per_solver(%r)=%r", solver_name, count)
 
     @classmethod
     @register_metric_job
