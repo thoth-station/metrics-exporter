@@ -95,17 +95,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:d89ee91f199f7b6c8840a40ccd0b6abef7925775f8606de268bb9688cc14bd70",
-                "sha256:f9def3c5c871291a2b4dbc1f3520e35573fce3783ff1c904a97dd3a4539b0e5b"
+                "sha256:629ce3be236b6e0aed52358146eea9ffa7679d6cd1cc9b3e12332226270d6499",
+                "sha256:b1351e62136fae29be8fcbb1c4890f1d72017d57e33051d435a8bf9f71212fde"
             ],
-            "version": "==1.11.12"
+            "version": "==1.11.14"
         },
         "botocore": {
             "hashes": [
-                "sha256:054b195d7afee491a472e1462826042c805b4ab60c2ffd7137b90f41d52fd127",
-                "sha256:e20a7fa4bc3803b64bc59f9af1c86d13c825f209bed0edbf1b6da06bcf213212"
+                "sha256:34ad4d73e6bef5c8ad956c66354611628cdebd431fe2927261ed9c068b9cfb7a",
+                "sha256:6570f2ba046956d5b548ab2346d32f713ecf8b8cb098a839d73fcf832ccfa223"
             ],
-            "version": "==1.14.12"
+            "version": "==1.14.14"
         },
         "cachetools": {
             "hashes": [
@@ -763,11 +763,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:221ee65e552ba4c22d894cbb9602250c0c9aba9cb0ed003501c9eb65fd58e174",
-                "sha256:eb08239c1b27bfa4ce24a6dd7839888c7430e0a5684906d9c0d1ba62f51ffdd7"
+                "sha256:6c9e9bed3afa33b00e324660d75be2bb8d64322b72f3de90d5056e860d0cebfe",
+                "sha256:7d83e4a78023a376d9117751d3f906d1534533840a050026c9b9436babd5dd57"
             ],
             "index": "pypi",
-            "version": "==0.21.11"
+            "version": "==0.22.0"
         },
         "toml": {
             "hashes": [
@@ -786,10 +786,10 @@
         },
         "tzlocal": {
             "hashes": [
-                "sha256:11c9f16e0a633b4b60e1eede97d8a46340d042e67b670b290ca526576e039048",
-                "sha256:949b9dd5ba4be17190a80c0268167d7e6c92c62b30026cf9764caf3e308e5590"
+                "sha256:4e4c28c249322d80a1c87d3a9da2ef304875f6d6c6d9fdc177076f1523d17887",
+                "sha256:f63c325812eab0fea1bc12058495a404021eeb7e0532d32e03809115425df932"
             ],
-            "version": "==2.0.0"
+            "version": "==2.1b1"
         },
         "urllib3": {
             "hashes": [
