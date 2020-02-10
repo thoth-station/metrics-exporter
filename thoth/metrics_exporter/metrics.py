@@ -125,8 +125,13 @@ graphdb_advised_software_stacks_records = Gauge(
 )
 
 workflow_adviser_latency = Histogram(
-    "thoth_workflow_adviser_latency", "Thoth Adviser duration in Argo Workflow.", [],
+    "thoth_workflow_adviser_latency", "Thoth Qeb-Hwt inner workflow duration in Argo Workflow.", [],
     buckets=[120, 240, 360, 480, 600]
+)
+
+workflow_qebhwt_latency = Histogram(
+    "thoth_workflow_qebhwt_latency", "Thoth Qeb-Hwt outer workflow duration in Argo Workflow.", [],
+    buckets=[20, 40, 60, 80, 100]
 )
 
 # InspectionRun

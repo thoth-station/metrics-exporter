@@ -44,7 +44,8 @@ class AdviserMetrics(MetricsBase):
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _ADVISER_CHECK_TIME = 0
+    _ADVISER_CHECK_TIME = datetime.now()
+    _QEBHWT_CHECK_TIME = datetime.now()
 
     @classmethod
     @register_metric_job
@@ -67,3 +68,15 @@ class AdviserMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             check_time=cls._ADVISER_CHECK_TIME,
             metric_type=metrics.workflow_adviser_latency)
+
+    @classmethod
+    @register_metric_job
+    def get_adviser_evaluation_time(cls) -> None:
+        """Get the time spent for each adviser worflow."""
+        cls._QEBHWT_CHECK_TIME = get_workflow_duration(
+            service_name="qeb-hwt",
+            prometheus=cls._PROM,
+            instance=cls._INSTANCE,
+            namespace=cls._NAMESPACE,
+            check_time=cls._QEBHWT_CHECK_TIME,
+            metric_type=metrics.workflow_qebhwt_latency)
