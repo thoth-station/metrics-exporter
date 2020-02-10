@@ -125,13 +125,25 @@ graphdb_advised_software_stacks_records = Gauge(
 )
 
 workflow_adviser_latency = Histogram(
-    "thoth_workflow_adviser_latency", "Thoth Qeb-Hwt inner workflow duration in Argo Workflow.", [],
-    buckets=[120, 240, 360, 480, 600]
+    "thoth_workflow_adviser_latency",
+    "Thoth Qeb-Hwt inner workflow duration in Argo Workflow.",
+    [],
+    buckets=[120, 240, 360, 480, 600],
 )
 
 workflow_qebhwt_latency = Histogram(
-    "thoth_workflow_qebhwt_latency", "Thoth Qeb-Hwt outer workflow duration in Argo Workflow.", [],
-    buckets=[20, 40, 60, 80, 100]
+    "thoth_workflow_qebhwt_latency",
+    "Thoth Qeb-Hwt outer workflow duration in Argo Workflow.",
+    [],
+    buckets=[20, 40, 60, 80, 100],
+)
+
+workflow_adviser_quality = Gauge(
+    "thoth_workflow_adviser_quality", "Thoth Qeb-Hwt inner workflow status in Argo Workflow.", ["service", "status"]
+)
+
+workflow_qebhwt_quality = Gauge(
+    "thoth_workflow_qebhwt_quality", "Thoth Qeb-Hwt outer workflow status in Argo Workflow.", ["service", "status"]
 )
 
 # InspectionRun
@@ -144,8 +156,10 @@ graphdb_inspection_software_stacks_records = Gauge(
 )
 
 workflow_inspection_latency = Histogram(
-    "thoth_workflow_inspection_latency", "Thoth Inspection duration in Argo Workflow.", [],
-    buckets=[120, 240, 360, 480, 600]
+    "thoth_workflow_inspection_latency",
+    "Thoth Inspection duration in Argo Workflow.",
+    [],
+    buckets=[120, 240, 360, 480, 600],
 )
 
 # PackageAnalyzerRun
@@ -197,14 +211,10 @@ graphdb_total_number_unsolved_python_packages_per_solver = Gauge(
     ["solver_name"],
 )
 graphdb_total_number_unsolved_python_packages = Gauge(
-    "thoth_graphdb_total_number_unsolved_python_packages",
-    "Total number of unsolved Python packages.",
-    [],
+    "thoth_graphdb_total_number_unsolved_python_packages", "Total number of unsolved Python packages.", []
 )
 graphdb_unsolved_python_package_versions_change = Counter(
-    "thoth_graphdb_unsolved_python_package_versions_change",
-    "Unsolved Python package versions change.",
-    []
+    "thoth_graphdb_unsolved_python_package_versions_change", "Unsolved Python package versions change.", []
 )
 
 graphdb_is_schema_up2date = Gauge(
@@ -212,6 +222,5 @@ graphdb_is_schema_up2date = Gauge(
 )
 
 workflow_solver_latency = Histogram(
-    "thoth_workflow_solver_latency", "Thoth Solver duration in Argo Workflow.", [],
-    buckets=[120, 240, 360, 480, 600]
+    "thoth_workflow_solver_latency", "Thoth Solver duration in Argo Workflow.", [], buckets=[120, 240, 360, 480, 600]
 )

@@ -28,7 +28,7 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .common import get_workflow_duration
+from .common import get_workflow_duration, get_workflow_quality
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class AdviserMetrics(MetricsBase):
     @classmethod
     @register_metric_job
     def get_adviser_evaluation_time(cls) -> None:
-        """Get the time spent for each adviser worflow."""
+        """Get the time spent for each adviser workflow."""
         cls._ADVISER_CHECK_TIME = get_workflow_duration(
             service_name="adviser",
             prometheus=cls._PROM,
@@ -71,8 +71,19 @@ class AdviserMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_adviser_evaluation_time(cls) -> None:
-        """Get the time spent for each adviser worflow."""
+    def get_adviser_quality(cls) -> None:
+        """Get the quality for adviser workflows."""
+        get_workflow_quality(
+            service_name="adviser",
+            prometheus=cls._PROM,
+            instance=cls._INSTANCE,
+            namespace=cls._NAMESPACE,
+            metric_type=metrics.workflow_adviser_quality)
+
+    @classmethod
+    @register_metric_job
+    def get_qebhwt_evaluation_time(cls) -> None:
+        """Get the time spent for each thamos advise workflow."""
         cls._QEBHWT_CHECK_TIME = get_workflow_duration(
             service_name="qeb-hwt",
             prometheus=cls._PROM,
@@ -80,3 +91,14 @@ class AdviserMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             check_time=cls._QEBHWT_CHECK_TIME,
             metric_type=metrics.workflow_qebhwt_latency)
+
+    @classmethod
+    @register_metric_job
+    def get_qebhwt_quality(cls) -> None:
+        """Get the quality for thamos advise workflows."""
+        get_workflow_quality(
+            service_name="qeb-hwt",
+            prometheus=cls._PROM,
+            instance=cls._INSTANCE,
+            namespace=cls._NAMESPACE,
+            metric_type=metrics.workflow_qebhwt_quality)

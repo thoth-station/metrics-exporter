@@ -28,6 +28,8 @@ _LOGGER = logging.getLogger(__name__)
 
 _WORKFLOW_COMPLETION_TIME_METRIC_NAME = "argo_workflow_completion_time"
 _WORKFLOW_START_TIME_METRIC_NAME = "argo_workflow_start_time"
+_WORKFLOW_STATUS_METRIC_NAME = "argo_workflow_status_phase"
+_WORKFLOW_STATUSES = ["Succeeded", "Failed", "Error", "Running", "Skipped"]
 
 
 def get_workflow_duration(
@@ -39,7 +41,7 @@ def get_workflow_duration(
     metric_type: metrics,
 ) -> datetime:
     """Get the time spent for each workflow for a certain service."""
-    workflow_status_metric_name = "argo_workflow_status_phase"
+    workflow_status_metric_name = _WORKFLOW_STATUS_METRIC_NAME
     workflow_status_metrics = prometheus.get_current_metric_value(
         metric_name=workflow_status_metric_name,
         label_config={"instance": instance, "namespace": namespace, "phase": "Succeeded"},
@@ -51,33 +53,66 @@ def get_workflow_duration(
 
     new_time = datetime.utcnow()
     new_workflows_count = 0
-    for metric in workflow_status_metrics:
+    service_workflow_status_metrics = [
+        w for w in workflow_status_metrics if (service_name in w["metric"]["name"]) and (int(w["value"][1]) == 1)
+    ]
+
+    for metric in service_workflow_status_metrics:
 
         workflow_status = int(metric["value"][1])
         workflow_name = metric["metric"]["name"]
 
-        if service_name in workflow_name and workflow_status == 1:
-            workflow_completion_time = prometheus.get_current_metric_value(
-                metric_name=_WORKFLOW_COMPLETION_TIME_METRIC_NAME,
+        workflow_completion_time = prometheus.get_current_metric_value(
+            metric_name=_WORKFLOW_COMPLETION_TIME_METRIC_NAME,
+            label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
+        )
+
+        completion_time = datetime.fromtimestamp(int(workflow_completion_time[0]["value"][1]))
+
+        if check_time < completion_time < new_time:
+            new_workflows_count += 1
+            workflow_start_time = prometheus.get_current_metric_value(
+                metric_name=_WORKFLOW_START_TIME_METRIC_NAME,
                 label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
             )
 
-            completion_time = datetime.fromtimestamp(int(workflow_completion_time[0]["value"][1]))
+            start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
+            metric_type.observe((completion_time - start_time).total_seconds())
+            _LOGGER.debug(
+                "Workflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
+            )
 
-            if check_time < completion_time < new_time:
-                new_workflows_count += 1
-                workflow_start_time = prometheus.get_current_metric_value(
-                    metric_name=_WORKFLOW_START_TIME_METRIC_NAME,
-                    label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
-                )
-
-                start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
-                metric_type.observe((completion_time - start_time).total_seconds())
-                _LOGGER.debug(
-                    "Workflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
-                )
-
-            if not new_workflows_count:
-                _LOGGER.debug("No new %r workflow identified", service_name)
+        if not new_workflows_count:
+            _LOGGER.debug("No new %r workflow identified", service_name)
 
     return new_time
+
+
+def get_workflow_quality(
+    service_name: str, prometheus: PrometheusConnect, instance: str, namespace: str, metric_type: metrics
+) -> None:
+    """Get the status for workflows for a certain service."""
+    workflow_status_metric_name = _WORKFLOW_STATUS_METRIC_NAME
+
+    workflows_count = {}
+    tot_workflows = 0
+    for workflow_status in _WORKFLOW_STATUSES:
+        workflow_status_metrics = prometheus.get_current_metric_value(
+            metric_name=workflow_status_metric_name,
+            label_config={"instance": instance, "namespace": namespace, "phase": workflow_status},
+        )
+        service_workflows = [
+            w for w in workflow_status_metrics if (int(w["value"][1]) == 1) and (service_name in w["metric"]["name"])
+        ]
+        workflows_count[workflow_status] = len(service_workflows)
+        tot_workflows += len(service_workflows)
+
+    for w_status, counts in workflows_count.items():
+        if tot_workflows:
+            metric_type.labels(service_name, w_status).set(counts / tot_workflows)
+            _LOGGER.debug(
+                "Workflow metrics status/counts for service_name=%r, status=%r, counts=%r",
+                service_name,
+                w_status,
+                counts,
+            )
