@@ -47,7 +47,7 @@ class SolverMetrics(MetricsBase):
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _SOLVER_CHECK_TIME = datetime.now()
+    _SOLVER_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job

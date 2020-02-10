@@ -44,8 +44,8 @@ class AdviserMetrics(MetricsBase):
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _ADVISER_CHECK_TIME = datetime.now()
-    _QEBHWT_CHECK_TIME = datetime.now()
+    _ADVISER_CHECK_TIME = datetime.utcnow()
+    _QEBHWT_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job

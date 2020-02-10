@@ -45,7 +45,7 @@ class InspectionMetrics(MetricsBase):
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _INSPECTION_CHECK_TIME = datetime.now()
+    _INSPECTION_CHECK_TIME = datetime.utcnow()
 
     @staticmethod
     @register_metric_job
