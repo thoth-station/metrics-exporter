@@ -18,9 +18,13 @@
 """Knowledge graph metrics."""
 
 import logging
+import os
+
+from datetime import datetime, timedelta
 
 from thoth.storages.exceptions import DatabaseNotInitialized
 import thoth.metrics_exporter.metrics as metrics
+from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
@@ -31,7 +35,16 @@ _LOGGER = logging.getLogger(__name__)
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
-    _CHECK_TIME = datetime.now()
+    _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
+
+    _URL = os.environ["PROMETHEUS_HOST_URL"]
+    _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
+    _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
+    _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
+    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
+
+    _SCRAPE_COUNT = 0
+    _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
 
     @classmethod
     @register_metric_job
@@ -84,14 +97,43 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def get_bloat_data(cls) -> None:
         """Get bloat data from database."""
+        if cls._SCRAPE_COUNT != 0:
+            metric_name = "thoth_graphdb_last_evaluation_bloat_data"
+            metric = cls._PROM.get_current_metric_value(
+                metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
+            )
+
+            last_prometheus_scrape = datetime.fromtimestamp(int(metric[0]["value"][0]))
+            last_evaluation = datetime.fromtimestamp(int(metric[0]["value"][1]))
+
+            if not (last_prometheus_scrape - last_evaluation).total_seconds() > timedelta(
+                days=cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS
+            ).total_seconds():
+                return
+
         bloat_data = cls.graph().get_bloat_data()
 
-        for table_data in bloat_data:
-            metrics.graphdb_pct_bloat_data_table.labels(table_data["name"]).set(table_data['pct_bloat'])
-            _LOGGER.debug("graphdb_total_number_unsolved_python_packages_per_solver(%r)=%r", solver_name, count)
+        if bloat_data:
+            for table_data in bloat_data:
+                metrics.graphdb_pct_bloat_data_table.labels(table_data["tablename"]).set(table_data["pct_bloat"])
+                _LOGGER.debug(
+                    "thoth_graphdb_pct_bloat_data_table(%r)=%r", table_data["tablename"], table_data["pct_bloat"]
+                )
 
-            metrics.graphdb_mb_bloat_data_table.labels(table_data["name"]).set(table_data['mb_bloat'])
-            _LOGGER.debug("graphdb_total_number_unsolved_python_packages_per_solver(%r)=%r", solver_name, count)
+                metrics.graphdb_mb_bloat_data_table.labels(table_data["tablename"]).set(table_data["mb_bloat"])
+                _LOGGER.debug("thoth_graphdb_mb_bloat_data_table(%r)=%r", table_data["tablename"], 0)
+        else:
+            metrics.graphdb_pct_bloat_data_table.labels("No table pct").set(0)
+            _LOGGER.debug("thoth_graphdb_pct_bloat_data_table is empty")
+
+            metrics.graphdb_mb_bloat_data_table.labels("No table mb").set(0)
+            _LOGGER.debug("thoth_graphdb_mb_bloat_data_table is empty")
+
+        metrics.graphdb_last_evaluation_bloat_data.set(datetime.utcnow().timestamp())
+        _LOGGER.debug("thoth_graphdb_last_evaluation_bloat_data=%r", datetime.utcnow().timestamp())
+
+        cls._SCRAPE_COUNT += 1
+        _LOGGER.info("Next bloat data evaluation in %r days", cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS)
 
     @classmethod
     @register_metric_job
