@@ -104,7 +104,7 @@ class OpenshiftMetrics(MetricsBase):
 
         for namespace, job_labels in namespace_jobs_map.items():
             for label_selector in job_labels + ["operator=graph-sync", "operator=workload"]:
-                _LOGGER.info(
+                _LOGGER.debug(
                     "Evaluating ConfigMaps(label_selector=%r) metrics for namespace: %r", label_selector, namespace
                 )
                 response = cls._OPENSHIFT.get_configmaps(namespace=namespace, label_selector=label_selector)
@@ -123,7 +123,7 @@ class OpenshiftMetrics(MetricsBase):
         """Get the total number of image streams in the namespace based on labels."""
         label_selector = "component=amun-inspection-imagestream"
         namespace = os.environ["THOTH_AMUN_INSPECTION_NAMESPACE"]
-        _LOGGER.info(
+        _LOGGER.debug(
             "Evaluating ImageStreams(label_selector=%r) metrics for namespace: %r", label_selector, namespace
         )
         response = cls._OPENSHIFT.get_image_streams(namespace=namespace, label_selector=label_selector)
