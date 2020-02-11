@@ -29,7 +29,7 @@ from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .common import get_workflow_duration
+from .common import get_workflow_duration, get_workflow_quality
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,3 +91,14 @@ class InspectionMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             check_time=cls._INSPECTION_CHECK_TIME,
             metric_type=metrics.workflow_inspection_latency)
+
+    @classmethod
+    @register_metric_job
+    def get_inspection_quality(cls) -> None:
+        """Get the quality for inspection workflows."""
+        get_workflow_quality(
+            service_name="inspection",
+            prometheus=cls._PROM,
+            instance=cls._INSTANCE,
+            namespace=cls._NAMESPACE,
+            metric_type=metrics.workflow_inspection_quality)

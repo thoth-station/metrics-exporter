@@ -162,6 +162,10 @@ workflow_inspection_latency = Histogram(
     buckets=[120, 240, 360, 480, 600],
 )
 
+workflow_inspection_quality = Gauge(
+    "thoth_workflow_inspection_quality", "Thoth inspection workflows status in Argo Workflow.", ["service", "status"]
+)
+
 # PackageAnalyzerRun
 graphdb_total_number_analyzed_python_packages = Gauge(
     "thoth_graphdb_total_number_analyzed_python_packages", "Total number of analyzed Python packages.", []
