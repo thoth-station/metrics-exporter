@@ -86,7 +86,7 @@ class OpenshiftMetrics(MetricsBase):
 
         for namespace, job_labels in namespace_jobs_map.items():
             for label_selector in job_labels:
-                _LOGGER.info("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
+                _LOGGER.debug("Evaluating jobs(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
                 jobs_status_evaluated = cls._OPENSHIFT.get_job_status_count(
                     label_selector=label_selector, namespace=namespace
                 )
