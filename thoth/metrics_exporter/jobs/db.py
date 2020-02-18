@@ -103,8 +103,8 @@ class DBMetrics(MetricsBase):
                 metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
             )
 
-            last_prometheus_scrape = datetime.fromtimestamp(int(metric[0]["value"][0]))
-            last_evaluation = datetime.fromtimestamp(int(metric[0]["value"][1]))
+            last_prometheus_scrape = datetime.fromtimestamp(float(metric[0]["value"][0]))
+            last_evaluation = datetime.fromtimestamp(float(metric[0]["value"][1]))
 
             if not (last_prometheus_scrape - last_evaluation).total_seconds() > timedelta(
                 days=cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS
