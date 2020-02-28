@@ -43,7 +43,7 @@ class SolverMetrics(MetricsBase):
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
     _INSTANCE = os.environ["WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE"]
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
-    _NAMESPACE = os.environ["THOTH_FRONTEND_NAMESPACE"]
+    _NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
