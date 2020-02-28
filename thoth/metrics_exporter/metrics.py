@@ -169,7 +169,7 @@ workflow_inspection_latency = Histogram(
     "thoth_workflow_inspection_latency",
     "Thoth Inspection duration in Argo Workflow.",
     [],
-    buckets=[120, 240, 360, 480, 600],
+    buckets=[2100, 2700, 3600, 4500, 5100],
 )
 
 workflow_inspection_quality = Gauge(
@@ -237,4 +237,8 @@ graphdb_is_schema_up2date = Gauge(
 
 workflow_solver_latency = Histogram(
     "thoth_workflow_solver_latency", "Thoth Solver duration in Argo Workflow.", [], buckets=[120, 240, 360, 480, 600]
+)
+
+workflow_solver_quality = Gauge(
+    "thoth_workflow_solver_quality", "Thoth solver workflows status in Argo Workflow.", ["service", "status"]
 )

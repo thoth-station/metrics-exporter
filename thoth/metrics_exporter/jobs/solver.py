@@ -28,7 +28,7 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .common import get_workflow_duration
+from .common import get_workflow_duration, get_workflow_quality
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class SolverMetrics(MetricsBase):
     _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    _WORKFLOW_INSTANCE = os.environ["WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE"]
+    _INSTANCE = os.environ["WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE"]
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
     _NAMESPACE = os.environ["THOTH_FRONTEND_NAMESPACE"]
 
@@ -78,16 +78,18 @@ class SolverMetrics(MetricsBase):
 
         metric_name = "thoth_graphdb_total_number_unsolved_python_packages"
         metric = cls._PROM.get_current_metric_value(
-            metric_name=metric_name,
-            label_config={
-                'instance': cls._METRICS_EXPORTER_INSTANCE}
-                )
+            metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
+        )
         if metric:
-            python_package_versions_metric = float(metric[0]['value'][1])
+            python_package_versions_metric = float(metric[0]["value"][1])
 
-            unsolved_python_package_versions_change = abs(
+            unsolved_python_package_versions_change = (
                 python_package_versions_metric - count_unsolved_python_package_versions
-                )
+            )
+
+            if unsolved_python_package_versions_change < 0:
+                # Unsolved packages are increasing < 0 -> 0
+                unsolved_python_package_versions_change = 0
 
             metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
             _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
@@ -151,7 +153,7 @@ class SolverMetrics(MetricsBase):
             _LOGGER.debug(
                 "graphdb_total_python_packages_solved_with_no_error(%r)=%r",
                 solver_name,
-                python_packages_solved_with_no_error
+                python_packages_solved_with_no_error,
             )
 
             metrics.graphdb_total_python_packages_with_solver_error.labels(solver_name).set(
@@ -165,9 +167,8 @@ class SolverMetrics(MetricsBase):
             )
 
             _LOGGER.debug(
-                "graphdb_total_python_packages_with_solver_error(%r)=%r",
-                solver_name,
-                python_packages_solver_error)
+                "graphdb_total_python_packages_with_solver_error(%r)=%r", solver_name, python_packages_solver_error
+            )
 
             _LOGGER.debug(
                 "graphdb_total_python_packages_with_solver_error_unparseable(%r)=%r",
@@ -188,7 +189,20 @@ class SolverMetrics(MetricsBase):
         cls._SOLVER_CHECK_TIME = get_workflow_duration(
             service_name="solver",
             prometheus=cls._PROM,
-            instance=cls._WORKFLOW_INSTANCE,
+            instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
             check_time=cls._SOLVER_CHECK_TIME,
-            metric_type=metrics.workflow_solver_latency)
+            metric_type=metrics.workflow_solver_latency,
+        )
+
+    @classmethod
+    @register_metric_job
+    def get_solver_quality(cls) -> None:
+        """Get the quality for solver workflows."""
+        get_workflow_quality(
+            service_name="solver",
+            prometheus=cls._PROM,
+            instance=cls._INSTANCE,
+            namespace=cls._NAMESPACE,
+            metric_type=metrics.workflow_solver_quality,
+        )

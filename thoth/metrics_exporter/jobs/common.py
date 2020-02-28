@@ -67,20 +67,21 @@ def get_workflow_duration(
             label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
         )
 
-        completion_time = datetime.fromtimestamp(int(workflow_completion_time[0]["value"][1]))
+        if workflow_completion_time:
+            completion_time = datetime.fromtimestamp(int(workflow_completion_time[0]["value"][1]))
 
-        if check_time < completion_time < new_time:
-            new_workflows_count += 1
-            workflow_start_time = prometheus.get_current_metric_value(
-                metric_name=_WORKFLOW_START_TIME_METRIC_NAME,
-                label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
-            )
+            if check_time < completion_time < new_time:
+                new_workflows_count += 1
+                workflow_start_time = prometheus.get_current_metric_value(
+                    metric_name=_WORKFLOW_START_TIME_METRIC_NAME,
+                    label_config={"instance": instance, "namespace": namespace, "name": workflow_name},
+                )
 
-            start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
-            metric_type.observe((completion_time - start_time).total_seconds())
-            _LOGGER.debug(
-                "Workflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
-            )
+                start_time = datetime.fromtimestamp(int(workflow_start_time[0]["value"][1]))
+                metric_type.observe((completion_time - start_time).total_seconds())
+                _LOGGER.debug(
+                    "Workflow duration for %r is %r s", workflow_name, (completion_time - start_time).total_seconds()
+                )
 
         if not new_workflows_count:
             _LOGGER.debug("No new %r workflow identified", service_name)
