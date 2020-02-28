@@ -29,7 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 _WORKFLOW_COMPLETION_TIME_METRIC_NAME = "argo_workflow_completion_time"
 _WORKFLOW_START_TIME_METRIC_NAME = "argo_workflow_start_time"
 _WORKFLOW_STATUS_METRIC_NAME = "argo_workflow_status_phase"
-_WORKFLOW_STATUSES = ["Succeeded", "Failed", "Error", "Running", "Skipped"]
+_WORKFLOW_STATUSES = ["Succeeded", "Failed", "Error", "Running", "Skipped", "Pending"]
 
 
 def get_workflow_duration(
