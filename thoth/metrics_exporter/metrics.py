@@ -138,7 +138,7 @@ workflow_adviser_latency = Histogram(
     "thoth_workflow_adviser_latency",
     "Thoth Qeb-Hwt inner workflow duration in Argo Workflow.",
     [],
-    buckets=[10, 20, 40, 60, 80],
+    buckets=[60, 120, 240, 480, 600, 720, 840],
 )
 
 workflow_qebhwt_latency = Histogram(
