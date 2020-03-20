@@ -766,8 +766,12 @@
             "version": "==0.9.1"
         },
         "thoth-storages": {
+            "hashes": [
+                "sha256:544311be2a25d3aae24e99e6e822c3080cbaae521faf2cc9fce7e7be5af9fb17",
+                "sha256:94557adfef6079999ca2039f76145918a0ab9def3fa774be894e3b5716034ae4"
+            ],
             "index": "pypi",
-            "version": "==0.22.4"
+            "version": "==0.22.5"
         },
         "toml": {
             "hashes": [
