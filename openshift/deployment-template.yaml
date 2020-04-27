@@ -92,7 +92,7 @@ objects:
                 - name: "THOTH_METRICS_EXPORTER_MAX_WORKERS"
                   value: "16"
                 - name: "THOTH_METRICS_EXPORTER_WEAK_READINESS"
-                  # If set to 0, its not necessary to gather all metrics to become service ready.
+                  # If set to 1, its not necessary to gather all metrics to become service ready.
                   value: "0"
                 - name: "THOTH_FRONTEND_NAMESPACE"
                   valueFrom:
