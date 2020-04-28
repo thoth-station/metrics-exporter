@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# thoth-metrics_exporter
+# thoth-metrics-exporter
 # Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
