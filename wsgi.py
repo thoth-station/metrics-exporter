@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# thoth-metrics
+# thoth-metrics_exporter
 # Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
@@ -33,7 +33,7 @@ from flask import make_response
 from flask import redirect
 from prometheus_client import generate_latest
 from thoth.common import init_logging
-from thoth.metrics_exporter import __version__
+from thoth.metrics_exporter import __version__, __service_version__
 from thoth.metrics_exporter.jobs import REGISTERED_JOBS
 import thoth.metrics_exporter.jobs as jobs
 
@@ -42,7 +42,7 @@ init_logging()
 
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_LOGGER.info(f"Thoth Metrics Exporter v%s", __version__)
+_LOGGER.info(f"Thoth Metrics Exporter v%s", __service_version__)
 
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
 _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")
@@ -74,9 +74,7 @@ def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int]
         sleep_time = _UPDATE_INTERVAL_SECONDS - (time.monotonic() - last_schedule)
         if sleep_time > 0:
             # Let's be nice to database, we don't need to update metrics each second...
-            _LOGGER.debug(
-                "Sleeping for %g to prevent from overloading", sleep_time
-            )
+            _LOGGER.debug("Sleeping for %g to prevent from overloading", sleep_time)
             time.sleep(sleep_time)
         else:
             missed_times = int(-sleep_time / _UPDATE_INTERVAL_SECONDS)
@@ -123,7 +121,7 @@ for class_name, method_name in REGISTERED_JOBS:
 @application.after_request
 def extend_response_headers(response):
     """Just add my signature."""
-    response.headers["X-Thoth-Metrics-Exporter-Version"] = f"v{__version__}"
+    response.headers["X-Thoth-Metrics-Exporter-Version"] = f"v{__service_version__}"
     return response
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# thoth-metrics
+# thoth-metrics_exporter
 # Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 """All metrics exposed by metrics exporter."""
 
 
-from thoth.metrics_exporter import __version__
+from thoth.metrics_exporter import __version__, __service_version__
 from prometheus_client import Gauge, Counter, Histogram
 
 
@@ -28,7 +29,7 @@ metrics_exporter_info = Gauge(
     "Thoth Metrics Exporter information",  # what the human reads
     ["version"],  # what labels I use
 )
-metrics_exporter_info.labels(__version__).inc()
+metrics_exporter_info.labels(__service_version__).inc()
 
 # SERVICE METRICS
 
