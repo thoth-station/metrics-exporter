@@ -18,7 +18,9 @@
 """A collection of methods that can be reused in different metric classes."""
 
 import logging
+import os
 
+from typing import Dict, Any, List
 from datetime import datetime
 from prometheus_api_client import PrometheusConnect
 import thoth.metrics_exporter.metrics as metrics
@@ -117,3 +119,18 @@ def get_workflow_quality(
                 w_status,
                 counts,
             )
+
+
+def get_namespace_object_labels_map(namespace_objects: Dict[str, Any]) -> Dict[str, List[str]]:
+    """Retrieve namespace/objects map that shall be monitored by metrics-exporter."""
+    namespace_objects_map = {}
+    for environment_variable, objects_labels in namespace_objects.items():
+        if os.getenv(environment_variable):
+            if os.getenv(environment_variable) not in namespace_objects_map.keys():
+                namespace_objects_map[os.environ[environment_variable]] = objects_labels
+            else:
+                namespace_objects_map[os.environ[environment_variable]] += objects_labels
+        else:
+            _LOGGER.warning("Namespace variable not provided for %r", environment_variable)
+
+    return namespace_objects_map

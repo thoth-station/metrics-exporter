@@ -21,14 +21,16 @@ import logging
 import os
 from datetime import datetime
 
+import thoth.metrics_exporter.metrics as metrics
+
 from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
-import thoth.metrics_exporter.metrics as metrics
+
 from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .common import get_workflow_duration, get_workflow_quality
+from .utils import get_workflow_duration, get_workflow_quality
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -26,6 +26,7 @@ import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
+from .utils import get_namespace_object_labels_map
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,25 +65,10 @@ class OpenshiftMetrics(MetricsBase):
     }
 
     @classmethod
-    def get_namespace_job_labels_map(cls) -> Dict[str, List[str]]:
-        """Retrieve namespace/jobs map that shall be monitored by metrics-exporter."""
-        namespace_jobs_map = {}
-        for environment_variable, job_labels in cls._NAMESPACES_VARIABLES_JOBS_MAP.items():
-            if os.getenv(environment_variable):
-                if os.getenv(environment_variable) not in namespace_jobs_map.keys():
-                    namespace_jobs_map[os.environ[environment_variable]] = job_labels
-                else:
-                    namespace_jobs_map[os.environ[environment_variable]] += job_labels
-            else:
-                _LOGGER.warning("Namespace variable not provided for %r", environment_variable)
-
-        return namespace_jobs_map
-
-    @classmethod
     @register_metric_job
     def get_thoth_jobs_per_namespace_per_label(cls) -> None:
         """Get the total number of Jobs per label per namespace with corresponding status."""
-        namespace_jobs_map = cls.get_namespace_job_labels_map()
+        namespace_jobs_map = get_namespace_object_labels_map(cls._NAMESPACES_VARIABLES_JOBS_MAP)
 
         for namespace, job_labels in namespace_jobs_map.items():
             for label_selector in job_labels:
@@ -100,7 +86,7 @@ class OpenshiftMetrics(MetricsBase):
     @register_metric_job
     def get_configmaps_per_namespace_per_label(cls) -> None:
         """Get the total number of configmaps in the namespace based on labels."""
-        namespace_jobs_map = cls.get_namespace_job_labels_map()
+        namespace_jobs_map = get_namespace_object_labels_map(cls._NAMESPACES_VARIABLES_JOBS_MAP)
 
         for namespace, job_labels in namespace_jobs_map.items():
             for label_selector in job_labels + ["operator=graph-sync", "operator=workload"]:

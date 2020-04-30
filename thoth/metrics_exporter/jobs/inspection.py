@@ -29,7 +29,7 @@ from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .common import get_workflow_duration, get_workflow_quality
+from .utils import get_workflow_duration, get_workflow_quality
 
 _LOGGER = logging.getLogger(__name__)
 
