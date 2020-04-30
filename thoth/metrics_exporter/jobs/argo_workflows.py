@@ -18,7 +18,7 @@
 """Metrics related to Argo workflows resources and objects."""
 
 import logging
-from typing import Dict, List
+from typing import Dict, List, Any
 import os
 
 from thoth.common import OpenShift, WorkflowManager
@@ -37,18 +37,11 @@ class ArgoWorkflowsMetrics(MetricsBase):
     _OPENSHIFT = OpenShift()
     _WORKFLOW_MANAGER = WorkflowManager(openshift=_OPENSHIFT)
 
-    _MIDDLETIER_WORKFLOWS_LABELS = [
-        "component=solver",
-    ]
+    _MIDDLETIER_WORKFLOWS_LABELS = ["component=solver"]
 
-    _AMUN_INSPECTION_WORKFLOWS_LABELS = [
-        "component=amun-inspection-job"
-    ]
+    _AMUN_INSPECTION_WORKFLOWS_LABELS = ["component=amun-inspection-job"]
 
-    _BACKEND_WORKFLOWS_LABELS = [
-        "component=adviser",
-        "component=qeb-hwt",
-    ]
+    _BACKEND_WORKFLOWS_LABELS = ["component=adviser", "component=qeb-hwt"]
 
     _NAMESPACES_VARIABLES_WORKFLOWS_MAP = {
         "THOTH_MIDDLETIER_NAMESPACE": _MIDDLETIER_WORKFLOWS_LABELS,
@@ -64,21 +57,48 @@ class ArgoWorkflowsMetrics(MetricsBase):
 
         for namespace, workflows_labels in namespace_workflows_map.items():
             for label_selector in workflows_labels:
-                _LOGGER.info("Evaluating workflows(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
+                _LOGGER.info(
+                    "Evaluating workflows(label_selector=%r) metrics for namespace: %r", label_selector, namespace
+                )
                 workflows_and_tasks_status = cls._WORKFLOW_MANAGER.get_workflows_and_tasks_status(
                     label_selector=label_selector, namespace=namespace
                 )
+                cls._analyze_workflows(
+                    label_selector=label_selector, namespace=namespace, workflows=workflows_and_tasks_status
+                )
 
-                for workflows_info in workflows_and_tasks_status.values():
-                    _LOGGER.info("workflow_type=%r", workflows_info['component'])
+    @classmethod
+    def _analyze_workflows(cls, label_selector: str, namespace: str, workflows: Dict[str, Any]):
+        """Process workflows tasks."""
+        for workflows_info in workflows.values():
+            _LOGGER.info("workflow_type=%r", workflows_info["component"])
 
-                    for workflow_status, workflow_status_count in workflows_info['status'].items():
-                        metrics.workflows_status.labels(label_selector, workflow_status, namespace).set(workflow_status_count)
-                        _LOGGER.info("workflow_status=(%r, %r, %r)=%r", label_selector, workflow_status, namespace, workflow_status_count)
+            for workflow_status, workflow_status_count in workflows_info["status"].items():
+                metrics.workflows_status.labels(label_selector, workflow_status, namespace).set(workflow_status_count)
+                _LOGGER.info(
+                    "workflow_status=(%r, %r, %r)=%r", label_selector, workflow_status, namespace, workflow_status_count
+                )
 
-                    for task, task_info in workflows_info['tasks'].items():
-                        _LOGGER.info("workflow_type=%r, task=%r", workflows_info['component'], task)
+            cls._analyze_workflows_tasks(
+                label_selector=label_selector,
+                namespace=namespace,
+                component=workflows_info["component"],
+                tasks=workflows_info["tasks"],
+            )
 
-                        for task_status, task_status_count in workflows_info['status'].items():
-                            metrics.workflow_task_status.labels(label_selector, task, task_status, namespace).set(task_status_count)
-                            _LOGGER.info("workflow_task_status=(%r, %r, %r, %r)=%r", label_selector, task, task_status, namespace, workflow_status_count)
+    @staticmethod
+    def _analyze_workflows_tasks(label_selector: str, namespace: str, component: str, tasks: Dict[str, Any]):
+        """Process workflows tasks."""
+        for task, task_info in tasks.items():
+            _LOGGER.info("workflow_type=%r, task=%r", component, task)
+
+            for task_status, task_status_count in task_info.items():
+                metrics.workflow_task_status.labels(label_selector, task, task_status, namespace).set(task_status_count)
+                _LOGGER.info(
+                    "workflow_task_status=(%r, %r, %r, %r)=%r",
+                    label_selector,
+                    task,
+                    task_status,
+                    namespace,
+                    task_status_count,
+                )

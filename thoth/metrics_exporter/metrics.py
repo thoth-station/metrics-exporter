@@ -54,12 +54,16 @@ image_streams_maps_number = Gauge(
 
 # Workflows
 workflows_status = Gauge(
-    "thoth_workflows_status", "Argo Workflows status overview per label.", ["label_selector", "workflow_status", "namespace"]
+    "thoth_workflows_status",
+    "Argo Workflows status overview per label.",
+    ["label_selector", "workflow_status", "namespace"],
 )
 
 # Workflows Tasks
 workflow_task_status = Gauge(
-    "thoth_workflow_task_status", "Argo Workflows Tasks status overview per label.", ["label_selector", "task", "task_status", "namespace"]
+    "thoth_workflow_task_status",
+    "Argo Workflows Tasks status overview per label.",
+    ["label_selector", "task", "task_status", "namespace"],
 )
 
 # Ceph metrics
