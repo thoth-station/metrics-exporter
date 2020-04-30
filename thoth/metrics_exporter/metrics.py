@@ -40,12 +40,30 @@ jobs_status = Gauge(
     "thoth_jobs_status", "Jobs status overview per label.", ["label_selector", "job_status", "namespace"]
 )
 
+# ConfigMaps
 config_maps_number = Gauge(
     "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
 )
 
+# ImageStreams
 image_streams_maps_number = Gauge(
     "thoth_image_streams_maps_number", "Thoth ImageStreams per namespace per label.", ["namespace", "label"]
+)
+
+# Argo metrics
+
+# Workflows
+workflows_status = Gauge(
+    "thoth_workflows_status",
+    "Argo Workflows status overview per label.",
+    ["label_selector", "workflow_status", "namespace"],
+)
+
+# Workflows Tasks
+workflow_task_status = Gauge(
+    "thoth_workflow_task_status",
+    "Argo Workflows Tasks status overview per label.",
+    ["label_selector", "task", "task_status", "namespace"],
 )
 
 # Ceph metrics

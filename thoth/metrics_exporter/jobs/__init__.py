@@ -19,6 +19,7 @@
 
 
 from .adviser import AdviserMetrics
+from .argo_workflows import ArgoWorkflowsMetrics
 from .ceph import CephMetrics
 from .db import DBMetrics
 from .inspection import InspectionMetrics
@@ -33,6 +34,7 @@ from .base import REGISTERED_JOBS
 
 __all__ = [
     "AdviserMetrics",
+    'ArgoWorkflowsMetrics',
     "CephMetrics",
     "DBMetrics",
     "InspectionMetrics",
