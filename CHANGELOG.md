@@ -370,3 +370,10 @@
 * added gunicorn to pipenv
 * renamed app to application
 * relocked restructured
+
+## Release 0.8.2 (2020-05-01T09:33:34)
+* all the github standard templates
+* Add class to Registered Job
+* make Code Climate a little bit more happy
+* Add argo workflows class of metrics
+* :pushpin: Automatic update of dependency thoth-common from 0.13.1 to 0.13.2
