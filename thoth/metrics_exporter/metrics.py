@@ -162,10 +162,6 @@ workflow_qebhwt_quality = Gauge(
 )
 
 # InspectionRun
-inspection_results_ceph = Gauge(
-    "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
-)
-
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
 )

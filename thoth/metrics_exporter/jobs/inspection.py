@@ -47,29 +47,6 @@ class InspectionMetrics(MetricsBase):
 
     _INSPECTION_CHECK_TIME = datetime.utcnow()
 
-    @staticmethod
-    @register_metric_job
-    def get_inspection_results_per_identifier() -> None:
-        """Get the total number of inspections in Ceph per identifier."""
-        store = InspectionResultsStore()
-        if not store.is_connected():
-            store.connect()
-
-        specific_list_ids = {"without_identifier": 0}
-        for ids in store.get_document_listing():
-            inspection_filter = "_".join(ids.split("-")[1 : (len(ids.split("-")) - 1)])
-            if inspection_filter:
-                if inspection_filter not in specific_list_ids.keys():
-                    specific_list_ids[inspection_filter] = 1
-                else:
-                    specific_list_ids[inspection_filter] += 1
-            else:
-                specific_list_ids["without_identifier"] += 1
-
-        for identifier, identifier_list in specific_list_ids.items():
-            metrics.inspection_results_ceph.labels(identifier).set(identifier_list)
-            _LOGGER.debug(f"inspection_results_ceph for {identifier} ={identifier_list}")
-
     @classmethod
     @register_metric_job
     def get_inspection_python_software_stack_count(cls) -> None:
