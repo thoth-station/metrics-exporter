@@ -19,7 +19,6 @@
 
 
 from .adviser import AdviserMetrics
-from .argo_workflows import ArgoWorkflowsMetrics
 from .ceph import CephMetrics
 from .db import DBMetrics
 from .inspection import InspectionMetrics
@@ -27,6 +26,7 @@ from .openshift import OpenshiftMetrics
 from .package_analyzer import PackageAnalyzerMetrics
 from .pi import PIMetrics
 from .python import PythonPackagesMetrics
+from .qeb_hwt import QebHwtMetrics
 from .software_environment import SoftwareEnvironmentMetrics
 from .solver import SolverMetrics
 from .user import UserInformationMetrics
@@ -34,7 +34,6 @@ from .base import REGISTERED_JOBS
 
 __all__ = [
     "AdviserMetrics",
-    'ArgoWorkflowsMetrics',
     "CephMetrics",
     "DBMetrics",
     "InspectionMetrics",
@@ -42,6 +41,7 @@ __all__ = [
     "PackageAnalyzerMetrics",
     "PIMetrics",
     "PythonPackagesMetrics",
+    "QebHwtMetrics",
     "SoftwareEnvironmentMetrics",
     "SolverMetrics",
     "UserInformationMetrics",

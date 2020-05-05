@@ -15,16 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Adviser metrics."""
+"""Qeb-Hwt metrics."""
 
 import logging
 import os
 from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
-
-from thoth.storages import GraphDatabase
-from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from prometheus_api_client import PrometheusConnect
 
@@ -35,46 +32,35 @@ from .argo_workflows import ArgoWorkflowsMetrics
 _LOGGER = logging.getLogger(__name__)
 
 
-class AdviserMetrics(MetricsBase):
-    """Class to evaluate Metrics for Adviser."""
+class QebHwtMetrics(MetricsBase):
+    """Class to evaluate Metrics for Qeb-Hwt Outer Workflow."""
 
     _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
     _INSTANCE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
-
     _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _ADVISER_CHECK_TIME = datetime.utcnow()
-
-    @classmethod
-    @register_metric_job
-    def get_advised_python_software_stack_count(cls) -> None:
-        """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
-        thoth_graphdb_total_advised_software_stacks = cls.graph().get_python_software_stack_count_all(
-            software_stack_type=SoftwareStackTypeEnum.ADVISED.value
-        )
-        metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
-        _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
+    _QEBHWT_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=adviser", namespace=cls._NAMESPACE
+            label_selector="component=qeb-hwt", namespace=cls._NAMESPACE
         )
 
     @classmethod
     @register_metric_job
-    def get_adviser_quality(cls) -> None:
-        """Get the quality for adviser workflows."""
+    def get_qebhwt_quality(cls) -> None:
+        """Get the quality for thamos advise workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="adviser",
+            service_name="qeb-hwt",
             prometheus=cls._PROM,
             instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
-            metric_type=metrics.workflow_adviser_quality,
+            metric_type=metrics.workflow_qebhwt_quality,
         )

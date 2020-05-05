@@ -29,7 +29,7 @@ from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .utils import get_workflow_duration, get_workflow_quality
+from .argo_workflows import ArgoWorkflowsMetrics
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class InspectionMetrics(MetricsBase):
 
         specific_list_ids = {"without_identifier": 0}
         for ids in store.get_document_listing():
-            inspection_filter = "_".join(ids.split("-")[1:(len(ids.split("-")) - 1)])
+            inspection_filter = "_".join(ids.split("-")[1 : (len(ids.split("-")) - 1)])
             if inspection_filter:
                 if inspection_filter not in specific_list_ids.keys():
                     specific_list_ids[inspection_filter] = 1
@@ -82,23 +82,20 @@ class InspectionMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_inspection_evaluation_time(cls) -> None:
-        """Get the time spent for each inspection worflow."""
-        cls._INSPECTION_CHECK_TIME = get_workflow_duration(
-            service_name="inspection",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
-            check_time=cls._INSPECTION_CHECK_TIME,
-            metric_type=metrics.workflow_inspection_latency)
+    def get_workflow_status(cls) -> None:
+        """Get the workflow status for each workflow."""
+        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
+            label_selector="component=amun-inspection-job", namespace=cls._NAMESPACE
+        )
 
     @classmethod
     @register_metric_job
     def get_inspection_quality(cls) -> None:
         """Get the quality for inspection workflows."""
-        get_workflow_quality(
+        ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="inspection",
             prometheus=cls._PROM,
             instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
-            metric_type=metrics.workflow_inspection_quality)
+            metric_type=metrics.workflow_inspection_quality,
+        )
