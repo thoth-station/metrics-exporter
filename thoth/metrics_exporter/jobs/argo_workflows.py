@@ -71,8 +71,9 @@ class ArgoWorkflowsMetrics:
                 w_status,
                 counts,
             )
+
         if tot_workflows:
-            metric_type.labels(service_name, "total_workflows").set(counts)
+            metric_type.labels(service_name, "total_workflows").set(tot_workflows)
             _LOGGER.debug(
                 "Workflow metrics status/counts for service_name=%r, status=%r, counts=%r",
                 service_name,
