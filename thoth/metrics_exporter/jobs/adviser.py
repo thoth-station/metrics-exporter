@@ -30,7 +30,7 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .utils import get_workflow_duration, get_workflow_quality
+from .argo_workflows import ArgoWorkflowsMetrics
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,12 +42,12 @@ class AdviserMetrics(MetricsBase):
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
     _INSTANCE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
+
     _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
     _ADVISER_CHECK_TIME = datetime.utcnow()
-    _QEBHWT_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job
@@ -61,46 +61,20 @@ class AdviserMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_adviser_evaluation_time(cls) -> None:
-        """Get the time spent for each adviser workflow."""
-        cls._ADVISER_CHECK_TIME = get_workflow_duration(
-            service_name="adviser",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
-            check_time=cls._ADVISER_CHECK_TIME,
-            metric_type=metrics.workflow_adviser_latency)
+    def get_workflow_status(cls) -> None:
+        """Get the workflow status for each workflow."""
+        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
+            label_selector="component=adviser", namespace=cls._NAMESPACE
+        )
 
     @classmethod
     @register_metric_job
     def get_adviser_quality(cls) -> None:
         """Get the quality for adviser workflows."""
-        get_workflow_quality(
+        ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="adviser",
             prometheus=cls._PROM,
             instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
-            metric_type=metrics.workflow_adviser_quality)
-
-    @classmethod
-    @register_metric_job
-    def get_qebhwt_evaluation_time(cls) -> None:
-        """Get the time spent for each thamos advise workflow."""
-        cls._QEBHWT_CHECK_TIME = get_workflow_duration(
-            service_name="qeb-hwt",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
-            check_time=cls._QEBHWT_CHECK_TIME,
-            metric_type=metrics.workflow_qebhwt_latency)
-
-    @classmethod
-    @register_metric_job
-    def get_qebhwt_quality(cls) -> None:
-        """Get the quality for thamos advise workflows."""
-        get_workflow_quality(
-            service_name="qeb-hwt",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
-            metric_type=metrics.workflow_qebhwt_quality)
+            metric_type=metrics.workflow_adviser_quality,
+        )

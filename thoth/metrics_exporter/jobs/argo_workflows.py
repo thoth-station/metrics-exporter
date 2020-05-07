@@ -22,6 +22,8 @@ from typing import Dict, List, Any
 import os
 
 from thoth.common import OpenShift, WorkflowManager
+from datetime import datetime
+from prometheus_api_client import PrometheusConnect
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -31,43 +33,62 @@ from .utils import get_namespace_object_labels_map
 _LOGGER = logging.getLogger(__name__)
 
 
-class ArgoWorkflowsMetrics(MetricsBase):
+class ArgoWorkflowsMetrics:
     """Class to evaluate Metrics for Argo Workflows."""
 
     _OPENSHIFT = OpenShift()
     _WORKFLOW_MANAGER = WorkflowManager(openshift=_OPENSHIFT)
 
-    _MIDDLETIER_WORKFLOWS_LABELS = ["component=solver"]
+    _WORKFLOW_STATUS_METRIC_NAME = "argo_workflow_status_phase"
+    _WORKFLOW_STATUSES = ["Failed", "Error", "Running", "Skipped", "Pending"]
 
-    _AMUN_INSPECTION_WORKFLOWS_LABELS = ["component=amun-inspection-job"]
+    def get_workflow_quality(
+        cls, service_name: str, prometheus: PrometheusConnect, instance: str, namespace: str, metric_type: metrics
+    ) -> None:
+        """Get the status for workflows for a certain service."""
+        workflow_status_metric_name = cls._WORKFLOW_STATUS_METRIC_NAME
 
-    _BACKEND_WORKFLOWS_LABELS = ["component=adviser", "component=qeb-hwt"]
+        workflows_count = {}
+        tot_workflows = 0
+        for workflow_status in cls._WORKFLOW_STATUSES:
+            workflow_status_metrics = prometheus.get_current_metric_value(
+                metric_name=workflow_status_metric_name,
+                label_config={"instance": instance, "namespace": namespace, "phase": workflow_status},
+            )
+            service_workflows = [
+                w
+                for w in workflow_status_metrics
+                if (int(w["value"][1]) == 1) and (service_name in w["metric"]["name"])
+            ]
+            workflows_count[workflow_status] = len(service_workflows)
+            tot_workflows += len(service_workflows)
 
-    _NAMESPACES_VARIABLES_WORKFLOWS_MAP = {
-        "THOTH_MIDDLETIER_NAMESPACE": _MIDDLETIER_WORKFLOWS_LABELS,
-        "THOTH_BACKEND_NAMESPACE": _BACKEND_WORKFLOWS_LABELS,
-        "THOTH_AMUN_INSPECTION_NAMESPACE": _AMUN_INSPECTION_WORKFLOWS_LABELS,
-    }
+        for w_status, counts in workflows_count.items():
+            metric_type.labels(service_name, w_status).set(counts)
+            _LOGGER.debug(
+                "Workflow metrics status/counts for service_name=%r, status=%r, counts=%r",
+                service_name,
+                w_status,
+                counts,
+            )
 
-    @classmethod
-    @register_metric_job
-    def get_thoth_workflows_status_per_namespace_per_label(cls) -> None:
+        if tot_workflows:
+            metric_type.labels(service_name, "total_workflows").set(tot_workflows)
+            _LOGGER.debug(
+                "Workflow metrics status/counts for service_name=%r, status=%r, counts=%r",
+                service_name,
+                "total_workflows",
+                tot_workflows,
+            )
+
+    def get_thoth_workflows_status_per_namespace_per_label(cls, label_selector: str, namespace: str) -> None:
         """Get the workflows and tasks per label per namespace with corresponding status."""
-        namespace_workflows_map = get_namespace_object_labels_map(cls._NAMESPACES_VARIABLES_WORKFLOWS_MAP)
+        _LOGGER.info("Evaluating workflows(label_selector=%r) metrics for namespace: %r", label_selector, namespace)
+        workflows_and_tasks_status = cls._WORKFLOW_MANAGER.get_workflows_and_tasks_status(
+            label_selector=label_selector, namespace=namespace
+        )
+        cls._analyze_workflows(label_selector=label_selector, namespace=namespace, workflows=workflows_and_tasks_status)
 
-        for namespace, workflows_labels in namespace_workflows_map.items():
-            for label_selector in workflows_labels:
-                _LOGGER.info(
-                    "Evaluating workflows(label_selector=%r) metrics for namespace: %r", label_selector, namespace
-                )
-                workflows_and_tasks_status = cls._WORKFLOW_MANAGER.get_workflows_and_tasks_status(
-                    label_selector=label_selector, namespace=namespace
-                )
-                cls._analyze_workflows(
-                    label_selector=label_selector, namespace=namespace, workflows=workflows_and_tasks_status
-                )
-
-    @classmethod
     def _analyze_workflows(cls, label_selector: str, namespace: str, workflows: Dict[str, Any]):
         """Process workflows tasks."""
         for workflows_info in workflows.values():

@@ -106,9 +106,10 @@ class DBMetrics(MetricsBase):
             last_prometheus_scrape = datetime.fromtimestamp(float(metric[0]["value"][0]))
             last_evaluation = datetime.fromtimestamp(float(metric[0]["value"][1]))
 
-            if not (last_prometheus_scrape - last_evaluation).total_seconds() > timedelta(
-                days=cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS
-            ).total_seconds():
+            if (
+                not (last_prometheus_scrape - last_evaluation).total_seconds()
+                > timedelta(days=cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS).total_seconds()
+            ):
                 return
 
         bloat_data = cls.graph().get_bloat_data()

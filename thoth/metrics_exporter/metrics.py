@@ -153,20 +153,6 @@ graphdb_advised_software_stacks_records = Gauge(
     "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
 )
 
-workflow_adviser_latency = Histogram(
-    "thoth_workflow_adviser_latency",
-    "Thoth Qeb-Hwt inner workflow duration in Argo Workflow.",
-    [],
-    buckets=[60, 120, 240, 480, 600, 720, 840],
-)
-
-workflow_qebhwt_latency = Histogram(
-    "thoth_workflow_qebhwt_latency",
-    "Thoth Qeb-Hwt outer workflow duration in Argo Workflow.",
-    [],
-    buckets=[5, 10, 20, 40, 60],
-)
-
 workflow_adviser_quality = Gauge(
     "thoth_workflow_adviser_quality", "Thoth Qeb-Hwt inner workflow status in Argo Workflow.", ["service", "status"]
 )
@@ -176,19 +162,8 @@ workflow_qebhwt_quality = Gauge(
 )
 
 # InspectionRun
-inspection_results_ceph = Gauge(
-    "thoth_inspection_results_ceph", "Thoth Inspections result in Ceph per identifier.", ["identifier"]
-)
-
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
-)
-
-workflow_inspection_latency = Histogram(
-    "thoth_workflow_inspection_latency",
-    "Thoth Inspection duration in Argo Workflow.",
-    [],
-    buckets=[2100, 2700, 3600, 4500, 5100],
 )
 
 workflow_inspection_quality = Gauge(
@@ -252,10 +227,6 @@ graphdb_unsolved_python_package_versions_change = Counter(
 
 graphdb_is_schema_up2date = Gauge(
     "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
-)
-
-workflow_solver_latency = Histogram(
-    "thoth_workflow_solver_latency", "Thoth Solver duration in Argo Workflow.", [], buckets=[120, 240, 360, 480, 600]
 )
 
 workflow_solver_quality = Gauge(

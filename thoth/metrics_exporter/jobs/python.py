@@ -34,9 +34,7 @@ class PythonPackagesMetrics(MetricsBase):
     @register_metric_job
     def get_python_packages_versions_count(cls) -> None:
         """Get the total number of Python packages versions in Thoth Knowledge Graph."""
-        number_python_package_versions = cls.graph().get_python_package_versions_count_all(
-            distinct=True
-        )
+        number_python_package_versions = cls.graph().get_python_package_versions_count_all(distinct=True)
         metrics.graphdb_number_python_package_versions.set(number_python_package_versions)
         _LOGGER.debug("graphdb_number_python_package_versions=%r", number_python_package_versions)
 
@@ -56,10 +54,9 @@ class PythonPackagesMetrics(MetricsBase):
         tot_packages = 0
         for index_url in python_urls_list:
 
-            packages_count = len(cls.graph().get_python_package_versions_per_index(
-                index_url=index_url,
-                distinct=True
-            )[index_url])
+            packages_count = len(
+                cls.graph().get_python_package_versions_per_index(index_url=index_url, distinct=True)[index_url]
+            )
             tot_packages += packages_count
 
             metrics.graphdb_total_python_packages_per_indexes.labels(index_url).set(packages_count)

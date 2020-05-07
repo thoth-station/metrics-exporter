@@ -15,17 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Inspection metrics."""
+"""Qeb-Hwt metrics."""
 
 import logging
 import os
 from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
-from prometheus_api_client import PrometheusConnect
 
-from thoth.storages import InspectionResultsStore
-from thoth.storages.graph.enums import SoftwareStackTypeEnum
+from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
@@ -34,45 +32,35 @@ from .argo_workflows import ArgoWorkflowsMetrics
 _LOGGER = logging.getLogger(__name__)
 
 
-class InspectionMetrics(MetricsBase):
-    """Class to evaluate Metrics for Amun Inspections."""
+class QebHwtMetrics(MetricsBase):
+    """Class to evaluate Metrics for Qeb-Hwt Outer Workflow."""
 
     _URL = os.environ["PROMETHEUS_HOST_URL"]
     _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
     _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    _INSTANCE = os.environ["WORKFLOW_METRICS_AMUN_INSPECTION_PROMETHEUS_INSTANCE"]
-    _NAMESPACE = os.environ["THOTH_AMUN_INSPECTION_NAMESPACE"]
+    _INSTANCE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
+    _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 
     _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
 
-    _INSPECTION_CHECK_TIME = datetime.utcnow()
-
-    @classmethod
-    @register_metric_job
-    def get_inspection_python_software_stack_count(cls) -> None:
-        """Get the total number of Inspection Python Software Stacks in Thoth Knowledge Graph."""
-        thoth_graphdb_total_inspection_software_stacks = cls.graph().get_python_software_stack_count_all(
-            software_stack_type=SoftwareStackTypeEnum.INSPECTION.value
-        )
-        metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)
-        _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
+    _QEBHWT_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=amun-inspection-job", namespace=cls._NAMESPACE
+            label_selector="component=qeb-hwt", namespace=cls._NAMESPACE
         )
 
     @classmethod
     @register_metric_job
-    def get_inspection_quality(cls) -> None:
-        """Get the quality for inspection workflows."""
+    def get_qebhwt_quality(cls) -> None:
+        """Get the quality for thamos advise workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="inspection",
+            service_name="qeb-hwt",
             prometheus=cls._PROM,
             instance=cls._INSTANCE,
             namespace=cls._NAMESPACE,
-            metric_type=metrics.workflow_inspection_quality,
+            metric_type=metrics.workflow_qebhwt_quality,
         )

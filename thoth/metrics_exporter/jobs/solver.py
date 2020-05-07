@@ -28,7 +28,7 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .utils import get_workflow_duration, get_workflow_quality
+from .argo_workflows import ArgoWorkflowsMetrics
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ class SolverMetrics(MetricsBase):
             )
 
             if unsolved_python_package_versions_change < 0:
-                # Unsolved packages are increasing < 0 -> 0
+                # Unsolved packages are increasing if < 0 -> 0
                 unsolved_python_package_versions_change = 0
 
             metrics.graphdb_unsolved_python_package_versions_change.inc(unsolved_python_package_versions_change)
@@ -184,22 +184,17 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_solver_evaluation_time(cls) -> None:
-        """Get the time spent for each solver worflow."""
-        cls._SOLVER_CHECK_TIME = get_workflow_duration(
-            service_name="solver",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
-            check_time=cls._SOLVER_CHECK_TIME,
-            metric_type=metrics.workflow_solver_latency,
+    def get_workflow_status(cls) -> None:
+        """Get the workflow status for each workflow."""
+        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
+            label_selector="component=solver", namespace=cls._NAMESPACE
         )
 
     @classmethod
     @register_metric_job
     def get_solver_quality(cls) -> None:
         """Get the quality for solver workflows."""
-        get_workflow_quality(
+        ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="solver",
             prometheus=cls._PROM,
             instance=cls._INSTANCE,
