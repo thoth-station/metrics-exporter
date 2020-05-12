@@ -55,8 +55,7 @@ class CephMetrics(MetricsBase):
             _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
             if not store.is_connected():
                 store.connect()
-            all_document_ids = store.get_document_listing()
-            list_ids = [str(cid) for cid in all_document_ids]
+            list_ids = store.get_document_count()
             metrics.ceph_results_number.labels(store.RESULT_TYPE).set(len(list_ids))
             _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, len(list_ids))
 
