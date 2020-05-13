@@ -45,6 +45,7 @@ class CephMetrics(MetricsBase):
         else:
             metrics.ceph_connection_error_status.set(1)
 
+
 def get_ceph_results_per_type(store: ResultStorageBase) -> None:
     """Get the total number of results in Ceph per service."""
     _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
