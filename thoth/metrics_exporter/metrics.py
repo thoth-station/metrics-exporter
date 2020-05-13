@@ -72,7 +72,21 @@ ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per 
 ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Connection error status.", [])
 
 # Thoth Database
-graphdb_total_records = Gauge("thoth_graphdb_total_records", "Total number of Records in Thoth Knowledge Graph.", [])
+graphdb_main_table_total_records = Gauge(
+    "thoth_graphdb_main_table_total_records", "Total number of Records for Main Tables in Thoth Knowledge Graph.", []
+)
+
+graphdb_relation_table_total_records = Gauge(
+    "thoth_graphdb_relation_table_total_records",
+    "Total number of Records for Relation Tables in Thoth Knowledge Graph.",
+    [],
+)
+
+graphdb_performance_table_total_records = Gauge(
+    "thoth_graphdb_performance_table_total_records",
+    "Total number of Records for Performance Tables in Thoth Knowledge Graph.",
+    [],
+)
 
 graphdb_total_main_records = Gauge(
     "thoth_graphdb_total_main_records",

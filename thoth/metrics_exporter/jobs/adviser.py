@@ -25,12 +25,14 @@ import thoth.metrics_exporter.metrics as metrics
 
 from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
+from thoth.storages import AdvisersResultsStore
 
 from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
 from .argo_workflows import ArgoWorkflowsMetrics
+from .ceph import get_ceph_results_per_type
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,3 +80,9 @@ class AdviserMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             metric_type=metrics.workflow_adviser_quality,
         )
+
+    @classmethod
+    @register_metric_job
+    def get_ceph_count(cls) -> None:
+        """Get number of reports stored in the database for a type of store."""
+        get_ceph_results_per_type(store=AdvisersResultsStore())
