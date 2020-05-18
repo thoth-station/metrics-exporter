@@ -31,11 +31,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class PyPIMetrics(MetricsBase):
-    """Class to collect metric from PyPI."""
+    """Class to collect statistics from PyPI."""
 
     @classmethod
     @register_metric_job
-    def get_pypi_metrics(cls) -> None:
+    def get_pypi_statistics(cls) -> None:
         """Get statistics from PyPI."""
         response = requests.get("https://pypi.org/")
         soup = BeautifulSoup(response.content, "html.parser")
