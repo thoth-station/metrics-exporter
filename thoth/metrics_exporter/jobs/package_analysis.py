@@ -23,11 +23,12 @@ import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
+from thoth.storages import PackageAnalysisResultsStore
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class PackageAnalyzerMetrics(MetricsBase):
+class PackageAnalysisMetrics(MetricsBase):
     """Class to evaluate Metrics for Package Analyzer."""
 
     @classmethod
@@ -53,3 +54,9 @@ class PackageAnalyzerMetrics(MetricsBase):
         count = cls.graph().get_unanalyzed_python_package_versions_count_all()
         metrics.graphdb_total_number_unanalyzed_python_packages.set(count)
         _LOGGER.debug("graphdb_total_number_unanalyzed_python_packages=%r", count)
+
+    @classmethod
+    @register_metric_job
+    def get_ceph_count(cls) -> None:
+        """Get number of reports stored in the database for a type of store."""
+        cls.get_ceph_results_per_type(store=PackageAnalysisResultsStore())

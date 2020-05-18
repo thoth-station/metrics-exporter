@@ -60,41 +60,6 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_tot_records_count(cls) -> None:
-        """Get the total number of Records in Thoth Knowledge Graph."""
-        main_models_record_count = sum(cls.graph().get_main_table_count().values())
-        relation_models_record_count = sum(cls.graph().get_relation_table_count().values())
-        performance_models_record_count = sum(cls.graph().get_performance_table_count().values())
-
-        total_records_count = main_models_record_count + relation_models_record_count + performance_models_record_count
-        metrics.graphdb_total_records.set(total_records_count)
-
-        _LOGGER.debug("thoth_graphdb_total_records=%r", total_records_count)
-
-    @classmethod
-    @register_metric_job
-    def get_tot_main_records_count(cls) -> None:
-        """Get the total number of Records for Main Tables in Thoth Knowledge Graph."""
-        main_models_records = cls.graph().get_main_table_count()
-
-        for main_table, main_table_records_count in main_models_records.items():
-            metrics.graphdb_total_main_records.labels(main_table).set(main_table_records_count)
-
-        _LOGGER.debug("thoth_graphdb_total_main_records=%r", main_models_records)
-
-    @classmethod
-    @register_metric_job
-    def get_tot_relation_records_count(cls) -> None:
-        """Get the total number of Records for Relation Tables in Thoth Knowledge Graph."""
-        relation_models_records = cls.graph().get_relation_table_count()
-
-        for relation_table, relation_table_records_count in relation_models_records.items():
-            metrics.graphdb_total_relation_records.labels(relation_table).set(relation_table_records_count)
-
-        _LOGGER.debug("thoth_graphdb_total_relation_records=%r", relation_models_records)
-
-    @classmethod
-    @register_metric_job
     def get_bloat_data(cls) -> None:
         """Get bloat data from database."""
         if cls._SCRAPE_COUNT != 0:

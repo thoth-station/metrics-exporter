@@ -23,6 +23,8 @@ from datetime import datetime
 
 from thoth.common import OpenShift
 
+from thoth.storages import SolverResultsStore
+
 import thoth.metrics_exporter.metrics as metrics
 from prometheus_api_client import PrometheusConnect
 
@@ -201,3 +203,9 @@ class SolverMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             metric_type=metrics.workflow_solver_quality,
         )
+
+    @classmethod
+    @register_metric_job
+    def get_ceph_count(cls) -> None:
+        """Get number of reports stored in the database for a type of store."""
+        cls.get_ceph_results_per_type(store=SolverResultsStore())

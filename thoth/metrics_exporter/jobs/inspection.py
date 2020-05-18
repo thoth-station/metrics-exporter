@@ -76,3 +76,9 @@ class InspectionMetrics(MetricsBase):
             namespace=cls._NAMESPACE,
             metric_type=metrics.workflow_inspection_quality,
         )
+
+    @classmethod
+    @register_metric_job
+    def get_ceph_count(cls) -> None:
+        """Get number of reports stored in the database for a type of store."""
+        cls.get_ceph_results_per_type(store=InspectionResultsStore())

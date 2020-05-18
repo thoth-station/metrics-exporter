@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
+# Copyright(C) 2020 Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,31 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Ceph metrics."""
+"""Provenance Check metrics."""
 
 import logging
 
-from thoth.storages import InspectionResultsStore
-import thoth.metrics_exporter.metrics as metrics
-
 from .base import register_metric_job
 from .base import MetricsBase
+from thoth.storages import ProvenanceResultsStore
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class CephMetrics(MetricsBase):
-    """Class to evaluate Metrics for Ceph."""
+class ProvenanceCheckMetrics(MetricsBase):
+    """Class to evaluate Metrics for Provenance Check."""
 
-    @staticmethod
+    @classmethod
     @register_metric_job
-    def get_ceph_connection_error_status() -> None:
-        """Check connection to Ceph instance."""
-        inspections = InspectionResultsStore()
-        try:
-            inspections.connect()
-        except Exception as excptn:
-            metrics.ceph_connection_error_status.set(0)
-            _LOGGER.exception(excptn)
-        else:
-            metrics.ceph_connection_error_status.set(1)
+    def get_ceph_count(cls) -> None:
+        """Get number of reports stored in the database for a type of store."""
+        cls.get_ceph_results_per_type(store=ProvenanceResultsStore())
