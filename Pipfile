@@ -13,6 +13,8 @@ decorator = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 aiocontextvars = "*"
 prometheus-api-client = "*"
+requests = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 
