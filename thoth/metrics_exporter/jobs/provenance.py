@@ -21,7 +21,6 @@ import logging
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .ceph import get_ceph_results_per_type
 from thoth.storages import ProvenanceResultsStore
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,4 +33,4 @@ class ProvenanceCheckMetrics(MetricsBase):
     @register_metric_job
     def get_ceph_count(cls) -> None:
         """Get number of reports stored in the database for a type of store."""
-        get_ceph_results_per_type(store=ProvenanceResultsStore())
+        cls.get_ceph_results_per_type(store=ProvenanceResultsStore())

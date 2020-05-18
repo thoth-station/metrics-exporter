@@ -27,7 +27,10 @@ import inspect
 import textwrap
 from typing import Any
 
+import thoth.metrics_exporter.metrics as metrics
+
 from thoth.storages import GraphDatabase
+from thoth.storages.result_base import ResultStorageBase
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,3 +85,13 @@ class MetricsBase(metaclass=_MetricsType):
             cls._GRAPH.connect()
 
         return cls._GRAPH
+
+    @classmethod
+    def get_ceph_results_per_type(cls, store: ResultStorageBase) -> None:
+        """Get the total number of results in Ceph per service."""
+        _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
+        if not store.is_connected():
+            store.connect()
+        number_ids = store.get_document_count()
+        metrics.ceph_results_number.labels(store.RESULT_TYPE).set(number_ids)
+        _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, number_ids)

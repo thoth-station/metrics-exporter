@@ -30,7 +30,6 @@ from thoth.storages.graph.enums import SoftwareStackTypeEnum
 from .base import register_metric_job
 from .base import MetricsBase
 from .argo_workflows import ArgoWorkflowsMetrics
-from .ceph import get_ceph_results_per_type
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,4 +81,4 @@ class InspectionMetrics(MetricsBase):
     @register_metric_job
     def get_ceph_count(cls) -> None:
         """Get number of reports stored in the database for a type of store."""
-        get_ceph_results_per_type(store=InspectionResultsStore())
+        cls.get_ceph_results_per_type(store=InspectionResultsStore())

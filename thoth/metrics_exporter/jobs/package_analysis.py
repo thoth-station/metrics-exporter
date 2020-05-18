@@ -23,7 +23,6 @@ import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .ceph import get_ceph_results_per_type
 from thoth.storages import PackageAnalysisResultsStore
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,4 +59,4 @@ class PackageAnalysisMetrics(MetricsBase):
     @register_metric_job
     def get_ceph_count(cls) -> None:
         """Get number of reports stored in the database for a type of store."""
-        get_ceph_results_per_type(store=PackageAnalysisResultsStore())
+        cls.get_ceph_results_per_type(store=PackageAnalysisResultsStore())

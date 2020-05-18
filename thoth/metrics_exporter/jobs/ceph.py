@@ -20,7 +20,6 @@
 import logging
 
 from thoth.storages import InspectionResultsStore
-from thoth.storages.result_base import ResultStorageBase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -44,13 +43,3 @@ class CephMetrics(MetricsBase):
             _LOGGER.exception(excptn)
         else:
             metrics.ceph_connection_error_status.set(1)
-
-
-def get_ceph_results_per_type(store: ResultStorageBase) -> None:
-    """Get the total number of results in Ceph per service."""
-    _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
-    if not store.is_connected():
-        store.connect()
-    number_ids = store.get_document_count()
-    metrics.ceph_results_number.labels(store.RESULT_TYPE).set(number_ids)
-    _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, number_ids)
