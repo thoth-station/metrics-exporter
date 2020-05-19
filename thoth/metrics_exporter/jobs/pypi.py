@@ -40,10 +40,17 @@ class PyPIMetrics(MetricsBase):
         response = requests.get("https://pypi.org/")
         soup = BeautifulSoup(response.content, "html.parser")
         statistics = soup.findAll("p", class_="statistics-bar__statistic")
-        pypy_stats = [int("".join(c for c in s.get_text() if c.isdigit())) for s in statistics]
 
-        pypi_packages = pypy_stats[0]
-        pypi_releases = pypy_stats[1]
+        pypy_stats = []
+        if statistics:
+            pypy_stats = [int("".join(c for c in s.get_text() if c.isdigit())) for s in statistics]
+
+        pypi_packages = 0
+        pypi_releases = 0
+
+        if pypy_stats:
+            pypi_packages = pypy_stats[0]
+            pypi_releases = pypy_stats[1]
 
         stats_type = "packages"
         metrics.pypi_stats.labels(stats_type).set(pypi_packages)
