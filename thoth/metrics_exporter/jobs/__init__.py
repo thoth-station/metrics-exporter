@@ -28,6 +28,7 @@ from .openshift import OpenshiftMetrics
 from .package_analysis import PackageAnalysisMetrics
 from .pi import PIMetrics
 from .provenance import ProvenanceCheckMetrics
+from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
 from .qeb_hwt import QebHwtMetrics
 from .software_environment import SoftwareEnvironmentMetrics
@@ -46,6 +47,7 @@ __all__ = [
     "PackageAnalysisMetrics",
     "PIMetrics",
     "ProvenanceCheckMetrics",
+    "PyPIMetrics",
     "PythonPackagesMetrics",
     "QebHwtMetrics",
     "SoftwareEnvironmentMetrics",

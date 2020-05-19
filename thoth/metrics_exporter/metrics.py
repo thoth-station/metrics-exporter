@@ -71,6 +71,13 @@ ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per 
 
 ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Connection error status.", [])
 
+# PyPI Database
+pypi_stats = Gauge(
+    "thoth_pypi_stats",
+    "Statistics collected from PyPI.",
+    ["stats_type"],
+)
+
 # Thoth Database
 graphdb_performance_table_total_records = Gauge(
     "thoth_graphdb_performance_table_total_records",
