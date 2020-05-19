@@ -38,6 +38,8 @@ class PyPIMetrics(MetricsBase):
     def get_pypi_statistics(cls) -> None:
         """Get statistics from PyPI."""
         response = requests.get("https://pypi.org/")
+        response.raise_for_status()
+
         soup = BeautifulSoup(response.content, "html.parser")
         statistics = soup.findAll("p", class_="statistics-bar__statistic")
 
