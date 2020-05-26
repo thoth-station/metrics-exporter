@@ -231,3 +231,8 @@ graphdb_is_schema_up2date = Gauge(
 workflow_solver_quality = Gauge(
     "thoth_workflow_solver_quality", "Thoth solver workflows status in Argo Workflow.", ["service", "status"]
 )
+
+# Kebechet Metrics
+kebechet_total_active_repo_count = Gauge(
+    "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
+)

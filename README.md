@@ -2,6 +2,22 @@
 
 This is a Promotheus Metrics exporter for Thoth.
 
+## Setting up Metrics Exporter locally.
+1. Create a `.env` file from the `.env.template`.
+2. Once you have populated all the values for `.env`, follow up with `pipenv install --dev`.
+3. oc login into the Openshift cluster. 
+5. Run the local version of thoth-storages after restoring the dump - [guide](https://github.com/thoth-station/storages#running-postgresql-locally) (or connect to the production db using replacing the env variables in `.env`).
+4. Run the metrics exporter using - `pipenv run python3 wsgi.py`
+5. You should see metrics in - [localhost:8080](http://localhost:8080)
+
+## Adding new metrics to be exported. 
+1. Add the metric you want to expose to [metrics.py](https://github.com/thoth-station/metrics-exporter/blob/master/thoth/metrics_exporter/metrics.py).
+2. Checkout [metrics_exporter/jobs](https://github.com/thoth-station/metrics-exporter/tree/master/thoth/metrics_exporter/jobs), if the metric you want to add belongs to a existing class add to it else create a new class and inherit the base class `MetricsBase`.
+3. Register the metric method you write using the decorater `@register_metric_job`. Here is an example to look at - [link](https://github.com/thoth-station/metrics-exporter/blob/a48247fc6a28ec5e2d6ac1f1703c5a8d77a711f5/thoth/metrics_exporter/jobs/pypi.py#L37)
+4. Set the metric variable's value from `metrics.py` in the method that you define. More, on that here on prometheus documentation - [Link](https://github.com/prometheus/client_python#gauge)
+5. Finally if you have a new class added in jobs, add it to the [init.py](https://github.com/thoth-station/metrics-exporter/blob/master/thoth/metrics_exporter/jobs/__init__.py).
+
+
 ## Copyright
 
 Copyright (C) 2018, 2019, 2020 Red Hat Inc.
