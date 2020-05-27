@@ -34,6 +34,7 @@ from .qeb_hwt import QebHwtMetrics
 from .software_environment import SoftwareEnvironmentMetrics
 from .solver import SolverMetrics
 from .user import UserInformationMetrics
+from .kebechet import KebechetMetrics
 from .base import REGISTERED_JOBS
 
 __all__ = [
@@ -53,5 +54,6 @@ __all__ = [
     "SoftwareEnvironmentMetrics",
     "SolverMetrics",
     "UserInformationMetrics",
+    "KebechetMetrics",
     "REGISTERED_JOBS",
 ]
