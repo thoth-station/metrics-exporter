@@ -34,7 +34,7 @@ class KebechetMetrics(MetricsBase):
     @classmethod
     @register_metric_job
     def get_active_kebechet_repo_count(cls) -> None:
-        """Get number of repo's Kebechet currently supports."""
+        """Get number of repositories Kebechet currently supports."""
         count = cls.graph().get_kebechet_github_installations_count_per_is_active()
         metrics.kebechet_total_active_repo_count.set(count)
         _LOGGER.debug("kebechet_total_active_repo_count=%r", count)
