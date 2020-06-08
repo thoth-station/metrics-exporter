@@ -31,6 +31,7 @@ from prometheus_api_client import PrometheusConnect
 from .base import register_metric_job
 from .base import MetricsBase
 from .argo_workflows import ArgoWorkflowsMetrics
+from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,17 +40,7 @@ class SolverMetrics(MetricsBase):
     """Class to evaluate Metrics for Solvers."""
 
     _OPENSHIFT = OpenShift()
-
-    _URL = os.environ["PROMETHEUS_HOST_URL"]
-    _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
-    _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    _INSTANCE = os.environ["WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE"]
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
-    _NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
-
-    _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
-
-    _SOLVER_CHECK_TIME = datetime.utcnow()
 
     @classmethod
     @register_metric_job
@@ -189,7 +180,7 @@ class SolverMetrics(MetricsBase):
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=solver", namespace=cls._NAMESPACE
+            label_selector="component=solver", namespace=Configuration._NAMESPACE
         )
 
     @classmethod
@@ -198,9 +189,9 @@ class SolverMetrics(MetricsBase):
         """Get the quality for solver workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="solver",
-            prometheus=cls._PROM,
-            instance=cls._INSTANCE,
-            namespace=cls._NAMESPACE,
+            prometheus=Configuration._PROM,
+            instance=Configuration._WORKFLOW_CONTROLLER_INSTANCE_MIDDLETIER_NAMESPACE,
+            namespace=Configuration._THOTH_MIDDLETIER_NAMESPACE,
             metric_type=metrics.workflow_solver_quality,
         )
 

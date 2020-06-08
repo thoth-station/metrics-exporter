@@ -45,9 +45,13 @@ class UserInformationMetrics(MetricsBase):
     @register_metric_job
     def get_user_unique_run_software_environment_count(cls) -> None:
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
-        thoth_graphdb_total_user_run_software_environment = len(
-            set(cls.graph().get_run_software_environment_all(is_external=True))
-        )
+        user_run_software_environment = cls.graph().get_run_software_environment_all(is_external=True)
+        if user_run_software_environment:
+            thoth_graphdb_total_user_run_software_environment = len(
+                set(user_run_software_environment)
+            )
+        else:
+            thoth_graphdb_total_user_run_software_environment = 0
 
         metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
         _LOGGER.debug(
