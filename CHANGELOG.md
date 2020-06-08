@@ -377,3 +377,31 @@
 * make Code Climate a little bit more happy
 * Add argo workflows class of metrics
 * :pushpin: Automatic update of dependency thoth-common from 0.13.1 to 0.13.2
+
+## Release 0.8.3 (2020-06-08T18:53:17)
+* added a 'tekton trigger tag_release pipeline issue'
+* :pushpin: Automatic update of dependency thoth-common from 0.13.7 to 0.13.8
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.11 to 0.22.12
+* Typo
+* Added prometheus link
+* :pushpin: Automatic update of dependency thoth-common from 0.13.6 to 0.13.7
+* Added kebechet metric and readme
+* :pushpin: Automatic update of dependency prometheus-client from 0.7.1 to 0.8.0
+* :pushpin: Automatic update of dependency thoth-common from 0.13.5 to 0.13.6
+* :pushpin: Automatic update of dependency thoth-common from 0.13.4 to 0.13.5
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.10 to 0.22.11
+* :pushpin: Automatic update of dependency thoth-common from 0.13.3 to 0.13.4
+* Add raise for status for request
+* Add sane defaults
+* Adjust docstrings and name
+* Add metrics from Pypi
+* Move method to basic class
+* Remove total counts metrics
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.3 to 0.14.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.9 to 0.22.10
+* Split metrics to reduce time to evaluate
+* use count method for Ceph documents
+* added Sesheta as a Maintainer, so that she can request new releases to be created by her
+* Remove specific inspection metrics for Ceph
+* Remove metrics
+* Adjust and delete metrics
