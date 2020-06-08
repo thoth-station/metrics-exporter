@@ -28,6 +28,7 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
+from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,12 +36,6 @@ _LOGGER = logging.getLogger(__name__)
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
-    _NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
-
-    _URL = os.environ["PROMETHEUS_HOST_URL"]
-    _PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
-    _HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    _PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
@@ -64,7 +59,7 @@ class DBMetrics(MetricsBase):
         """Get bloat data from database."""
         if cls._SCRAPE_COUNT != 0:
             metric_name = "thoth_graphdb_last_evaluation_bloat_data"
-            metric = cls._PROM.get_current_metric_value(
+            metric = Configuration._PROM.get_current_metric_value(
                 metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
             )
 
