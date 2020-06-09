@@ -41,8 +41,8 @@ For example:
 
 ```python
     # Workflows backend namespace
-    _WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
-    _THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
+    WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
+    THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
 ```
 
 4. In the class where you want to introduce Argo workflows metrics, you need to add:
@@ -57,7 +57,7 @@ from ..configuration import Configuration
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=<component_name>", namespace=Configuration._NAMESPACE
+            label_selector="component=<component_name>", namespace=Configuration.NAMESPACE
         )
 
     @classmethod
@@ -66,9 +66,9 @@ from ..configuration import Configuration
         """Get the quality for <component_name> workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="<component_name>",
-            prometheus=Configuration._PROM,
-            instance=Configuration._INSTANCE,
-            namespace=Configuration._NAMESPACE,
+            prometheus=Configuration.PROM,
+            instance=Configuration.INSTANCE,
+            namespace=Configuration.NAMESPACE,
             metric_type=metrics.workflow_<component_name>_quality,
         )
 ```

@@ -180,7 +180,7 @@ class SolverMetrics(MetricsBase):
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=solver", namespace=Configuration._NAMESPACE
+            label_selector="component=solver", namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
         )
 
     @classmethod
@@ -189,9 +189,9 @@ class SolverMetrics(MetricsBase):
         """Get the quality for solver workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="solver",
-            prometheus=Configuration._PROM,
-            instance=Configuration._WORKFLOW_CONTROLLER_INSTANCE_MIDDLETIER_NAMESPACE,
-            namespace=Configuration._THOTH_MIDDLETIER_NAMESPACE,
+            prometheus=Configuration.PROM,
+            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_MIDDLETIER_NAMESPACE,
+            namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
             metric_type=metrics.workflow_solver_quality,
         )
 

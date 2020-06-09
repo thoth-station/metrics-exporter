@@ -41,7 +41,7 @@ class QebHwtMetrics(MetricsBase):
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=qeb-hwt", namespace=Configuration._THOTH_BACKEND_NAMESPACE
+            label_selector="component=qeb-hwt", namespace=Configuration.THOTH_BACKEND_NAMESPACE
         )
 
     @classmethod
@@ -50,8 +50,8 @@ class QebHwtMetrics(MetricsBase):
         """Get the quality for thamos advise workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="qeb-hwt",
-            prometheus=Configuration._PROM,
-            instance=Configuration._WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE,
-            namespace=Configuration._THOTH_BACKEND_NAMESPACE,
+            prometheus=Configuration.PROM,
+            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE,
+            namespace=Configuration.THOTH_BACKEND_NAMESPACE,
             metric_type=metrics.workflow_qebhwt_quality,
         )

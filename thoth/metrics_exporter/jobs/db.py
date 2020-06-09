@@ -59,7 +59,7 @@ class DBMetrics(MetricsBase):
         """Get bloat data from database."""
         if cls._SCRAPE_COUNT != 0:
             metric_name = "thoth_graphdb_last_evaluation_bloat_data"
-            metric = Configuration._PROM.get_current_metric_value(
+            metric = Configuration.PROM.get_current_metric_value(
                 metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
             )
 

@@ -53,7 +53,7 @@ class InspectionMetrics(MetricsBase):
     def get_workflow_status(cls) -> None:
         """Get the workflow status for each workflow."""
         ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=amun-inspection-job", namespace=Configuration._THOTH_AMUN_INSPECTION_NAMESPACE
+            label_selector="component=amun-inspection-job", namespace=Configuration.THOTH_AMUN_INSPECTION_NAMESPACE
         )
 
     @classmethod
@@ -62,9 +62,9 @@ class InspectionMetrics(MetricsBase):
         """Get the quality for inspection workflows."""
         ArgoWorkflowsMetrics().get_workflow_quality(
             service_name="inspection",
-            prometheus=Configuration._PROM,
-            instance=Configuration._WORKFLOW_CONTROLLER_INSTANCE_AMUN_INSPECTION_NAMESPACE,
-            namespace=Configuration._THOTH_AMUN_INSPECTION_NAMESPACE,
+            prometheus=Configuration.PROM,
+            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_AMUN_INSPECTION_NAMESPACE,
+            namespace=Configuration.THOTH_AMUN_INSPECTION_NAMESPACE,
             metric_type=metrics.workflow_inspection_quality,
         )
 
