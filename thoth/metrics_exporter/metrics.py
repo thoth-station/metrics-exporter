@@ -236,3 +236,7 @@ workflow_solver_quality = Gauge(
 kebechet_total_active_repo_count = Gauge(
     "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
 )
+
+workflow_kebechet_quality = Gauge(
+    "thoth_workflow_kebechet_quality", "Thoth Kebechet workflow status in Argo Workflow.", ["service", "status"]
+)
