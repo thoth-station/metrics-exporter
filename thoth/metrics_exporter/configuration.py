@@ -19,6 +19,7 @@
 
 import logging
 import os
+from prometheus_api_client import PrometheusConnect
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,8 +30,8 @@ class Configuration:
     # Prometheus
     URL = os.environ["PROMETHEUS_HOST_URL"]
     PROMETHEUS_SERVICE_ACCOUNT_TOKEN = os.environ["PROMETHEUS_SERVICE_ACCOUNT_TOKEN"]
-    HEADERS = {"Authorization": f"bearer {_PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
-    PROM = PrometheusConnect(url=_URL, disable_ssl=True, headers=_HEADERS)
+    HEADERS = {"Authorization": f"bearer {PROMETHEUS_SERVICE_ACCOUNT_TOKEN}"}
+    PROM = PrometheusConnect(url=URL, disable_ssl=True, headers=HEADERS)
 
     # Workflows backend namespace
     WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE = os.environ["WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE"]
