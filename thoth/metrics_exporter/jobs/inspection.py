@@ -22,7 +22,6 @@ import os
 from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
-from prometheus_api_client import PrometheusConnect
 
 from thoth.storages import InspectionResultsStore
 from thoth.storages.graph.enums import SoftwareStackTypeEnum

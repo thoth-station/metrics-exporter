@@ -27,8 +27,6 @@ from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
 from thoth.storages import AdvisersResultsStore
 
-from prometheus_api_client import PrometheusConnect
-
 from .base import register_metric_job
 from .base import MetricsBase
 from ..configuration import Configuration
