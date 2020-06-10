@@ -30,7 +30,6 @@ from .pi import PIMetrics
 from .provenance import ProvenanceCheckMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
-from .qeb_hwt import QebHwtMetrics
 from .software_environment import SoftwareEnvironmentMetrics
 from .solver import SolverMetrics
 from .user import UserInformationMetrics
@@ -50,7 +49,6 @@ __all__ = [
     "ProvenanceCheckMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
-    "QebHwtMetrics",
     "SoftwareEnvironmentMetrics",
     "SolverMetrics",
     "UserInformationMetrics",

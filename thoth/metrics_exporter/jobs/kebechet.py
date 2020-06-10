@@ -39,4 +39,3 @@ class KebechetMetrics(MetricsBase):
         count = cls.graph().get_kebechet_github_installations_count_per_is_active()
         metrics.kebechet_total_active_repo_count.set(count)
         _LOGGER.debug("kebechet_total_active_repo_count=%r", count)
-

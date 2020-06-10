@@ -72,11 +72,7 @@ ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per 
 ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Connection error status.", [])
 
 # PyPI Database
-pypi_stats = Gauge(
-    "thoth_pypi_stats",
-    "Statistics collected from PyPI.",
-    ["stats_type"],
-)
+pypi_stats = Gauge("thoth_pypi_stats", "Statistics collected from PyPI.", ["stats_type"])
 
 # Thoth Database
 graphdb_performance_table_total_records = Gauge(
@@ -152,21 +148,9 @@ graphdb_advised_software_stacks_records = Gauge(
     "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
 )
 
-workflow_adviser_quality = Gauge(
-    "thoth_workflow_adviser_quality", "Thoth Qeb-Hwt inner workflow status in Argo Workflow.", ["service", "status"]
-)
-
-workflow_qebhwt_quality = Gauge(
-    "thoth_workflow_qebhwt_quality", "Thoth Qeb-Hwt outer workflow status in Argo Workflow.", ["service", "status"]
-)
-
 # InspectionRun
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
-)
-
-workflow_inspection_quality = Gauge(
-    "thoth_workflow_inspection_quality", "Thoth inspection workflows status in Argo Workflow.", ["service", "status"]
 )
 
 # PackageAnalyzerRun
@@ -228,15 +212,7 @@ graphdb_is_schema_up2date = Gauge(
     "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
 )
 
-workflow_solver_quality = Gauge(
-    "thoth_workflow_solver_quality", "Thoth solver workflows status in Argo Workflow.", ["service", "status"]
-)
-
 # Kebechet Metrics
 kebechet_total_active_repo_count = Gauge(
     "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
-)
-
-workflow_kebechet_quality = Gauge(
-    "thoth_workflow_kebechet_quality", "Thoth Kebechet workflow status in Argo Workflow.", ["service", "status"]
 )
