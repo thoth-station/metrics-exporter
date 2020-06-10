@@ -30,7 +30,6 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .argo_workflows import ArgoWorkflowsMetrics
 from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
@@ -174,26 +173,6 @@ class SolverMetrics(MetricsBase):
                 solver_name,
                 python_packages_solver_error_unsolvable,
             )
-
-    @classmethod
-    @register_metric_job
-    def get_workflow_status(cls) -> None:
-        """Get the workflow status for each workflow."""
-        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=solver", namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
-        )
-
-    @classmethod
-    @register_metric_job
-    def get_solver_quality(cls) -> None:
-        """Get the quality for solver workflows."""
-        ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="solver",
-            prometheus=Configuration.PROM,
-            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_MIDDLETIER_NAMESPACE,
-            namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
-            metric_type=metrics.workflow_solver_quality,
-        )
 
     @classmethod
     @register_metric_job

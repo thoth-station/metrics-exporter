@@ -39,23 +39,3 @@ class KebechetMetrics(MetricsBase):
         count = cls.graph().get_kebechet_github_installations_count_per_is_active()
         metrics.kebechet_total_active_repo_count.set(count)
         _LOGGER.debug("kebechet_total_active_repo_count=%r", count)
-
-    @classmethod
-    @register_metric_job
-    def get_workflow_status(cls) -> None:
-        """Get the workflow status for each workflow."""
-        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=kebechet", namespace=Configuration.THOTH_BACKEND_NAMESPACE
-        )
-
-    @classmethod
-    @register_metric_job
-    def get_kebechet_quality(cls) -> None:
-        """Get the quality for Kebechet workflows."""
-        ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="kebechet",
-            prometheus=Configuration.PROM,
-            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE,
-            namespace=Configuration.THOTH_BACKEND_NAMESPACE,
-            metric_type=metrics.workflow_kebechet_quality,
-        )

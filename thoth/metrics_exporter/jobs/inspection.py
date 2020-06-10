@@ -29,7 +29,6 @@ from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .argo_workflows import ArgoWorkflowsMetrics
 from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,26 +46,6 @@ class InspectionMetrics(MetricsBase):
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)
         _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
-
-    @classmethod
-    @register_metric_job
-    def get_workflow_status(cls) -> None:
-        """Get the workflow status for each workflow."""
-        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=amun-inspection-job", namespace=Configuration.THOTH_AMUN_INSPECTION_NAMESPACE
-        )
-
-    @classmethod
-    @register_metric_job
-    def get_inspection_quality(cls) -> None:
-        """Get the quality for inspection workflows."""
-        ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="inspection",
-            prometheus=Configuration.PROM,
-            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_AMUN_INSPECTION_NAMESPACE,
-            namespace=Configuration.THOTH_AMUN_INSPECTION_NAMESPACE,
-            metric_type=metrics.workflow_inspection_quality,
-        )
 
     @classmethod
     @register_metric_job

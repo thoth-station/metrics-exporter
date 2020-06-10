@@ -47,9 +47,7 @@ class UserInformationMetrics(MetricsBase):
         """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
         user_run_software_environment = cls.graph().get_run_software_environment_all(is_external=True)
         if user_run_software_environment:
-            thoth_graphdb_total_user_run_software_environment = len(
-                set(user_run_software_environment)
-            )
+            thoth_graphdb_total_user_run_software_environment = len(set(user_run_software_environment))
         else:
             thoth_graphdb_total_user_run_software_environment = 0
 
