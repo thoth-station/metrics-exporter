@@ -31,7 +31,6 @@ from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
-from .argo_workflows import ArgoWorkflowsMetrics
 from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,26 +48,6 @@ class AdviserMetrics(MetricsBase):
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
         _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
-
-    @classmethod
-    @register_metric_job
-    def get_workflow_status(cls) -> None:
-        """Get the workflow status for each workflow."""
-        ArgoWorkflowsMetrics().get_thoth_workflows_status_per_namespace_per_label(
-            label_selector="component=adviser", namespace=Configuration.THOTH_BACKEND_NAMESPACE
-        )
-
-    @classmethod
-    @register_metric_job
-    def get_adviser_quality(cls) -> None:
-        """Get the quality for adviser workflows."""
-        ArgoWorkflowsMetrics().get_workflow_quality(
-            service_name="adviser",
-            prometheus=Configuration.PROM,
-            instance=Configuration.WORKFLOW_CONTROLLER_INSTANCE_BACKEND_NAMESPACE,
-            namespace=Configuration.THOTH_BACKEND_NAMESPACE,
-            metric_type=metrics.workflow_adviser_quality,
-        )
 
     @classmethod
     @register_metric_job
