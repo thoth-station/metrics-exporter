@@ -26,7 +26,6 @@ from thoth.common import OpenShift
 from thoth.storages import SolverResultsStore
 
 import thoth.metrics_exporter.metrics as metrics
-from prometheus_api_client import PrometheusConnect
 
 from .base import register_metric_job
 from .base import MetricsBase
@@ -69,7 +68,7 @@ class SolverMetrics(MetricsBase):
             count_unsolved_python_package_versions += count
 
         metric_name = "thoth_graphdb_total_number_unsolved_python_packages"
-        metric = cls._PROM.get_current_metric_value(
+        metric = Configuration.PROM.get_current_metric_value(
             metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
         )
         if metric:
