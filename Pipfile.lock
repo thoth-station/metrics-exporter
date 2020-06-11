@@ -464,11 +464,11 @@
         },
         "prometheus-api-client": {
             "hashes": [
-                "sha256:40380d641b1636757e7582ea252ec6ce32eb4bce205c8bb79f2da1fa464c898e",
-                "sha256:4e05bed97cbe4d8542c01078053c998fe737f854192e3f4529341fe837256a39"
+                "sha256:833f5a5514ad16480fe3bc3ff00f3858e49acf7c2c039cad61794d6642d1d098",
+                "sha256:af1269568b7c763ad1b6360371659201dc4bc63b64756ebddb954c46ff6e548a"
             ],
             "index": "pypi",
-            "version": "==0.2.0"
+            "version": "==0.3.1"
         },
         "prometheus-client": {
             "hashes": [
