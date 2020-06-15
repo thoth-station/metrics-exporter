@@ -82,6 +82,8 @@ class MetricsBase(metaclass=_MetricsType):
         """Get instantiated graph database with shared connection pool."""
         if not cls._GRAPH:
             cls._GRAPH = GraphDatabase()
+
+        if not cls._GRAPH.is_connected():
             cls._GRAPH.connect()
 
         return cls._GRAPH
