@@ -46,9 +46,3 @@ class AdviserMetrics(MetricsBase):
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
         _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
-
-    @classmethod
-    @register_metric_job
-    def get_ceph_count(cls) -> None:
-        """Get number of reports stored in the database for a type of store."""
-        cls.get_ceph_results_per_type(store=AdvisersResultsStore())
