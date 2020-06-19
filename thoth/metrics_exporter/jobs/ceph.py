@@ -19,7 +19,7 @@
 
 import logging
 
-from thoth.storages import InspectionResultsStore
+from thoth.storages.result_base import ResultStorageBase
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -35,9 +35,9 @@ class CephMetrics(MetricsBase):
     @register_metric_job
     def get_ceph_connection_error_status() -> None:
         """Check connection to Ceph instance."""
-        inspections = InspectionResultsStore()
+        ceph_storage = ResultStorageBase()
         try:
-            inspections.connect()
+            ceph_storage.connect()
         except Exception as excptn:
             metrics.ceph_connection_error_status.set(0)
             _LOGGER.exception(excptn)
