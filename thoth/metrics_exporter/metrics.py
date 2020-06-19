@@ -67,8 +67,6 @@ workflow_task_status = Gauge(
 )
 
 # Ceph metrics
-ceph_results_number = Gauge("thoth_ceph_results_number", "Thoth Ceph result per type.", ["result_type"])
-
 ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Connection error status.", [])
 
 # PyPI Database

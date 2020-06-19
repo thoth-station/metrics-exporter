@@ -172,9 +172,3 @@ class SolverMetrics(MetricsBase):
                 solver_name,
                 python_packages_solver_error_unsolvable,
             )
-
-    @classmethod
-    @register_metric_job
-    def get_ceph_count(cls) -> None:
-        """Get number of reports stored in the database for a type of store."""
-        cls.get_ceph_results_per_type(store=SolverResultsStore())
