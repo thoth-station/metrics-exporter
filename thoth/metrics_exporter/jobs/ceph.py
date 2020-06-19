@@ -18,12 +18,14 @@
 """Ceph metrics."""
 
 import logging
+import os
 
-from thoth.storages.result_base import ResultStorageBase
+from thoth.storages.ceph import CephStore
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
+from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +37,13 @@ class CephMetrics(MetricsBase):
     @register_metric_job
     def get_ceph_connection_error_status() -> None:
         """Check connection to Ceph instance."""
-        ceph_storage = ResultStorageBase()
+        ceph_storage = CephStore(
+            key_id=Configuration.CEPH_ACCESS_KEY_ID,
+            secret_key=Configuration.CEPH_ACCESS_SECRET_KEY,
+            prefix=Configuration.CEPH_BUCKET_PREFIX,
+            host=Configuration.S3_ENDPOINT_URL,
+            bucket=Configuration.CEPH_BUCKET
+        )
         try:
             ceph_storage.connect()
         except Exception as excptn:
