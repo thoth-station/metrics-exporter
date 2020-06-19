@@ -19,15 +19,12 @@
 
 
 from .adviser import AdviserMetrics
-from .analysis import AnalysisMetrics
 from .ceph import CephMetrics
 from .db import DBMetrics
-from .dependency_monkey import DependencyMonkeyMetrics
 from .inspection import InspectionMetrics
 from .openshift import OpenshiftMetrics
 from .package_analysis import PackageAnalysisMetrics
 from .pi import PIMetrics
-from .provenance import ProvenanceCheckMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
 from .software_environment import SoftwareEnvironmentMetrics
@@ -38,15 +35,12 @@ from .base import REGISTERED_JOBS
 
 __all__ = [
     "AdviserMetrics",
-    "AnalysisMetrics",
     "CephMetrics",
     "DBMetrics",
-    "DependencyMonkeyMetrics",
     "InspectionMetrics",
     "OpenshiftMetrics",
     "PackageAnalysisMetrics",
     "PIMetrics",
-    "ProvenanceCheckMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
     "SoftwareEnvironmentMetrics",
