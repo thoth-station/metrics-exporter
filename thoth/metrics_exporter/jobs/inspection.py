@@ -45,4 +45,3 @@ class InspectionMetrics(MetricsBase):
         )
         metrics.graphdb_inspection_software_stacks_records.set(thoth_graphdb_total_inspection_software_stacks)
         _LOGGER.debug("graphdb_inspection_software_stacks_records=%r", thoth_graphdb_total_inspection_software_stacks)
-
