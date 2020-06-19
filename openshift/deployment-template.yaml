@@ -210,21 +210,6 @@ objects:
                     configMapKeyRef:
                       name: thoth
                       key: prometheus-instance-metrics-exporter-frontend
-                - name: WORKFLOW_METRICS_BACKEND_PROMETHEUS_INSTANCE
-                  valueFrom:
-                    configMapKeyRef:
-                      name: thoth
-                      key: prometheus-instance-workflow-metrics-backend
-                - name: WORKFLOW_METRICS_MIDDLETIER_PROMETHEUS_INSTANCE
-                  valueFrom:
-                    configMapKeyRef:
-                      name: thoth
-                      key: prometheus-instance-workflow-metrics-middletier
-                - name: WORKFLOW_METRICS_AMUN_INSPECTION_PROMETHEUS_INSTANCE
-                  valueFrom:
-                    configMapKeyRef:
-                      name: thoth
-                      key: prometheus-instance-workflow-metrics-amun-inspection
               ports:
                 - containerPort: 8080
                   protocol: TCP
