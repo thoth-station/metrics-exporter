@@ -64,7 +64,7 @@ class DBMetrics(MetricsBase):
             )
 
             if not metric:
-                _LOGGER.warning("No metrics identified for %r", metric_name)
+                _LOGGER.warning("No metrics identified from Prometheus for %r", metric_name)
                 return
 
             last_prometheus_scrape = datetime.fromtimestamp(float(metric[0]["value"][0]))
