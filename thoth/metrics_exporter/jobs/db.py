@@ -63,6 +63,10 @@ class DBMetrics(MetricsBase):
                 metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
             )
 
+            if not metric:
+                _LOGGER.warning("No metrics identified for %r", metric_name)
+                return
+
             last_prometheus_scrape = datetime.fromtimestamp(float(metric[0]["value"][0]))
             last_evaluation = datetime.fromtimestamp(float(metric[0]["value"][1]))
 
