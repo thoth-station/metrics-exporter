@@ -86,7 +86,7 @@ class SolverMetrics(MetricsBase):
             _LOGGER.debug("graphdb_unsolved_python_package_versions_change=%r", unsolved_python_package_versions_change)
 
         else:
-            _LOGGER.warning("No metrics identified for %r", metric_name)
+            _LOGGER.warning("No metrics identified from Prometheus for %r", metric_name)
 
         metrics.graphdb_total_number_unsolved_python_packages.set(count_unsolved_python_package_versions)
         _LOGGER.debug("graphdb_total_number_unsolved_python_packages=%r", count_unsolved_python_package_versions)
