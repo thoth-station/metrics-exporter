@@ -405,3 +405,72 @@
 * Remove specific inspection metrics for Ceph
 * Remove metrics
 * Adjust and delete metrics
+
+## Release 0.8.4 (2020-08-18T07:26:10)
+* :pushpin: Automatic update of dependency thoth-common from 0.16.0 to 0.16.1 (#457)
+* Add check (#455)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.3 to 0.16.5 (#454)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.3 to 0.16.5 (#453)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.0 to 0.25.1 (#452)
+* :pushpin: Automatic update of dependency prometheus-api-client from 0.3.1 to 0.4.0 (#450)
+* :pushpin: Automatic update of dependency prometheus-api-client from 0.3.1 to 0.4.0 (#449)
+* :pushpin: Automatic update of dependency prometheus-api-client from 0.3.1 to 0.4.0 (#448)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.1 to 0.16.3 (#447)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.1 to 0.16.3 (#446)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.1 to 0.16.3 (#445)
+* :pushpin: Automatic update of dependency thoth-common from 0.14.2 to 0.16.0 (#444)
+* :pushpin: Automatic update of dependency thoth-common from 0.14.2 to 0.16.0 (#443)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.4 to 0.25.0 (#442)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.0 to 0.16.1 (#439)
+* :pushpin: Automatic update of dependency thoth-common from 0.14.1 to 0.14.2 (#438)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.2 to 0.24.4 (#437)
+* Remove latest versions limitation (#436)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.15.1 to 0.16.0 (#435)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.15.1 to 0.16.0 (#434)
+* :pushpin: Automatic update of dependency thoth-common from 0.13.13 to 0.14.1 (#433)
+* :pushpin: Automatic update of dependency thoth-common from 0.13.13 to 0.14.1 (#432)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.0 to 0.24.2 (#431)
+* Remove templates handled by thoth-application (#430)
+* Update OWNERS
+* :pushpin: Automatic update of dependency thoth-common from 0.13.12 to 0.13.13
+* :pushpin: Automatic update of dependency thoth-storages from 0.23.2 to 0.24.0
+* Update OWNERS
+* Create OWNERS
+* remove env variables from template
+* Use common methods
+* remove env variables
+* Add and remove env variables
+* Use CephStorage
+* Use generic Ceph storage
+* :pushpin: Automatic update of dependency requests from 2.23.0 to 2.24.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.4 to 0.15.1
+* :pushpin: Automatic update of dependency thoth-common from 0.13.11 to 0.13.12
+* :pushpin: Automatic update of dependency thoth-storages from 0.23.0 to 0.23.2
+* remove-imports
+* make coala happy
+* :pushpin: Automatic update of dependency requests from 2.23.0 to 2.24.0
+* :pushpin: Automatic update of dependency requests from 2.23.0 to 2.24.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.4 to 0.15.1
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.4 to 0.15.1
+* :pushpin: Automatic update of dependency thoth-common from 0.13.11 to 0.13.12
+* :pushpin: Automatic update of dependency thoth-storages from 0.23.0 to 0.23.2
+* Remove metric
+* Remove Ceph as queries are too long when the bucket contains too many data
+* Connect if the adapter is not connected
+* :pushpin: Automatic update of dependency prometheus-api-client from 0.2.0 to 0.3.1
+* :pushpin: Automatic update of dependency thoth-common from 0.13.9 to 0.13.11
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.12 to 0.23.0
+* remove unusued imports
+* add import
+* add env variables
+* :pushpin: Automatic update of dependency thoth-common from 0.13.8 to 0.13.9
+* remove Argo metrics
+* Remove unusued metrics
+* Make env not hidden
+* Use configuration
+* Add missing import
+* Add docs for argo workflows and Ceph metrics
+* refactor classes to use configuration
+* Add prometheus metrics for Kebechet workflow
+* Add configuration file
+* Add workflow metrics for Kebehcet
