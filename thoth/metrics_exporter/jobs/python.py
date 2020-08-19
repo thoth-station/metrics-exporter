@@ -53,7 +53,7 @@ class PythonPackagesMetrics(MetricsBase):
         python_urls_list = list(cls.graph().get_python_package_index_urls_all())
         tot_packages = 0
         for index_url in python_urls_list:
-
+            index_url = normalize_python_index_url(index_url=index_url)
             packages_count = len(
                 cls.graph().get_python_package_versions_per_index(index_url=index_url, distinct=True)[index_url]
             )
