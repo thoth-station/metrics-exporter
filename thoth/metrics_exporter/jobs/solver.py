@@ -110,7 +110,7 @@ class SolverMetrics(MetricsBase):
     def get_python_packages_solver_error_count_per_solver(cls) -> None:
         """Get number of python packages with solver error True and how many are unparsable or unsolvable per solver."""
         for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls.graph().parse_python_solver_name(solver_name)
+            solver_info = cls._OPENSHIFT.parse_python_solver_name(solver_name)
             python_packages_solved = cls.graph().get_solved_python_packages_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
