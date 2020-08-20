@@ -478,3 +478,8 @@
 ## Release 0.8.5 (2020-08-19T15:47:43)
 * Correct errors (#463)
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.1 to 0.25.2 (#462)
+
+## Release 0.8.6 (2020-08-20T17:09:51)
+* Update README (#471)
+* Remove package analysis metrics (#470)
+* :hammer: update module based upon storages and common functions (#469)
