@@ -23,7 +23,6 @@ from .ceph import CephMetrics
 from .db import DBMetrics
 from .inspection import InspectionMetrics
 from .openshift import OpenshiftMetrics
-from .package_analysis import PackageAnalysisMetrics
 from .pi import PIMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
@@ -39,7 +38,6 @@ __all__ = [
     "DBMetrics",
     "InspectionMetrics",
     "OpenshiftMetrics",
-    "PackageAnalysisMetrics",
     "PIMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
