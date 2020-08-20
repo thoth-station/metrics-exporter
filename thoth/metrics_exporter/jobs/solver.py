@@ -55,7 +55,7 @@ class SolverMetrics(MetricsBase):
         """Get the change in unsolved Python Packages in Thoth Knowledge Graph."""
         count_unsolved_python_package_versions = 0
         for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls.graph().parse_python_solver_name(solver_name)
+            solver_info = cls._OPENSHIFT.parse_python_solver_name(solver_name)
 
             count = cls.graph().get_unsolved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
