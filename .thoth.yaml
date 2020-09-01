@@ -20,6 +20,7 @@ managers:
       maintainers:
         - fridex
         - goern
+        - pacospace
         - sesheta
       assignees:
         - sesheta
