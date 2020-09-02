@@ -483,3 +483,16 @@
 * Update README (#471)
 * Remove package analysis metrics (#470)
 * :hammer: update module based upon storages and common functions (#469)
+
+## Release 0.8.7 (2020-09-02T06:28:13)
+### Features
+* Add maintainer (#489)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.1 to 0.17.2 (#488)
+* :pushpin: Automatic update of dependency thoth-common from 0.17.0 to 0.17.2 (#487)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.0 to 0.17.1 (#484)
+* :pushpin: Automatic update of dependency flask-cors from 3.0.8 to 3.0.9 (#483)
+* :pushpin: Automatic update of dependency thoth-common from 0.16.1 to 0.17.0 (#482)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.5 to 0.17.0 (#478)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.3 to 0.25.5 (#477)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.2 to 0.25.3 (#475)

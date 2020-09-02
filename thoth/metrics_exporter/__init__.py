@@ -24,7 +24,7 @@ from thoth.common import init_logging
 from thoth.storages import __version__ as __storages__version__
 
 
-__version__ = "0.8.6"
+__version__ = "0.8.7"
 __service_version__ = f"{__version__}+storage.{__storages__version__}.common.{__common__version__}"
 
 
