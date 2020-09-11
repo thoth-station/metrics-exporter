@@ -151,17 +151,17 @@ graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
 )
 
-# PackageAnalyzerRun
-graphdb_total_number_analyzed_python_packages = Gauge(
-    "thoth_graphdb_total_number_analyzed_python_packages", "Total number of analyzed Python packages.", []
+# Security
+graphdb_total_number_si_analyzed_python_packages = Gauge(
+    "thoth_graphdb_total_number_si_analyzed_python_packages", "Total number of SI analyzed Python packages.", []
 )
-graphdb_total_number_analyzed_error_python_packages = Gauge(
-    "thoth_graphdb_total_number_analyzed_error_python_packages",
-    "Total number of analyzed Python packages with error.",
+graphdb_total_number_si_unanalyzed_python_packages_per_solver = Gauge(
+    "graphdb_total_number_si_unanalyzed_python_packages_per_solver",
+    "Total number of SI unanalyzed Python packages.",
     [],
 )
-graphdb_total_number_unanalyzed_python_packages = Gauge(
-    "thoth_graphdb_total_number_unanalyzed_python_packages", "Total number of unanalyzed Python packages.", []
+graphdb_si_unanalyzed_python_package_versions_change = Counter(
+    "thoth_graphdb_si_unanalyzed_python_package_versions_change", "SI unanalyzed Python package versions change.", []
 )
 
 # SolverRun

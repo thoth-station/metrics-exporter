@@ -26,6 +26,7 @@ from .openshift import OpenshiftMetrics
 from .pi import PIMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
+from .security import SecurityMetrics
 from .software_environment import SoftwareEnvironmentMetrics
 from .solver import SolverMetrics
 from .user import UserInformationMetrics
@@ -41,6 +42,7 @@ __all__ = [
     "PIMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
+    "SecurityMetrics",
     "SoftwareEnvironmentMetrics",
     "SolverMetrics",
     "UserInformationMetrics",

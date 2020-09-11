@@ -42,7 +42,7 @@ class CephMetrics(MetricsBase):
             secret_key=Configuration.CEPH_ACCESS_SECRET_KEY,
             prefix=Configuration.CEPH_BUCKET_PREFIX,
             host=Configuration.S3_ENDPOINT_URL,
-            bucket=Configuration.CEPH_BUCKET
+            bucket=Configuration.CEPH_BUCKET,
         )
         try:
             ceph_storage.connect()
