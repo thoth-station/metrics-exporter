@@ -496,3 +496,14 @@
 * :pushpin: Automatic update of dependency sentry-sdk from 0.16.5 to 0.17.0 (#478)
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.3 to 0.25.5 (#477)
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.2 to 0.25.3 (#475)
+
+## Release 0.8.8 (2020-09-14T11:00:09)
+### Features
+* Bump version for release with new SI (#499)
+* Add SI metrics (#496)
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-common from 0.18.1 to 0.18.2 (#497)
+* :pushpin: Automatic update of dependency prometheus-api-client from 0.4.0 to 0.4.1 (#495)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.2 to 0.17.4 (#494)
+* :pushpin: Automatic update of dependency thoth-common from 0.17.2 to 0.18.1 (#493)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.5 to 0.25.7 (#492)
