@@ -46,10 +46,10 @@ class SecurityMetrics(MetricsBase):
         """Get the change in security unanalyzed Python Packages in Thoth Knowledge Graph."""
         count_si_unanalyzed = cls.graph().get_si_unanalyzed_python_package_versions_count_all(distinct=True)
 
-        metrics.graphdb_total_number_si_unanalyzed_python_packages_per_solver.set(count_si_unanalyzed)
-        _LOGGER.debug("graphdb_total_number_si_unanalyzed_python_packages_per_solver=%r", count_si_unanalyzed)
+        metrics.graphdb_total_number_si_unanalyzed_python_packages.set(count_si_unanalyzed)
+        _LOGGER.debug("graphdb_total_number_si_unanalyzed_python_packages=%r", count_si_unanalyzed)
 
-        metric_name = "thoth_graphdb_total_number_si_unanalyzed_python_packages_per_solver"
+        metric_name = "thoth_graphdb_total_number_si_unanalyzed_python_packages"
         metric = Configuration.PROM.get_current_metric_value(
             metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
         )
