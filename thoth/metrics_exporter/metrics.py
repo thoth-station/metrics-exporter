@@ -155,8 +155,8 @@ graphdb_inspection_software_stacks_records = Gauge(
 graphdb_total_number_si_analyzed_python_packages = Gauge(
     "thoth_graphdb_total_number_si_analyzed_python_packages", "Total number of SI analyzed Python packages.", []
 )
-graphdb_total_number_si_unanalyzed_python_packages_per_solver = Gauge(
-    "graphdb_total_number_si_unanalyzed_python_packages_per_solver",
+graphdb_total_number_si_unanalyzed_python_packages = Gauge(
+    "graphdb_total_number_si_unanalyzed_python_packages",
     "Total number of SI unanalyzed Python packages.",
     [],
 )
