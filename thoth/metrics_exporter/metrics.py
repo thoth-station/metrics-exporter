@@ -146,6 +146,10 @@ graphdb_advised_software_stacks_records = Gauge(
     "thoth_graphdb_advised_software_stacks_records", "Thoth Advised Software Stacks.", []
 )
 
+graphdb_adviser_count_per_source_type = Gauge(
+    "thoth_graphdb_adviser_count_per_source_type", "Thoth Adviser Runs per Thoth Integration.", ["thoth_integration"]
+)
+
 # InspectionRun
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
@@ -156,9 +160,7 @@ graphdb_total_number_si_analyzed_python_packages = Gauge(
     "thoth_graphdb_total_number_si_analyzed_python_packages", "Total number of SI analyzed Python packages.", []
 )
 graphdb_total_number_si_unanalyzed_python_packages = Gauge(
-    "graphdb_total_number_si_unanalyzed_python_packages",
-    "Total number of SI unanalyzed Python packages.",
-    [],
+    "graphdb_total_number_si_unanalyzed_python_packages", "Total number of SI unanalyzed Python packages.", []
 )
 graphdb_si_unanalyzed_python_package_versions_change = Counter(
     "thoth_graphdb_si_unanalyzed_python_package_versions_change", "SI unanalyzed Python package versions change.", []
