@@ -51,7 +51,7 @@ class AdviserMetrics(MetricsBase):
     @classmethod
     @register_metric_job
     def get_adviser_count_per_source_type(cls) -> None:
-        """Get the total number of Advised Python Software Stacks in Thoth Knowledge Graph."""
+        """Get the total number of Adviser Runs per Thoth Integration provided."""
         adviser_count_per_source_type = cls.graph().get_adviser_run_count_per_source_type()
         for thoth_integration in ThothAdviserIntegrationEnum._member_names_:
 
