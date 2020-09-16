@@ -511,3 +511,12 @@
 ## Release 0.8.9 (2020-09-15T08:59:47)
 ### Features
 * Rename metric (#503)
+
+## Release 0.8.10 (2020-09-16T07:03:44)
+### Features
+* Introduce metrics for Thoth integrations (#511)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.5 to 0.17.6 (#514)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.8 to 0.25.9 (#512)
+* :pushpin: Automatic update of dependency thoth-common from 0.18.3 to 0.19.0 (#510)
+* :pushpin: Automatic update of dependency thoth-common from 0.18.3 to 0.19.0 (#509)
