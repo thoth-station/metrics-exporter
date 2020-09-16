@@ -25,6 +25,7 @@ import thoth.metrics_exporter.metrics as metrics
 
 from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
+from thoth.storages.graph.enums import ThothAdviserIntegrationEnum
 from thoth.storages import AdvisersResultsStore
 
 from .base import register_metric_job
@@ -46,3 +47,20 @@ class AdviserMetrics(MetricsBase):
         )
         metrics.graphdb_advised_software_stacks_records.set(thoth_graphdb_total_advised_software_stacks)
         _LOGGER.debug("graphdb_advised_software_stacks_records=%r", thoth_graphdb_total_advised_software_stacks)
+
+    @classmethod
+    @register_metric_job
+    def get_adviser_count_per_source_type(cls) -> None:
+        """Get the total number of Adviser Runs per Thoth Integration provided."""
+        adviser_count_per_source_type = cls.graph().get_adviser_run_count_per_source_type()
+        for thoth_integration in ThothAdviserIntegrationEnum._member_names_:
+
+            if thoth_integration in adviser_count_per_source_type:
+
+                counts = adviser_count_per_source_type[thoth_integration]
+                metrics.graphdb_adviser_count_per_source_type.labels(thoth_integration).set(counts)
+                _LOGGER.debug("graphdb_adviser_count_per_source_type(%r)=%r", thoth_integration, counts)
+            else:
+
+                metrics.graphdb_adviser_count_per_source_type.labels(thoth_integration).set(0)
+                _LOGGER.debug("graphdb_adviser_count_per_source_type(%r)=%r", thoth_integration, 0)
