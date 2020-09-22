@@ -520,3 +520,7 @@
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.8 to 0.25.9 (#512)
 * :pushpin: Automatic update of dependency thoth-common from 0.18.3 to 0.19.0 (#510)
 * :pushpin: Automatic update of dependency thoth-common from 0.18.3 to 0.19.0 (#509)
+
+## Release 0.8.11 (2020-09-22T06:36:14)
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.9 to 0.25.11 (#517)
