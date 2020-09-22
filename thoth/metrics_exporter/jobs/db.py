@@ -36,7 +36,7 @@ _LOGGER = logging.getLogger(__name__)
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
-    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
+    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
