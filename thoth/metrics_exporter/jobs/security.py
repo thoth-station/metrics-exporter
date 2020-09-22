@@ -38,7 +38,7 @@ class SecurityMetrics(MetricsBase):
     """Class to evaluate Metrics for Security."""
 
     _OPENSHIFT = OpenShift()
-    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_FRONTEND_PROMETHEUS_INSTANCE"]
+    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     @classmethod
     @register_metric_job
