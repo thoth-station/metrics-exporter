@@ -524,3 +524,9 @@
 ## Release 0.8.11 (2020-09-22T06:36:14)
 ### Automatic Updates
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.9 to 0.25.11 (#517)
+
+## Release 0.8.12 (2020-09-23T06:15:29)
+### Features
+* metrics-exporter runs in infra now (#521)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.6 to 0.17.7 (#524)
