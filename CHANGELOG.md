@@ -530,3 +530,7 @@
 * metrics-exporter runs in infra now (#521)
 ### Automatic Updates
 * :pushpin: Automatic update of dependency sentry-sdk from 0.17.6 to 0.17.7 (#524)
+
+## Release 0.8.13 (2020-09-23T11:37:42)
+### Features
+* Adjust metrics to start with Thoth (#526)
