@@ -106,33 +106,41 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def get_is_management_api_storages_up2date(cls) -> None:
         """Check if management-API deployed contains latest thoth-storages library."""
+        python_package_name = "thoth-storages"
         python_package_index = "https://pypi.org/simple"
         source = Source(python_package_index)
         try:
             latest_version = source.get_latest_package_version(python_package_name)
         except Exception as exc:
-            print(str(exc))
-
-        metric_name = "management_api_info"
-        query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
-        query = f"management_api_info{query_labels}"
-        metrics = Configuration.PROM.custom_query(query=query)
-
-        for metric in metrics:
-            if metric["value"][1] == "1":
-                complete_versions = metric["metric"]["version"]
-                libraries_versions = complete_versions.split("+")[1]
-                management_api_storage_version = (
-                    libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
-                )
-                break
-
-        if storage_version != latest_version:
-            _LOGGER.info(
-                "latest thoth-storages version %r is not in sync with Management-API: %r ",
-                latest_version,
-                management_api_storage_version,
+            _LOGGER.warning(
+                "Could not retrieve version for package %r from %r", python_package_name, python_package_index
             )
-            metrics.graphdb_is_schema_up2date.set(0)
-        else:
-            metrics.graphdb_is_schema_up2date.set(1)
+
+        if latest_version:
+            metric_name = "management_api_info"
+            query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
+            query = f"management_api_info{query_labels}"
+            metrics = Configuration.PROM.custom_query(query=query)
+
+            if metrics:
+                for metric in metrics:
+                    if metric["value"][1] == "1":
+                        complete_versions = metric["metric"]["version"]
+                        libraries_versions = complete_versions.split("+")[1]
+                        management_api_storage_version = (
+                            libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
+                        )
+                        break
+
+                if storage_version != latest_version:
+                    _LOGGER.info(
+                        "latest thoth-storages version %r is not in sync with Management-API: %r ",
+                        latest_version,
+                        management_api_storage_version,
+                    )
+                    metrics.graphdb_is_schema_up2date.set(0)
+                else:
+                    metrics.graphdb_is_schema_up2date.set(1)
+
+            else:
+                _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
