@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 from thoth.storages.exceptions import DatabaseNotInitialized
 import thoth.metrics_exporter.metrics as metrics
 from prometheus_api_client import PrometheusConnect
+from thoth.python import Source
 
 from .base import register_metric_job
 from .base import MetricsBase
@@ -37,6 +38,7 @@ class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
+    _MANAGEMENT_API_INSTANCE = os.environ["MANAGEMENT_API_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
@@ -102,10 +104,35 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_is_schema_up2date(cls) -> None:
-        """Check if the schema running on metrics-exporter is same as the schema present in the database."""
+    def get_is_management_api_storages_up2date(cls) -> None:
+        """Check if management-API deployed contains latest thoth-storages library."""
+        python_package_index = "https://pypi.org/simple"
+        source = Source(python_package_index)
         try:
-            metrics.graphdb_is_schema_up2date.set(int(cls.graph().is_schema_up2date()))
-        except DatabaseNotInitialized as exc:
-            _LOGGER.warning("Database schema is not initialized yet: %s", str(exc))
+            latest_version = source.get_latest_package_version(python_package_name)
+        except Exception as exc:
+            print(str(exc))
+
+        metric_name = "management_api_info"
+        query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
+        query = f"management_api_info{query_labels}"
+        metrics = Configuration.PROM.custom_query(query=query)
+
+        for metric in metrics:
+            if metric["value"][1] == "1":
+                complete_versions = metric["metric"]["version"]
+                libraries_versions = complete_versions.split("+")[1]
+                management_api_storage_version = (
+                    libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
+                )
+                break
+
+        if storage_version != latest_version:
+            _LOGGER.info(
+                "latest thoth-storages version %r is not in sync with Management-API: %r ",
+                latest_version,
+                management_api_storage_version,
+            )
             metrics.graphdb_is_schema_up2date.set(0)
+        else:
+            metrics.graphdb_is_schema_up2date.set(1)
