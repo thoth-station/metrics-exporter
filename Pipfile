@@ -15,6 +15,7 @@ aiocontextvars = "*"
 prometheus-api-client = "*"
 requests = "*"
 beautifulsoup4 = "*"
+thoth-python = "*"
 
 [dev-packages]
 
