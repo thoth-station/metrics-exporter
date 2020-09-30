@@ -534,3 +534,11 @@
 ## Release 0.8.13 (2020-09-23T11:37:42)
 ### Features
 * Adjust metrics to start with Thoth (#526)
+
+## Release 0.8.14 (2020-09-30T15:56:35)
+### Features
+* Introduce metric for alarm on storages version in management-API (#533)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.7 to 0.17.8 (#532)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.7 to 0.17.8 (#531)
+* :pushpin: Automatic update of dependency thoth-common from 0.19.0 to 0.20.0 (#530)
