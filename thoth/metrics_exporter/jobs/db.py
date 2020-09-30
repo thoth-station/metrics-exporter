@@ -130,9 +130,9 @@ class DBMetrics(MetricsBase):
                 latest_version,
                 management_api_storage_version,
             )
-            metrics.management_api_is_storages_latest.set(0)
+            metrics.management_api_has_storages_latest.set(0)
         else:
-            metrics.management_api_is_storages_latest.set(1)
+            metrics.management_api_has_storages_latest.set(1)
 
 
 def _retrieve_latest_version() -> Optional[str]:
