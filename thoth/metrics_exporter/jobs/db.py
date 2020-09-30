@@ -116,13 +116,13 @@ class DBMetrics(MetricsBase):
         metric_name = "management_api_info"
         query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
         query = f"management_api_info{query_labels}"
-        metrics = Configuration.PROM.custom_query(query=query)
+        metrics_retrieved = Configuration.PROM.custom_query(query=query)
 
-        if not metrics:
+        if not metrics_retrieved:
             _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
             return
 
-        management_api_storage_version = _parse_metric(metrics=metrics)
+        management_api_storage_version = _parse_metric(metrics_retrieved=metrics_retrieved)
 
         if management_api_storage_version != latest_version:
             _LOGGER.info(
@@ -149,9 +149,9 @@ def _retrieve_latest_version() -> Optional[str]:
     return latest_version
 
 
-def _parse_metric(metrics: List[Any]) -> str:
+def _parse_metric(metrics_retrieved: List[Any]) -> str:
     """Parse metric to obtain current version."""
-    for metric in metrics:
+    for metric in metrics_retrieved:
         if metric["value"][1] == "1":
             complete_versions = metric["metric"]["version"]
             libraries_versions = complete_versions.split("+")[1]
