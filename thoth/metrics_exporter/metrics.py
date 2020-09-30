@@ -208,8 +208,8 @@ graphdb_unsolved_python_package_versions_change = Counter(
     "thoth_graphdb_unsolved_python_package_versions_change", "Unsolved Python package versions change.", []
 )
 
-graphdb_is_schema_up2date = Gauge(
-    "thoth_graphdb_is_schema_up2date", "Exposing information if database schema is up2date", []
+management_api_has_storages_latest = Gauge(
+    "thoth_management_api_has_storages_latest", "Exposing information if storages in management-API is latest", []
 )
 
 # Kebechet Metrics
