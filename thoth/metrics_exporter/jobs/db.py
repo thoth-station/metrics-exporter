@@ -20,6 +20,8 @@
 import logging
 import os
 
+from typing import List, Any, Optional
+
 from datetime import datetime, timedelta
 
 from thoth.storages.exceptions import DatabaseNotInitialized
@@ -106,15 +108,7 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def get_is_management_api_storages_up2date(cls) -> None:
         """Check if management-API deployed contains latest thoth-storages library."""
-        python_package_name = "thoth-storages"
-        python_package_index = "https://pypi.org/simple"
-        source = Source(python_package_index)
-        try:
-            latest_version = source.get_latest_package_version(python_package_name)
-        except Exception as exc:
-            _LOGGER.warning(
-                "Could not retrieve version for package %r from %r", python_package_name, python_package_index
-            )
+        latest_version = _retrieve_latest_version()
 
         if not latest_version:
             return
@@ -128,16 +122,9 @@ class DBMetrics(MetricsBase):
             _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
             return
 
-        for metric in metrics:
-            if metric["value"][1] == "1":
-                complete_versions = metric["metric"]["version"]
-                libraries_versions = complete_versions.split("+")[1]
-                management_api_storage_version = (
-                    libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
-                )
-                break
+        management_api_storage_version = _parse_metric(metrics=metrics)
 
-        if storage_version != latest_version:
+        if management_api_storage_version != latest_version:
             _LOGGER.info(
                 "latest thoth-storages version %r is not in sync with Management-API: %r ",
                 latest_version,
@@ -146,3 +133,31 @@ class DBMetrics(MetricsBase):
             metrics.management_api_is_storages_latest.set(0)
         else:
             metrics.management_api_is_storages_latest.set(1)
+
+
+def _retrieve_latest_version() -> Optional[str]:
+    """Retrieve storages latest version."""
+    python_package_name = "thoth-storages"
+    python_package_index = "https://pypi.org/simple"
+    source = Source(python_package_index)
+
+    try:
+        latest_version = source.get_latest_package_version(python_package_name)
+    except Exception as exc:
+        _LOGGER.warning("Could not retrieve version for package %r from %r", python_package_name, python_package_index)
+
+    return latest_version
+
+
+def _parse_metric(metrics: List[Any]) -> str:
+    """Parse metric to obtain current version."""
+    for metric in metrics:
+        if metric["value"][1] == "1":
+            complete_versions = metric["metric"]["version"]
+            libraries_versions = complete_versions.split("+")[1]
+            management_api_storage_version = (
+                libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
+            )
+            break
+
+    return management_api_storage_version
