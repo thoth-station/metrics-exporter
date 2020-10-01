@@ -548,3 +548,7 @@
 * Introduce metric on SI not unalyzable (#540)
 ### Automatic Updates
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.13 to 0.25.14 (#538)
+
+## Release 0.8.16 (2020-10-01T17:28:38)
+### Features
+* Adjust datatype (#543)
