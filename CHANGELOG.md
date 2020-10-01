@@ -542,3 +542,9 @@
 * :pushpin: Automatic update of dependency sentry-sdk from 0.17.7 to 0.17.8 (#532)
 * :pushpin: Automatic update of dependency sentry-sdk from 0.17.7 to 0.17.8 (#531)
 * :pushpin: Automatic update of dependency thoth-common from 0.19.0 to 0.20.0 (#530)
+
+## Release 0.8.15 (2020-10-01T09:57:17)
+### Features
+* Introduce metric on SI not unalyzable (#540)
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.13 to 0.25.14 (#538)
