@@ -79,3 +79,13 @@ class SecurityMetrics(MetricsBase):
         count_si_analyzed = cls.graph().get_si_analyzed_python_package_versions_count_all(distinct=True)
         metrics.graphdb_total_number_si_analyzed_python_packages.set(count_si_analyzed)
         _LOGGER.debug("graphdb_total_number_si_analyzed_python_packages=%r", count_si_analyzed)
+
+    @classmethod
+    @register_metric_job
+    def get_python_packages_si_not_analyzable_count(cls) -> None:
+        """Get number of SI not analyzable Python packages."""
+        count_si_not_analyzable = cls.graph().get_si_unanalyzed_python_package_versions_count_all(
+            distinct=True, provides_source_distro=False
+        )
+        metrics.graphdb_total_number_si_not_analyzable_python_packages.set(count_si_not_analyzable)
+        _LOGGER.debug("graphdb_total_number_si_not_analyzable_python_packages=%r", count_si_not_analyzable)
