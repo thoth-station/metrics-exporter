@@ -113,6 +113,7 @@ class DBMetrics(MetricsBase):
         if not latest_version:
             return
 
+        latest_version = str(latest_version)
         metric_name = "management_api_info"
         query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
         query = f"management_api_info{query_labels}"
@@ -122,20 +123,29 @@ class DBMetrics(MetricsBase):
             _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
             return
 
-        management_api_storage_version = _parse_metric(metrics_retrieved=metrics_retrieved)
+        management_api_storage_version = str(_parse_metric(metrics_retrieved=metrics_retrieved))
 
+        check = 0
         if management_api_storage_version != latest_version:
             _LOGGER.info(
                 "latest thoth-storages version %r is not in sync with Management-API: %r ",
                 latest_version,
                 management_api_storage_version,
             )
-            metrics.management_api_has_storages_latest.set(0)
+
         else:
-            metrics.management_api_has_storages_latest.set(1)
+            _LOGGER.info(
+                "latest thoth-storages version %r is in sync with Management-API: %r ",
+                latest_version,
+                management_api_storage_version,
+            )
+            check = 1
+
+        _LOGGER.debug("management_api_has_storages_latest=%r", check)
+        metrics.management_api_has_storages_latest.set(check)
 
 
-def _retrieve_latest_version() -> Optional[str]:
+def _retrieve_latest_version() -> Optional[Any]:
     """Retrieve storages latest version."""
     python_package_name = "thoth-storages"
     python_package_index = "https://pypi.org/simple"
@@ -149,7 +159,7 @@ def _retrieve_latest_version() -> Optional[str]:
     return latest_version
 
 
-def _parse_metric(metrics_retrieved: List[Any]) -> str:
+def _parse_metric(metrics_retrieved: List[Any]) -> Optional[str]:
     """Parse metric to obtain current version."""
     for metric in metrics_retrieved:
         if metric["value"][1] == "1":
@@ -158,6 +168,4 @@ def _parse_metric(metrics_retrieved: List[Any]) -> str:
             management_api_storage_version = (
                 libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
             )
-            break
-
-    return management_api_storage_version
+        return management_api_storage_version
