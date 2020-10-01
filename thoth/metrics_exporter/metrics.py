@@ -165,6 +165,10 @@ graphdb_total_number_si_unanalyzed_python_packages = Gauge(
 graphdb_si_unanalyzed_python_package_versions_change = Counter(
     "thoth_graphdb_si_unanalyzed_python_package_versions_change", "SI unanalyzed Python package versions change.", []
 )
+graphdb_total_number_si_not_analyzable_python_packages = Gauge(
+    "thoth_graphdb_total_number_si_not_analyzable_python_packages", "SI not analyzable Python package.", []
+)
+
 
 # SolverRun
 graphdb_total_number_solvers = Gauge(
