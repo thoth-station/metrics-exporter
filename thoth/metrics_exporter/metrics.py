@@ -91,6 +91,8 @@ graphdb_last_evaluation_bloat_data = Gauge("thoth_graphdb_last_evaluation_bloat_
 
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status.", [])
 
+graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption", [])
+
 # CONTENT METRICS
 
 # Python Packages
