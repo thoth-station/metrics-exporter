@@ -70,7 +70,7 @@ class AdviserMetrics(MetricsBase):
     @register_metric_job
     def get_uniquer_usage_count_per_source_type(cls) -> None:
         """Get unique number of users per Thoth Integration provided."""
-        users_count_per_source_type = cls.graph().get_origin_count_per_source_type()
+        users_count_per_source_type = cls.graph().get_origin_count_per_source_type(distinct=True)
         for thoth_integration in ThothAdviserIntegrationEnum._member_names_:
 
             if thoth_integration in users_count_per_source_type:
