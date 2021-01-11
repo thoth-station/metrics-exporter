@@ -552,3 +552,13 @@
 ## Release 0.8.16 (2020-10-01T17:28:38)
 ### Features
 * Adjust datatype (#543)
+
+## Release 0.9.0 (2021-01-11T08:37:42)
+### Features
+* :arrow_up: Automatic update of dependencies by kebechet. (#556)
+* Changed func name (#551)
+* :arrow_up: Automatic update of dependencies by kebechet. (#553)
+* :arrow_up: Automatic update of dependencies by kebechet. (#550)
+* port to python 38 (#548)
+### Improvements
+* Introduce metrics for unique usage of adviser integrations (#554)
