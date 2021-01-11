@@ -150,6 +150,11 @@ graphdb_adviser_count_per_source_type = Gauge(
     "thoth_graphdb_adviser_count_per_source_type", "Thoth Adviser Runs per Thoth Integration.", ["thoth_integration"]
 )
 
+graphdb_users_count_per_source_type = Gauge(
+    "thoth_graphdb_users_count_per_source_type", "Thoth Users per Thoth Integration.", ["thoth_integration"]
+)
+
+
 # InspectionRun
 graphdb_inspection_software_stacks_records = Gauge(
     "thoth_graphdb_inspection_software_stacks_records", "Thoth Inspection Software Stacks.", []
