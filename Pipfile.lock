@@ -129,17 +129,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:360a9f805b11f2e468d48815193c55278765fb30b64350893ab63236a5034726",
-                "sha256:81c514185de8937ba75023a2466fae0cc6f170e6348fdac31c235c32ba9d58f3"
+                "sha256:15d3910eb1acfcdaa6aa8a64f3ed956ada1b5f3f9a8f2f127fd786036cb2afa5",
+                "sha256:d46f7c8c586c9c293f1a1eead56c18b82fcc3eec4dcebd4686aad4a675fd45b8"
             ],
-            "version": "==1.16.52"
+            "version": "==1.16.54"
         },
         "botocore": {
             "hashes": [
-                "sha256:d8f50e4162012ccfab64c2db4fcc99313d46d57789072251bab56013d66546e2",
-                "sha256:dc5ec23deadbe9327d3c81d03fddf80805c549059baabd80dea605941fe6a221"
+                "sha256:bba883f97c6657df941598150bf8a5a88bb976b7de53ec41ad3e518cfe8931d3",
+                "sha256:edfe213f3b01467605754ba1d46c6ac3b8a4be721fdf879d45c2132a99b4ac49"
             ],
-            "version": "==1.19.52"
+            "version": "==1.19.54"
         },
         "cachetools": {
             "hashes": [
@@ -954,10 +954,10 @@
         },
         "thoth-common": {
             "hashes": [
-                "sha256:debe3118f0150c8f3813a9a3572bed274db4beb221a423954ce40afed18ba741"
+                "sha256:32b9a43def528ec82469c02640cf27ec8c1021a96c71342d140bab4f1ab36120"
             ],
             "index": "pypi",
-            "version": "==0.21.3"
+            "version": "==0.21.4"
         },
         "thoth-python": {
             "hashes": [
@@ -979,11 +979,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:1513bfbb3e6d6ecefe66d5a769c92df7201b8adbc4f64616f1807f9e2d00c588",
-                "sha256:a3a60961ad5e3d4d3c288173324d6a0b1dedd767f7910fa37bfb5cf73f0f1c3f"
+                "sha256:12058b100c03d624f8af083479120eebc6cbe7d73af58c5f5d8a0f016fe2c460",
+                "sha256:8030ef55e5f43374608cc74cb0d5e8ea5f0bbe5db1b31a10aa5b8b1b19048a02"
             ],
             "index": "pypi",
-            "version": "==0.31.0"
+            "version": "==0.32.0"
         },
         "toml": {
             "hashes": [
