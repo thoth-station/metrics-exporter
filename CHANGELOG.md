@@ -562,3 +562,9 @@
 * port to python 38 (#548)
 ### Improvements
 * Introduce metrics for unique usage of adviser integrations (#554)
+
+## Release 0.9.1 (2021-01-15T08:03:14)
+### Features
+* :arrow_up: Automatic update of dependencies by kebechet. (#568)
+* :arrow_up: Automatic update of dependencies by kebechet. (#565)
+* :arrow_up: Automatic update of dependencies by kebechet. (#564)
