@@ -144,6 +144,15 @@ class DBMetrics(MetricsBase):
         _LOGGER.debug("management_api_has_storages_latest=%r", check)
         metrics.management_api_has_storages_latest.set(check)
 
+    @classmethod
+    @register_metric_job
+    def set_is_corrupted_metric(cls):
+        """Set metric for indicating whether database corruption has been **detected**."""
+        if cls.graph().is_database_corrupted():
+            metrics.graphdb_is_corrupted.set(1)
+        else:
+            metrics.graphdb_is_corrupted.set(0)
+
 
 def _retrieve_latest_version() -> Optional[Any]:
     """Retrieve storages latest version."""
