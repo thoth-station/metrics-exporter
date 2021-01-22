@@ -20,8 +20,6 @@
 import logging
 import os
 
-from typing import List, Any, Optional
-
 from datetime import datetime, timedelta
 
 from thoth.storages.exceptions import DatabaseNotInitialized
@@ -40,7 +38,6 @@ class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
-    _MANAGEMENT_API_INSTANCE = os.environ["MANAGEMENT_API_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
@@ -106,75 +103,9 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_is_management_api_storages_up2date(cls) -> None:
-        """Check if management-API deployed contains latest thoth-storages library."""
-        latest_version = _retrieve_latest_version()
-
-        if not latest_version:
-            return
-
-        latest_version = str(latest_version)
-        metric_name = "management_api_info"
-        query_labels = f'{{instance="{cls._MANAGEMENT_API_INSTANCE}"}}'
-        query = f"management_api_info{query_labels}"
-        metrics_retrieved = Configuration.PROM.custom_query(query=query)
-
-        if not metrics_retrieved:
-            _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
-            return
-
-        management_api_storage_version = str(_parse_metric(metrics_retrieved=metrics_retrieved))
-
-        check = 0
-        if management_api_storage_version != latest_version:
-            _LOGGER.info(
-                "latest thoth-storages version %r is not in sync with Management-API: %r ",
-                latest_version,
-                management_api_storage_version,
-            )
-
-        else:
-            _LOGGER.info(
-                "latest thoth-storages version %r is in sync with Management-API: %r ",
-                latest_version,
-                management_api_storage_version,
-            )
-            check = 1
-
-        _LOGGER.debug("management_api_has_storages_latest=%r", check)
-        metrics.management_api_has_storages_latest.set(check)
-
-    @classmethod
-    @register_metric_job
     def set_is_corrupted_metric(cls):
         """Set metric for indicating whether database corruption has been **detected**."""
         if cls.graph().is_database_corrupted():
             metrics.graphdb_is_corrupted.set(1)
         else:
             metrics.graphdb_is_corrupted.set(0)
-
-
-def _retrieve_latest_version() -> Optional[Any]:
-    """Retrieve storages latest version."""
-    python_package_name = "thoth-storages"
-    python_package_index = "https://pypi.org/simple"
-    source = Source(python_package_index)
-
-    try:
-        latest_version = source.get_latest_package_version(python_package_name)
-    except Exception as exc:
-        _LOGGER.warning("Could not retrieve version for package %r from %r", python_package_name, python_package_index)
-
-    return latest_version
-
-
-def _parse_metric(metrics_retrieved: List[Any]) -> Optional[str]:
-    """Parse metric to obtain current version."""
-    for metric in metrics_retrieved:
-        if metric["value"][1] == "1":
-            complete_versions = metric["metric"]["version"]
-            libraries_versions = complete_versions.split("+")[1]
-            management_api_storage_version = (
-                libraries_versions.split("common")[0].rsplit(".", 1)[0].split("storage.", 1)[1]
-            )
-        return management_api_storage_version
