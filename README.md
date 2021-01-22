@@ -6,7 +6,7 @@ This is a Promotheus Metrics exporter for Thoth.
 
 1. Create a `.env` file from the `.env.template`.
 2. Once you have populated all the values for `.env`, follow up with `pipenv install --dev`.
-3. oc login into the Openshift cluster. 
+3. oc login into the Openshift cluster.
 4. Run the local version of thoth-storages after restoring the dump - [guide](https://github.com/thoth-station/storages#running-postgresql-locally) (or connect to the production db using replacing the env variables in `.env`).
 5. Run the metrics exporter using - `pipenv run python3 wsgi.py`
 6. You should see metrics in - [localhost:8080](http://localhost:8080)

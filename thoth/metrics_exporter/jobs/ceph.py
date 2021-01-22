@@ -18,7 +18,6 @@
 """Ceph metrics."""
 
 import logging
-import os
 
 from thoth.storages.ceph import CephStore
 import thoth.metrics_exporter.metrics as metrics

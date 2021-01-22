@@ -19,11 +19,8 @@
 
 import logging
 import os
-from datetime import datetime
 
 from thoth.common import OpenShift
-
-from thoth.storages import SolverResultsStore
 
 import thoth.metrics_exporter.metrics as metrics
 

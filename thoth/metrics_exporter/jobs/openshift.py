@@ -18,7 +18,6 @@
 """Metrics related to OpenShift resources and objects."""
 
 import logging
-from typing import Dict, List
 import os
 
 from thoth.common import OpenShift

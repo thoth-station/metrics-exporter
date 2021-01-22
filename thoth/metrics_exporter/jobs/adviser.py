@@ -18,19 +18,14 @@
 """Adviser metrics."""
 
 import logging
-import os
-from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
 
-from thoth.storages import GraphDatabase
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
 from thoth.storages.graph.enums import ThothAdviserIntegrationEnum
-from thoth.storages import AdvisersResultsStore
 
 from .base import register_metric_job
 from .base import MetricsBase
-from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +59,6 @@ class AdviserMetrics(MetricsBase):
 
                 metrics.graphdb_adviser_count_per_source_type.labels(thoth_integration).set(0)
                 _LOGGER.debug("graphdb_adviser_count_per_source_type(%r)=%r", thoth_integration, 0)
-
 
     @classmethod
     @register_metric_job

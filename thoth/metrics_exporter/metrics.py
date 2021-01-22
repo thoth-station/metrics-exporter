@@ -19,8 +19,8 @@
 """All metrics exposed by metrics exporter."""
 
 
-from thoth.metrics_exporter import __version__, __service_version__
-from prometheus_client import Gauge, Counter, Histogram
+from thoth.metrics_exporter import __service_version__
+from prometheus_client import Gauge, Counter
 
 
 # Info Metric

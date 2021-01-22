@@ -24,7 +24,6 @@ from .base import register_metric_job
 from .base import MetricsBase
 
 import thoth.metrics_exporter.metrics as metrics
-from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 

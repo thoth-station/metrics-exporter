@@ -18,17 +18,13 @@
 """Inspection metrics."""
 
 import logging
-import os
-from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
 
-from thoth.storages import InspectionResultsStore
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
-from ..configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
