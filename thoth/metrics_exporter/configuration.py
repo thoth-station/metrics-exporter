@@ -44,3 +44,5 @@ class Configuration:
     CEPH_BUCKET_PREFIX = os.environ["THOTH_CEPH_BUCKET_PREFIX"]
     S3_ENDPOINT_URL = os.environ["THOTH_S3_ENDPOINT_URL"]
     CEPH_BUCKET = os.environ["THOTH_CEPH_BUCKET"]
+
+    DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
