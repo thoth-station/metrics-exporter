@@ -94,9 +94,7 @@ graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Conn
 graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption.", [])
 
 database_schema_revision_script = Gauge(
-    "thoth_database_schema_revision_script",
-    "Thoth database schema revision from script",
-    ["component", "revision"],
+    "thoth_database_schema_revision_script", "Thoth database schema revision from script.", ["component", "revision"],
 )
 
 database_schema_revision_table = Gauge(
@@ -106,9 +104,7 @@ database_schema_revision_table = Gauge(
 )
 
 graph_db_component_revision_check = Gauge(
-    "thoth_graph_db_component_revision_check",
-    "Component script and database head revision check.",
-    ["component"]
+    "thoth_graph_db_component_revision_check", "Component script and database head revision check.", ["component"]
 )
 
 
@@ -242,5 +238,3 @@ graphdb_unsolved_python_package_versions_change = Counter(
 kebechet_total_active_repo_count = Gauge(
     "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
 )
-
-
