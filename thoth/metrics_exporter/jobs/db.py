@@ -35,9 +35,39 @@ class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
 
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
+    _MANAGEMENT_API_INSTANCE = os.environ["MANAGEMENT_API_PROMETHEUS_INSTANCE"]
+    _INVESTIGATOR_INSTANCE = os.environ["INVESTIGATOR_PROMETHEUS_INSTANCE"]
+    _USER_API_INSTANCE = os.environ["USER_API_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
+
+    _TABLE_COMPONENT_USING_DATABASE = {
+        "user-api": {
+            "uses_pushgateway": False,
+            "instance": _USER_API_INSTANCE
+        },
+        "management-api": {
+            "uses_pushgateway": False,
+            "instance": _MANAGEMENT_API_INSTANCE
+        },
+        "investigator": {
+            "uses_pushgateway": False,
+            "instance": _INVESTIGATOR_INSTANCE
+        },
+        "package-releases": {
+            "uses_pushgateway": True,
+            "env": Configuration.DEPLOYMENT_NAME
+        },
+        "graph-refresh": {
+            "uses_pushgateway": True,
+            "env": Configuration.DEPLOYMENT_NAME
+        },
+        "graph-sync": {
+            "uses_pushgateway": True,
+            "env": Configuration.DEPLOYMENT_NAME
+        },
+    }
 
     @classmethod
     @register_metric_job
@@ -106,3 +136,80 @@ class DBMetrics(MetricsBase):
             metrics.graphdb_is_corrupted.set(1)
         else:
             metrics.graphdb_is_corrupted.set(0)
+
+
+    @classmethod
+    @register_metric_job
+    def set_script_head_revision(cls):
+        """Set metric for indicating database revision exposed by script."""
+        metrics.database_schema_revision_script.labels(
+            "metrics-exporter",
+            cls.graph().get_script_alembic_version_head()
+        ).set(1)
+
+    @classmethod
+    @register_metric_job
+    def set_table_head_revision(cls):
+        """Set metric for indicating database revision exposed by alembic table."""
+        metrics.database_schema_revision_table.labels(
+            "metrics-exporter",
+            cls.graph().get_table_alembic_version_head()
+        ).set(1)
+
+
+    @classmethod
+    @register_metric_job
+    def check_is_schema_up2date(cls) -> None:
+        """Check if the schema running on metrics-exporter is same as the one present in database."""
+        is_schema_up2date = int(cls.graph().is_schema_up2date())
+
+        if is_schema_up2date:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(0)
+        else:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(1)
+
+
+    @classmethod	
+    @register_metric_job	
+    def check_is_schema_up2date_for_components(cls) -> None:	
+        """Check if schema is up 2 date for all components."""
+        database_table_revision = cls.graph().get_table_alembic_version_head()
+
+        for component_name, component_info in cls._TABLE_COMPONENT_USING_DATABASE.items():
+
+            uses_pushgateway = component_info["uses_pushgateway"]
+            query_labels = ""
+
+            if not uses_pushgateway:
+                instance = component_info["instance"]
+                query_labels = f'{{instance="{instance}"}}'
+            else:
+                env = component_info["env"]
+                query_labels = f'{{env="{env}", component="{component_name}"}}'
+
+            query = f"thoth_database_schema_revision_script{query_labels}"
+            metrics_retrieved = Configuration.PROM.custom_query(query=query)
+
+            if not metrics_retrieved:	
+                _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
+                value = 1
+                metrics.graph_db_component_revision_check.labels(component_name).set(-value)
+                continue
+
+            metric = metrics_retrieved[0]
+            is_revision_up = metric['value'][1]
+
+            if int(is_revision_up) != 1:
+                _LOGGER.warning("Metric retrieved for %r is not up!", component_name)
+                value = 1
+                metrics.graph_db_component_revision_check.labels(component_name).set(-value)
+                continue
+
+            database_script_revision = metric['metric']['revision']
+            
+            if database_table_revision != database_script_revision:
+                # alarm is required: component is probably using old thoth-storages
+                metrics.graph_db_component_revision_check.labels(component_name).set(1)
+            else:
+                # component is using same revision head as in the database
+                metrics.graph_db_component_revision_check.labels(component_name).set(0)
