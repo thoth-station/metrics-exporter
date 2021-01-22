@@ -19,13 +19,11 @@
 
 
 import ast
-import time
 import logging
-from typing import Callable
+from typing import Callable, List, Any
 from decorator import decorator
 import inspect
 import textwrap
-from typing import Any
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -35,7 +33,7 @@ from thoth.storages.result_base import ResultStorageBase
 _LOGGER = logging.getLogger(__name__)
 
 # Registered jobs run by metrics-exporter periodically.
-REGISTERED_JOBS = []
+REGISTERED_JOBS: List[Any] = []
 
 
 @decorator
@@ -76,7 +74,7 @@ class MetricsBase(metaclass=_MetricsType):
 
     def __init__(self) -> None:
         """Do not instantiate this class."""
-        raise NotImplemented
+        raise NotImplementedError
 
     @classmethod
     def graph(cls):

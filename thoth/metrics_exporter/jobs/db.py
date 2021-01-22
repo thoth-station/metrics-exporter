@@ -22,10 +22,7 @@ import os
 
 from datetime import datetime, timedelta
 
-from thoth.storages.exceptions import DatabaseNotInitialized
 import thoth.metrics_exporter.metrics as metrics
-from prometheus_api_client import PrometheusConnect
-from thoth.python import Source
 
 from .base import register_metric_job
 from .base import MetricsBase

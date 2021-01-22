@@ -34,11 +34,11 @@ class PIMetrics(MetricsBase):
     @register_metric_job
     def get_observations_count_per_component(cls) -> None:
         """Get the total number of PI per component in Thoth Knowledge Graph."""
-        PI_COMPONENTS = cls.graph().get_pi_component_all()
+        pi_components = cls.graph().get_pi_component_all()
         thoth_number_of_pi_per_type = {}
 
-        if PI_COMPONENTS:
-            for component in PI_COMPONENTS:
+        if pi_components:
+            for component in pi_components:
                 thoth_number_of_pi_per_type[component] = cls.graph().get_pi_count(component=component)
 
                 for pi, pi_count in thoth_number_of_pi_per_type[component].items():

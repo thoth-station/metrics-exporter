@@ -33,7 +33,7 @@ from flask import make_response
 from flask import redirect
 from prometheus_client import generate_latest
 from thoth.common import init_logging
-from thoth.metrics_exporter import __version__, __service_version__
+from thoth.metrics_exporter import __service_version__
 from thoth.metrics_exporter.jobs import REGISTERED_JOBS
 import thoth.metrics_exporter.jobs as jobs
 
@@ -42,7 +42,7 @@ init_logging()
 
 
 _LOGGER = logging.getLogger("thoth.metrics_exporter")
-_LOGGER.info(f"Thoth Metrics Exporter v%s", __service_version__)
+_LOGGER.info("Thoth Metrics Exporter v%s", __service_version__)
 
 _UPDATE_INTERVAL_SECONDS = int(os.getenv("THOTH_METRICS_EXPORTER_UPDATE_INTERVAL", 20))
 _GRAFANA_REDIRECT_URL = os.getenv("THOTH_METRICS_EXPORTER_GRAFANA_REDIRECT_URL", "https://grafana.datahub.redhat.com/")

@@ -1,6 +1,6 @@
 ---
-name: New deployment 
-about: Request a new deployment of a component 
+name: New deployment
+about: Request a new deployment of a component
 
 ---
 Depends-On: #n
