@@ -106,7 +106,9 @@ database_schema_revision_table = Gauge(
 )
 
 graph_db_component_revision_check = Gauge(
-    "thoth_graph_db_component_revision_check", "Component script and database head revision check.", ["component"]
+    "thoth_graph_db_component_revision_check",
+    "Component script and database head revision check.",
+    ["component", "env"],
 )
 
 

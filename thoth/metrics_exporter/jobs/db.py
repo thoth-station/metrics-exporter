@@ -140,7 +140,7 @@ class DBMetrics(MetricsBase):
         """Check if schema is up to date for all components."""
         database_table_revision = cls.graph().get_table_alembic_version_head()
 
-        query = f"thoth_database_schema_revision_script"
+        query = "thoth_database_schema_revision_script"
         metrics_retrieved = Configuration.PROM.custom_query(query=query)
 
         if not metrics_retrieved:
@@ -171,7 +171,7 @@ class DBMetrics(MetricsBase):
 
             if database_table_revision != database_script_revision:
                 # alarm is required: component is probably using old thoth-storages
-                metrics.graph_db_component_revision_check.labels(component_name).set(1)
+                metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(1)
             else:
                 # component is using same revision head as in the database
-                metrics.graph_db_component_revision_check.labels(component_name).set(0)
+                metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(0)
