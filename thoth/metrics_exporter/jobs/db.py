@@ -106,3 +106,72 @@ class DBMetrics(MetricsBase):
             metrics.graphdb_is_corrupted.set(1)
         else:
             metrics.graphdb_is_corrupted.set(0)
+
+    @classmethod
+    @register_metric_job
+    def set_script_head_revision(cls):
+        """Set metric for indicating database revision exposed by script."""
+        metrics.database_schema_revision_script.labels(
+            "metrics-exporter", cls.graph().get_script_alembic_version_head(), Configuration.DEPLOYMENT_NAME
+        ).set(1)
+
+    @classmethod
+    @register_metric_job
+    def set_table_head_revision(cls):
+        """Set metric for indicating database revision exposed by alembic table."""
+        metrics.database_schema_revision_table.labels(
+            "metrics-exporter", cls.graph().get_table_alembic_version_head(), Configuration.DEPLOYMENT_NAME
+        ).set(1)
+
+    @classmethod
+    @register_metric_job
+    def check_is_schema_up2date(cls) -> None:
+        """Check if the schema running on metrics-exporter is same as the one present in database."""
+        is_schema_up2date = int(cls.graph().is_schema_up2date())
+
+        if is_schema_up2date:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(0)
+        else:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(1)
+
+    @classmethod
+    @register_metric_job
+    def check_is_schema_up2date_for_components(cls) -> None:
+        """Check if schema is up to date for all components."""
+        database_table_revision = cls.graph().get_table_alembic_version_head()
+
+        query = "thoth_database_schema_revision_script"
+        metrics_retrieved = Configuration.PROM.custom_query(query=query)
+
+        if not metrics_retrieved:
+            _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
+            metrics.graph_db_component_revision_check.labels("no-component").set(-1)
+
+        for metric in metrics_retrieved:
+
+            component_name = metric["metric"]["component"]
+
+            if "env" not in metric["metric"]:
+                continue
+
+            deployment_environment = metric["metric"]["env"]
+
+            if str(deployment_environment) == Configuration.DEPLOYMENT_NAME:
+                _LOGGER.debug("Metric skipped because of deployment environment in metric: %r!", deployment_environment)
+                continue
+
+            is_revision_up = metric["value"][1]
+
+            if int(is_revision_up) != 1:
+                _LOGGER.warning("Metric retrieved for %r is not up!", component_name)
+                metrics.graph_db_component_revision_check.labels(component_name).set(-1)
+                continue
+
+            database_script_revision = metric["metric"]["revision"]
+
+            if database_table_revision != database_script_revision:
+                # alarm is required: component is probably using old thoth-storages
+                metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(1)
+            else:
+                # component is using same revision head as in the database
+                metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(0)

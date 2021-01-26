@@ -91,7 +91,26 @@ graphdb_last_evaluation_bloat_data = Gauge("thoth_graphdb_last_evaluation_bloat_
 
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status.", [])
 
-graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption", [])
+graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption.", [])
+
+database_schema_revision_script = Gauge(
+    "thoth_database_schema_revision_script",
+    "Thoth database schema revision from script.",
+    ["component", "revision", "env"],
+)
+
+database_schema_revision_table = Gauge(
+    "thoth_database_schema_revision_table",
+    "Thoth database schema revision from database table.",
+    ["component", "revision", "env"],
+)
+
+graph_db_component_revision_check = Gauge(
+    "thoth_graph_db_component_revision_check",
+    "Component script and database head revision check.",
+    ["component", "env"],
+)
+
 
 # CONTENT METRICS
 
