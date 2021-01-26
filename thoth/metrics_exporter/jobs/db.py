@@ -112,7 +112,7 @@ class DBMetrics(MetricsBase):
     def set_script_head_revision(cls):
         """Set metric for indicating database revision exposed by script."""
         metrics.database_schema_revision_script.labels(
-            "metrics-exporter", cls.graph().get_script_alembic_version_head()
+            "metrics-exporter", cls.graph().get_script_alembic_version_head(), Configuration.DEPLOYMENT_NAME
         ).set(1)
 
     @classmethod
@@ -120,7 +120,7 @@ class DBMetrics(MetricsBase):
     def set_table_head_revision(cls):
         """Set metric for indicating database revision exposed by alembic table."""
         metrics.database_schema_revision_table.labels(
-            "metrics-exporter", cls.graph().get_table_alembic_version_head()
+            "metrics-exporter", cls.graph().get_table_alembic_version_head(), Configuration.DEPLOYMENT_NAME
         ).set(1)
 
     @classmethod
@@ -145,8 +145,7 @@ class DBMetrics(MetricsBase):
 
         if not metrics_retrieved:
             _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
-            value = 1
-            metrics.graph_db_component_revision_check.labels("no-component").set(-value)
+            metrics.graph_db_component_revision_check.labels("no-component").set(-1)
 
         for metric in metrics_retrieved:
 
@@ -158,7 +157,7 @@ class DBMetrics(MetricsBase):
             deployment_environment = metric["metric"]["env"]
 
             if str(deployment_environment) == Configuration.DEPLOYMENT_NAME:
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "Metric skipped because of deployment environment in metric: %r!", deployment_environment
                 )
                 continue
@@ -167,8 +166,7 @@ class DBMetrics(MetricsBase):
 
             if int(is_revision_up) != 1:
                 _LOGGER.warning("Metric retrieved for %r is not up!", component_name)
-                value = 1
-                metrics.graph_db_component_revision_check.labels(component_name).set(-value)
+                metrics.graph_db_component_revision_check.labels(component_name).set(-1)
                 continue
 
             database_script_revision = metric["metric"]["revision"]
