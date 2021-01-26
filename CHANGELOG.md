@@ -568,3 +568,15 @@
 * :arrow_up: Automatic update of dependencies by kebechet. (#568)
 * :arrow_up: Automatic update of dependencies by kebechet. (#565)
 * :arrow_up: Automatic update of dependencies by kebechet. (#564)
+
+## Release 0.10.0 (2021-01-26T09:38:55)
+### Features
+* :arrow_up: Automatic update of dependencies by kebechet. (#583)
+* Introduce database revision metric checks (#577)
+* :arrow_up: Automatic update of dependencies by kebechet. (#580)
+* :arrow_up: Automatic update of dependencies by kebechet. (#578)
+* Adjust pre commit (#576)
+* remove-metric (#575)
+* :arrow_up: Automatic update of dependencies by kebechet. (#574)
+* :arrow_up: Automatic update of dependencies by kebechet. (#572)
+* add job to check for db corruption (#547)
