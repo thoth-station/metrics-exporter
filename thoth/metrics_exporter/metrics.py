@@ -94,13 +94,13 @@ graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Conn
 graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption.", [])
 
 database_schema_revision_script = Gauge(
-    "thoth_database_schema_revision_script", "Thoth database schema revision from script.", ["component", "revision"],
+    "thoth_database_schema_revision_script", "Thoth database schema revision from script.", ["component", "revision", "env"],
 )
 
 database_schema_revision_table = Gauge(
     "thoth_database_schema_revision_table",
     "Thoth database schema revision from database table.",
-    ["component", "revision"],
+    ["component", "revision", "env"],
 )
 
 graph_db_component_revision_check = Gauge(
