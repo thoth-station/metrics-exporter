@@ -157,9 +157,7 @@ class DBMetrics(MetricsBase):
             deployment_environment = metric["metric"]["env"]
 
             if str(deployment_environment) == Configuration.DEPLOYMENT_NAME:
-                _LOGGER.debug(
-                    "Metric skipped because of deployment environment in metric: %r!", deployment_environment
-                )
+                _LOGGER.debug("Metric skipped because of deployment environment in metric: %r!", deployment_environment)
                 continue
 
             is_revision_up = metric["value"][1]
