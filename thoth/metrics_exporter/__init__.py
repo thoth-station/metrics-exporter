@@ -25,7 +25,7 @@ from thoth.storages import __version__ as __storages__version__
 from thoth.python import __version__ as __python__version__
 
 
-__version__ = "0.9.1"
+__version__ = "0.10.0"
 __service_version__ = (
     f"{__version__}+storage.{__storages__version__}.common.{__common__version__}.python.{__python__version__}"
 )
