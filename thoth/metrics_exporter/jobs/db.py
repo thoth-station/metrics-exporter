@@ -125,10 +125,6 @@ class DBMetrics(MetricsBase):
             metrics.database_schema_revision_table.labels(
                 "metrics-exporter", table_revision_head, Configuration.DEPLOYMENT_NAME
             ).set(1)
-        else:
-            metrics.database_schema_revision_table.labels(
-                "metrics-exporter", table_revision_head, Configuration.DEPLOYMENT_NAME
-            ).set(-1)
 
     @classmethod
     @register_metric_job
