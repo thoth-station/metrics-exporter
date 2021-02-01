@@ -580,3 +580,9 @@
 * :arrow_up: Automatic update of dependencies by kebechet. (#574)
 * :arrow_up: Automatic update of dependencies by kebechet. (#572)
 * add job to check for db corruption (#547)
+
+## Release 0.10.1 (2021-02-01T11:41:59)
+### Features
+* :arrow_up: Automatic update of dependencies by kebechet. (#589)
+* Add check if database is not connected when get method to retrieve alembic version from table is used. (#588)
+* :arrow_up: Automatic update of dependencies by kebechet. (#587)
