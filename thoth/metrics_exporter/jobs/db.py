@@ -119,9 +119,16 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def set_table_head_revision(cls):
         """Set metric for indicating database revision exposed by alembic table."""
-        metrics.database_schema_revision_table.labels(
-            "metrics-exporter", cls.graph().get_table_alembic_version_head(), Configuration.DEPLOYMENT_NAME
-        ).set(1)
+        table_revision_head = cls.graph().get_table_alembic_version_head()
+
+        if table_revision_head:
+            metrics.database_schema_revision_table.labels(
+                "metrics-exporter", table_revision_head, Configuration.DEPLOYMENT_NAME
+            ).set(1)
+        else:
+            metrics.database_schema_revision_table.labels(
+                "metrics-exporter", table_revision_head, Configuration.DEPLOYMENT_NAME
+            ).set(-1)
 
     @classmethod
     @register_metric_job
