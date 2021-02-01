@@ -119,7 +119,11 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def set_table_head_revision(cls):
         """Set metric for indicating database revision exposed by alembic table."""
-        table_revision_head = cls.graph().get_table_alembic_version_head()
+        table_revision_head = None
+        try:
+            table_revision_head = cls.graph().get_table_alembic_version_head()
+        except Exception as e:
+            _LOGGER.warning("Database revision table could not be retrieved: %r", e)
 
         if table_revision_head:
             metrics.database_schema_revision_table.labels(
@@ -141,7 +145,11 @@ class DBMetrics(MetricsBase):
     @register_metric_job
     def check_is_schema_up2date_for_components(cls) -> None:
         """Check if schema is up to date for all components."""
-        database_table_revision = cls.graph().get_table_alembic_version_head()
+        try:
+            database_table_revision = cls.graph().get_table_alembic_version_head()
+        except Exception as e:
+            _LOGGER.warning("Database revision table could not be retrieved: %r", e)
+            return
 
         query = "thoth_database_schema_revision_script"
         metrics_retrieved = Configuration.PROM.custom_query(query=query)
