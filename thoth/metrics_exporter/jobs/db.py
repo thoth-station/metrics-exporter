@@ -123,7 +123,7 @@ class DBMetrics(MetricsBase):
         try:
             table_revision_head = cls.graph().get_table_alembic_version_head()
         except Exception as e:
-            _LOGGER.warning("Database revision table could not be retrieved: %r", e)
+            _LOGGER.exception("Database revision table could not be retrieved: %r", e)
 
         if table_revision_head:
             metrics.database_schema_revision_table.labels(
@@ -148,7 +148,7 @@ class DBMetrics(MetricsBase):
         try:
             database_table_revision = cls.graph().get_table_alembic_version_head()
         except Exception as e:
-            _LOGGER.warning("Database revision table could not be retrieved: %r", e)
+            _LOGGER.exception("Database revision table could not be retrieved: %r", e)
             return
 
         query = "thoth_database_schema_revision_script"
