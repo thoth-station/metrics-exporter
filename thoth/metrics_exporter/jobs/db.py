@@ -137,9 +137,9 @@ class DBMetrics(MetricsBase):
         is_schema_up2date = int(cls.graph().is_schema_up2date())
 
         if is_schema_up2date:
-            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(0)
+            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(0)
         else:
-            metrics.graph_db_component_revision_check.labels("metrics-exporter").set(1)
+            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(1)
 
     @classmethod
     @register_metric_job
@@ -167,7 +167,7 @@ class DBMetrics(MetricsBase):
 
             deployment_environment = metric["metric"]["env"]
 
-            if str(deployment_environment) == Configuration.DEPLOYMENT_NAME:
+            if str(deployment_environment) != Configuration.DEPLOYMENT_NAME:
                 _LOGGER.debug("Metric skipped because of deployment environment in metric: %r!", deployment_environment)
                 continue
 
