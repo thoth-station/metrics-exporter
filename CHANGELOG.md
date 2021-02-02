@@ -586,3 +586,7 @@
 * :arrow_up: Automatic update of dependencies by kebechet. (#589)
 * Add check if database is not connected when get method to retrieve alembic version from table is used. (#588)
 * :arrow_up: Automatic update of dependencies by kebechet. (#587)
+
+## Release 0.10.2 (2021-02-02T06:55:11)
+### Features
+* Adjust condition to keep metrics (#593)
