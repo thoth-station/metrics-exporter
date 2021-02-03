@@ -999,11 +999,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:561822a041dc7de72d62a6e04d2f0f74a016aa7786af23881b4b99bc225118fc",
-                "sha256:b2d77658fb7b5196f0fa895d29b1bffdcb10b168fee6cc028d0e8bdaeb717bd8"
+                "sha256:918c68d8781cd129392ea015ee5b8c2825926a7bd518383555a3b3120a830091",
+                "sha256:d74b8c4fcc498e677d4cb206a3013fa4d4ffc4e6e290077cda4aa104128f4a19"
             ],
             "index": "pypi",
-            "version": "==0.35.0"
+            "version": "==0.35.1"
         },
         "toml": {
             "hashes": [
@@ -1186,7 +1186,7 @@
                 "sha256:fbb17c0d0822684b7d6c09915677a32319f16ff1115df5ec05bdcaaee40b35f3",
                 "sha256:fff1f3a586246110f34dc762098b5afd2de88de507559e63553d7da643053786"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==5.4"
         },
         "distlib": {
