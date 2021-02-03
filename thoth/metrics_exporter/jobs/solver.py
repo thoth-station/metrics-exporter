@@ -39,12 +39,21 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_solver_count(cls) -> None:
-        """Get number of solvers in Thoth Infra namespace."""
+    def get_solver_from_cm_count(cls) -> None:
+        """Get number of solvers from Thoth Solver ConfigMap."""
         solvers = len(cls._OPENSHIFT.get_solver_names())
 
         metrics.graphdb_total_number_solvers.set(solvers)
         _LOGGER.debug("graphdb_total_number_solvers=%r", solvers)
+
+    @classmethod
+    @register_metric_job
+    def get_solver_from_database_table_count(cls) -> None:
+        """Get number of solvers from database table."""
+        solvers = cls.graph().get_ecosystem_solver_count_all()
+
+        metrics.graphdb_total_number_solvers_database.set(solvers)
+        _LOGGER.debug("graphdb_total_number_solvers_database=%r", solvers)
 
     @classmethod
     @register_metric_job

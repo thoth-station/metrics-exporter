@@ -198,8 +198,12 @@ graphdb_total_number_si_not_analyzable_python_packages = Gauge(
 
 # SolverRun
 graphdb_total_number_solvers = Gauge(
-    "thoth_graphdb_total_number_solvers", "Total number of solvers in Thoth Infra namespace.", []
+    "thoth_graphdb_total_number_solvers", "Total number of solvers  of solvers from Thoth Solver ConfigMap.", []
 )
+graphdb_total_number_solvers_database = Gauge(
+    "thoth_graphdb_total_number_solvers_database", "Total number of solvers from database table.", []
+)
+
 graphdb_total_python_packages_solved_with_no_error = Gauge(
     "thoth_graphdb_total_python_packages_with_no_error",
     "Total number of python packages solved with no error.",
