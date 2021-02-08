@@ -590,3 +590,13 @@
 ## Release 0.10.2 (2021-02-02T06:55:11)
 ### Features
 * Adjust condition to keep metrics (#593)
+
+## Release 0.11.0 (2021-02-08T11:06:10)
+### Features
+* remove Openshift metrics for components (#608)
+* Adjust query parameters (#607)
+* :arrow_up: Automatic update of dependencies by Kebechet (#606)
+* Introduce metric for number of solvers from database table (#601)
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet (#603)
+* Add Kebechet templates (#599)
