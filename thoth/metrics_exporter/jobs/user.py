@@ -36,7 +36,7 @@ class UserInformationMetrics(MetricsBase):
     def get_user_python_software_stack_count(cls) -> None:
         """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
         thoth_graphdb_total_software_stacks = cls.graph().get_python_software_stack_count_all(
-            software_stack_type=SoftwareStackTypeEnum.USER.value
+            is_external=True
         )
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
