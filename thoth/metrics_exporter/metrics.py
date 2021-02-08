@@ -33,23 +33,6 @@ metrics_exporter_info.labels(__service_version__).inc()
 
 # SERVICE METRICS
 
-# Openshift metrics
-
-# Jobs
-jobs_status = Gauge(
-    "thoth_jobs_status", "Jobs status overview per label.", ["label_selector", "job_status", "namespace"]
-)
-
-# ConfigMaps
-config_maps_number = Gauge(
-    "thoth_config_maps_number", "Thoth ConfigMaps per namespace per label.", ["namespace", "label"]
-)
-
-# ImageStreams
-image_streams_maps_number = Gauge(
-    "thoth_image_streams_maps_number", "Thoth ImageStreams per namespace per label.", ["namespace", "label"]
-)
-
 # Argo metrics
 
 # Workflows

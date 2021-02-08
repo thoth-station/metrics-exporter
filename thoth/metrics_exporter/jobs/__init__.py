@@ -22,7 +22,6 @@ from .adviser import AdviserMetrics
 from .ceph import CephMetrics
 from .db import DBMetrics
 from .inspection import InspectionMetrics
-from .openshift import OpenshiftMetrics
 from .pi import PIMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
@@ -38,7 +37,6 @@ __all__ = [
     "CephMetrics",
     "DBMetrics",
     "InspectionMetrics",
-    "OpenshiftMetrics",
     "PIMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
