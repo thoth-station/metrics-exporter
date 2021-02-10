@@ -186,6 +186,9 @@ graphdb_total_number_solvers = Gauge(
 graphdb_total_number_solvers_database = Gauge(
     "thoth_graphdb_total_number_solvers_database", "Total number of solvers from database table.", []
 )
+graphdb_solvers_number_match = Gauge(
+    "thoth_graphdb_solvers_number_match", "Check match between number of solvers from CM and from database.", []
+)
 
 graphdb_total_python_packages_solved_with_no_error = Gauge(
     "thoth_graphdb_total_python_packages_with_no_error",
