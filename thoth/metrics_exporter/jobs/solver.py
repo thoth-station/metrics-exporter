@@ -39,21 +39,24 @@ class SolverMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_solver_from_cm_count(cls) -> None:
-        """Get number of solvers from Thoth Solver ConfigMap."""
-        solvers = len(cls._OPENSHIFT.get_solver_names())
+    def check_solver_number_match(cls) -> None:
+        """Check number of solvers in CM and database match."""
+        solvers_cm = len(cls._OPENSHIFT.get_solver_names())
 
-        metrics.graphdb_total_number_solvers.set(solvers)
-        _LOGGER.debug("graphdb_total_number_solvers=%r", solvers)
+        metrics.graphdb_total_number_solvers.set(solvers_cm)
+        _LOGGER.debug("graphdb_total_number_solvers=%r", solvers_cm)
 
-    @classmethod
-    @register_metric_job
-    def get_solver_from_database_table_count(cls) -> None:
-        """Get number of solvers from database table."""
-        solvers = cls.graph().get_ecosystem_solver_count_all()
+        solvers_database = cls.graph().get_ecosystem_solver_count_all()
 
-        metrics.graphdb_total_number_solvers_database.set(solvers)
-        _LOGGER.debug("graphdb_total_number_solvers_database=%r", solvers)
+        metrics.graphdb_total_number_solvers_database.set(solvers_database)
+        _LOGGER.debug("graphdb_total_number_solvers_database=%r", solvers_database)
+
+        if solvers_cm != solvers_database:
+            # Create alarm, data are not matching
+            metrics.graphdb_solvers_number_match.set(1)
+        else:
+            metrics.graphdb_solvers_number_match.set(0)
+
 
     @classmethod
     @register_metric_job
