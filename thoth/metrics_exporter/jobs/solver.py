@@ -70,6 +70,7 @@ class SolverMetrics(MetricsBase):
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
 
             metrics.graphdb_total_number_unsolved_python_packages_per_solver.labels(solver_name).set(count)
@@ -110,6 +111,7 @@ class SolverMetrics(MetricsBase):
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
             metrics.graphdb_total_number_solved_python_packages.labels(solver_name).set(count_solved)
             _LOGGER.debug("graphdb_total_number_solved_python_packages(%r)=%r", solver_name, count_solved)
@@ -124,24 +126,28 @@ class SolverMetrics(MetricsBase):
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
 
             python_packages_solver_error = cls.graph().get_error_solved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
             python_packages_solver_error_unparseable = cls.graph().get_error_solved_python_package_versions_count_all(
                 unparseable=True,
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
             python_packages_solver_error_unsolvable = cls.graph().get_error_solved_python_package_versions_count_all(
                 unsolvable=True,
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
                 python_version=solver_info["python_version"],
+                distinct=True,
             )
 
             python_packages_solved_with_no_error = python_packages_solved - python_packages_solver_error
