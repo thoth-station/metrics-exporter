@@ -41,6 +41,13 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
+    def get_database_size(cls) -> None:
+        """Get size of the database in bytes."""
+        size = cls.graph().get_database_size()
+        metrics.graphdb_size.set(size)
+
+    @classmethod
+    @register_metric_job
     def get_graphdb_connection_error_status(cls) -> None:
         """Raise a flag if there is an error connecting to database."""
         try:

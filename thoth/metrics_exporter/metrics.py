@@ -56,6 +56,8 @@ ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Conne
 pypi_stats = Gauge("thoth_pypi_stats", "Statistics collected from PyPI.", ["stats_type"])
 
 # Thoth Database
+graphdb_size = Gauge("thoth_graphdb_size", "database size in bytes", [])
+
 graphdb_performance_table_total_records = Gauge(
     "thoth_graphdb_performance_table_total_records",
     "Total number of Records for Performance Tables in Thoth Knowledge Graph.",
