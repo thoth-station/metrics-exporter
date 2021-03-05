@@ -53,6 +53,20 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
+    def get_graphdb_alembic_version_rows(cls) -> None:
+        """Raise a flag if there is more than one row in alembic version table."""
+        alembic_version_rows = cls.graph().get_alembic_version_count_all()
+        
+        metrics.graphdb_alembic_version_rows.set(alembic_version_rows)
+
+        if alembic_version_rows > 1:
+            # Alarm required, database is corrupted
+            metrics.graphdb_alembic_table_check.set(1)
+        else:
+            metrics.graphdb_alembic_table_check.set(0)
+
+    @classmethod
+    @register_metric_job
     def get_bloat_data(cls) -> None:
         """Get bloat data from database."""
         if cls._SCRAPE_COUNT != 0:
