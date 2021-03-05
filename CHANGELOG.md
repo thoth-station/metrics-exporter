@@ -600,3 +600,12 @@
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet (#603)
 * Add Kebechet templates (#599)
+
+## Release 0.12.0 (2021-03-05T11:46:51)
+### Features
+* Introduce a metric for obtaining the current database size (#617)
+* Add almebic rows table metric (#622)
+* :arrow_up: Automatic update of dependencies by Kebechet (#621)
+* :arrow_up: Automatic update of dependencies by Kebechet (#618)
+* :arrow_up: Automatic update of dependencies by Kebechet (#614)
+* Add check on number of solvers from CM and from database (#612)
