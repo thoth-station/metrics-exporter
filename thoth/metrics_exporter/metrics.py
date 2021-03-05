@@ -94,6 +94,10 @@ graph_db_component_revision_check = Gauge(
     ["component", "env"],
 )
 
+graphdb_alembic_version_rows = Gauge("thoth_graphdb_alembic_version_rows", "Number of rows in alembic version table.", [])
+
+graphdb_alembic_table_check = Gauge("thoth_graphdb_alembic_table_check", "alembic version table rows check.", [])
+
 
 # CONTENT METRICS
 
