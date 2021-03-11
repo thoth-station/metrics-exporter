@@ -19,7 +19,6 @@
 
 import logging
 
-from thoth.storages.graph.enums import SoftwareStackTypeEnum
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -35,9 +34,7 @@ class UserInformationMetrics(MetricsBase):
     @register_metric_job
     def get_user_python_software_stack_count(cls) -> None:
         """Get the total number of User Python Software Stacks in Thoth Knowledge Graph."""
-        thoth_graphdb_total_software_stacks = cls.graph().get_python_software_stack_count_all(
-            is_external=True
-        )
+        thoth_graphdb_total_software_stacks = cls.graph().get_python_software_stack_count_all(is_external=True)
         metrics.graphdb_user_software_stacks_records.set(thoth_graphdb_total_software_stacks)
         _LOGGER.debug("graphdb_user_software_stacks_records=%r", thoth_graphdb_total_software_stacks)
 

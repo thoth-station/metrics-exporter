@@ -63,7 +63,7 @@ class DBMetrics(MetricsBase):
     def get_graphdb_alembic_version_rows(cls) -> None:
         """Raise a flag if there is more than one row in alembic version table."""
         alembic_version_rows = cls.graph().get_alembic_version_count_all()
-        
+
         metrics.graphdb_alembic_version_rows.set(alembic_version_rows)
 
         if alembic_version_rows > 1:

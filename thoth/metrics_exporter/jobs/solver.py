@@ -57,7 +57,6 @@ class SolverMetrics(MetricsBase):
         else:
             metrics.graphdb_solvers_number_match.set(0)
 
-
     @classmethod
     @register_metric_job
     def get_unsolved_python_packages_versions(cls) -> None:
