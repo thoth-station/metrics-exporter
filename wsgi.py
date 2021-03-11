@@ -54,7 +54,7 @@ _EXECUTED = dict.fromkeys((f"{class_name}.{method_name}" for class_name, method_
 
 
 def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int] = None) -> None:
-    """A wrapper which counts how many jobs were run and notes down some metrics statistics.
+    """Count how many jobs were run and notes down some metrics statistics.
 
     Make sure you do not run metrics-exporter with preload set (gunicorn configuration),
     otherwise each worker process would run its own metrics job gathering.

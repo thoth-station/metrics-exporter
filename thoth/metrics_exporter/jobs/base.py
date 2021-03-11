@@ -38,7 +38,7 @@ REGISTERED_JOBS: List[Any] = []
 
 @decorator
 def register_metric_job(method: Callable, *args, **kwargs) -> None:
-    """A decorator for adding a metric job."""
+    """Add a metric job."""
     method(*args, **kwargs)
 
 
@@ -51,7 +51,8 @@ class _MetricsType(type):
         def _is_register_metric_job_decorator_present(node: ast.FunctionDef) -> None:
             """Check if the given function has assigned decorator to register a new metric job."""
             for n in node.decorator_list:
-                if n.id == register_metric_job.__name__:
+                # TODO(pacospace) check typing
+                if n.id == register_metric_job.__name__:  # type: ignore
                     _LOGGER.info("Registering job %r implemented in %r", method_name, class_name)
                     REGISTERED_JOBS.append((class_name, method_name))
 
@@ -59,7 +60,8 @@ class _MetricsType(type):
 
         _LOGGER.info("Checking class %r for registered metric jobs", class_name)
         node_iter = ast.NodeVisitor()
-        node_iter.visit_FunctionDef = _is_register_metric_job_decorator_present
+        # TODO(pacospace) check typing
+        node_iter.visit_FunctionDef = _is_register_metric_job_decorator_present  # type: ignore
         for method_name, item in attrs.items():
             # Metrics classes are not instantiable.
             if isinstance(item, (staticmethod, classmethod)):
