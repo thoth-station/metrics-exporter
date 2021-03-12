@@ -609,3 +609,16 @@
 * :arrow_up: Automatic update of dependencies by Kebechet (#618)
 * :arrow_up: Automatic update of dependencies by Kebechet (#614)
 * Add check on number of solvers from CM and from database (#612)
+
+## Release 0.13.0 (2021-03-12T15:01:04)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Solve type checking (#631)
+* :arrow_up: Automatic update of dependencies by Kebechet (#629)
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :pencil: pre-commit did some reformatting
+* :sparkles: autoupdate of pre-commit-config
+### Bug Fixes
+* :bug: fix or ignore typing
+### Improvements
+* stadard updated of ci config
