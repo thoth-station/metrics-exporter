@@ -48,18 +48,6 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def get_graphdb_connection_error_status(cls) -> None:
-        """Raise a flag if there is an error connecting to database."""
-        try:
-            cls.graph()._engine.execute("SELECT 1")
-        except Exception as excptn:
-            metrics.graphdb_connection_error_status.set(0)
-            _LOGGER.exception(excptn)
-        else:
-            metrics.graphdb_connection_error_status.set(1)
-
-    @classmethod
-    @register_metric_job
     def get_graphdb_alembic_version_rows(cls) -> None:
         """Raise a flag if there is more than one row in alembic version table."""
         alembic_version_rows = cls.graph().get_alembic_version_count_all()

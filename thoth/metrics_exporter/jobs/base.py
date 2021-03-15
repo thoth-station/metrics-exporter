@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020, 2021 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ import inspect
 import textwrap
 
 import thoth.metrics_exporter.metrics as metrics
+from thoth.common import OpenShift
 
 from thoth.storages import GraphDatabase
-from thoth.storages.result_base import ResultStorageBase
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,6 +73,7 @@ class MetricsBase(metaclass=_MetricsType):
     """A base class for grouping metrics."""
 
     _GRAPH = None
+    _OPENSHIFT = None
 
     def __init__(self) -> None:
         """Do not instantiate this class."""
@@ -85,16 +86,27 @@ class MetricsBase(metaclass=_MetricsType):
             cls._GRAPH = GraphDatabase()
 
         if not cls._GRAPH.is_connected():
-            cls._GRAPH.connect()
+            # Collect metrics about issues with connection to database
+            try:
+                cls._GRAPH.connect()
+            except Exception as e:
+                metrics.graphdb_connection_error_status.set(1)
+                raise Exception("Raise a flag if there is an error connecting to database. %r", e)
+            else:
+                metrics.graphdb_connection_error_status.set(0)
 
         return cls._GRAPH
 
     @classmethod
-    def get_ceph_results_per_type(cls, store: ResultStorageBase) -> None:
-        """Get the total number of results in Ceph per service."""
-        _LOGGER.info("Check Ceph content for %s", store.RESULT_TYPE)
-        if not store.is_connected():
-            store.connect()
-        number_ids = store.get_document_count()
-        metrics.ceph_results_number.labels(store.RESULT_TYPE).set(number_ids)
-        _LOGGER.debug("ceph_results_number for %s =%d", store.RESULT_TYPE, number_ids)
+    def openshift(cls):
+        """Get instantiated graph database with shared connection pool."""
+        if not cls._OPENSHIFT:
+            try:
+                cls._OPENSHIFT = OpenShift()
+            except Exception as e:
+                metrics.openshift_connection_error_status.set(1)
+                raise Exception("Raise a flag if there is an error connecting to openshift. %r", e)
+            else:
+                metrics.openshift_connection_error_status.set(0)
+
+        return cls._OPENSHIFT

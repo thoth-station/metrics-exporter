@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2018, 2019, 2020 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020, 2021 Christoph Görn, Francesco Murdaca, Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 import logging
 import os
 
-from thoth.common import OpenShift
-
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -34,14 +32,13 @@ _LOGGER = logging.getLogger(__name__)
 class SolverMetrics(MetricsBase):
     """Class to evaluate Metrics for Solvers."""
 
-    _OPENSHIFT = OpenShift()
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     @classmethod
     @register_metric_job
     def check_solver_number_match(cls) -> None:
         """Check number of solvers in CM and database match."""
-        solvers_cm = len(cls._OPENSHIFT.get_solver_names())
+        solvers_cm = len(cls.openshift().get_solver_names())
 
         metrics.graphdb_total_number_solvers.set(solvers_cm)
         _LOGGER.debug("graphdb_total_number_solvers=%r", solvers_cm)
@@ -62,8 +59,8 @@ class SolverMetrics(MetricsBase):
     def get_unsolved_python_packages_versions(cls) -> None:
         """Get the change in unsolved Python Packages in Thoth Knowledge Graph."""
         count_unsolved_python_package_versions = 0
-        for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls._OPENSHIFT.parse_python_solver_name(solver_name)
+        for solver_name in cls.openshift().get_solver_names():
+            solver_info = cls.openshift().parse_python_solver_name(solver_name)
 
             count = cls.graph().get_unsolved_python_package_versions_count_all(
                 os_name=solver_info["os_name"],
@@ -103,8 +100,8 @@ class SolverMetrics(MetricsBase):
     @register_metric_job
     def get_python_packages_solved_count_per_solver(cls) -> None:
         """Get number of solved Python packages per solver."""
-        for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls._OPENSHIFT.parse_python_solver_name(solver_name)
+        for solver_name in cls.openshift().get_solver_names():
+            solver_info = cls.openshift().parse_python_solver_name(solver_name)
             count_solved = cls.graph().get_solved_python_packages_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],
@@ -117,8 +114,8 @@ class SolverMetrics(MetricsBase):
     @register_metric_job
     def get_python_packages_solver_error_count_per_solver(cls) -> None:
         """Get number of python packages with solver error True and how many are unparsable or unsolvable per solver."""
-        for solver_name in cls._OPENSHIFT.get_solver_names():
-            solver_info = cls._OPENSHIFT.parse_python_solver_name(solver_name)
+        for solver_name in cls.openshift().get_solver_names():
+            solver_info = cls.openshift().parse_python_solver_name(solver_name)
             python_packages_solved = cls.graph().get_solved_python_packages_count_all(
                 os_name=solver_info["os_name"],
                 os_version=solver_info["os_version"],

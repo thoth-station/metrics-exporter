@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2020 Francesco Murdaca
+# Copyright(C) 2020, 2021 Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 import logging
 import os
 
-from thoth.common import OpenShift
-
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -34,7 +32,6 @@ _LOGGER = logging.getLogger(__name__)
 class SecurityMetrics(MetricsBase):
     """Class to evaluate Metrics for Security."""
 
-    _OPENSHIFT = OpenShift()
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     @classmethod
