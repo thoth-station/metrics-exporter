@@ -19,9 +19,17 @@ This is a Promotheus Metrics exporter for Thoth.
 4. Set the metric variable's value from `metrics.py` in the method that you define. More, on that here on prometheus documentation - [Link](https://github.com/prometheus/client_python#gauge)
 5. Finally if you have a new class added in jobs, add it to the [init.py](https://github.com/thoth-station/metrics-exporter/blob/master/thoth/metrics_exporter/jobs/__init__.py).
 
+## Conventions
+
+For any binary metrics the convention used is:
+
+- 0 all good
+
+- 1 alarm is required
+
 ## Copyright
 
-Copyright (C) 2018, 2019, 2020 Red Hat Inc.
+Copyright (C) 2018, 2019, 2020, 2021 Red Hat Inc.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
