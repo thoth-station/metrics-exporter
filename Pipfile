@@ -16,6 +16,7 @@ prometheus-api-client = "*"
 requests = "*"
 beautifulsoup4 = "*"
 thoth-python = "*"
+thoth-messaging = "*"
 
 [dev-packages]
 pytest = "*"
