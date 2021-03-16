@@ -32,7 +32,6 @@ _LOGGER = logging.getLogger(__name__)
 class KafkaMetrics(MetricsBase):
     """Class to evaluate Kafka Metrics."""
 
-
     @staticmethod
     @register_metric_job
     def get_kafka_connection_status() -> None:
