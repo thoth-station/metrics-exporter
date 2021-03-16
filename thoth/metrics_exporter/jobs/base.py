@@ -99,7 +99,7 @@ class MetricsBase(metaclass=_MetricsType):
 
     @classmethod
     def openshift(cls):
-        """Get instantiated graph database with shared connection pool."""
+        """Get instantiated openshift class."""
         if not cls._OPENSHIFT:
             try:
                 cls._OPENSHIFT = OpenShift()
