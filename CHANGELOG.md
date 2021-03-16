@@ -622,3 +622,13 @@
 * :bug: fix or ignore typing
 ### Improvements
 * stadard updated of ci config
+
+## Release 0.14.0 (2021-03-16T09:06:16)
+### Features
+* adjust docstring
+* update README
+* Add metrics
+* add kafka metrics
+* :arrow_up: Automatic update of dependencies by Kebechet (#637)
+### Improvements
+* make pre-commit happy
