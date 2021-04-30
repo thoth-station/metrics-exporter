@@ -636,3 +636,11 @@
 ## Release 0.14.1 (2021-03-17T04:11:34)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet (#643)
+
+## Release 0.14.2 (2021-04-30T06:19:03)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#657)
+* :arrow_up: Automatic update of dependencies by Kebechet (#655)
+* :arrow_up: Automatic update of dependencies by Kebechet (#652)
+* :arrow_up: Automatic update of dependencies by Kebechet (#650)
+* :arrow_up: Automatic update of dependencies by Kebechet (#647)
