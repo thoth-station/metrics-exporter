@@ -165,7 +165,6 @@ class DBMetrics(MetricsBase):
 
         if not metrics_retrieved:
             _LOGGER.warning("No metrics identified from Prometheus for query: %r", query)
-            metrics.graph_db_component_revision_check.labels("no-component").set(-1)
 
         for metric in metrics_retrieved:
 
@@ -184,7 +183,6 @@ class DBMetrics(MetricsBase):
 
             if int(is_revision_up) != 1:
                 _LOGGER.warning("Metric retrieved for %r is not up!", component_name)
-                metrics.graph_db_component_revision_check.labels(component_name).set(-1)
                 continue
 
             database_script_revision = metric["metric"]["revision"]
