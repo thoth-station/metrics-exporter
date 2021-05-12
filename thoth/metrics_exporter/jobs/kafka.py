@@ -39,7 +39,7 @@ class KafkaMetrics(MetricsBase):
         try:
             check_connection()
         except Exception as excptn:
-            metrics.kafka_connection_error_status.set(0)
+            metrics.kafka_connection_error_status.set(1)
             _LOGGER.exception(excptn)
         else:
-            metrics.kafka_connection_error_status.set(1)
+            metrics.kafka_connection_error_status.set(0)
