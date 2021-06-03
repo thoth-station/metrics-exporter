@@ -653,3 +653,11 @@
 ## Release 0.14.4 (2021-05-12T13:08:27)
 ### Features
 * Use convention for alarms (#667)
+
+## Release 0.14.5 (2021-06-03T17:37:49)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet (#672)
+* :hatched_chick: update the prow resource limits (#671)
