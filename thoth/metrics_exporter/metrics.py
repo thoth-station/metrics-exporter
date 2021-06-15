@@ -188,7 +188,7 @@ graphdb_si_unanalyzed_python_package_versions_change = Counter(
 graphdb_total_number_si_not_analyzable_python_packages = Gauge(
     "thoth_graphdb_total_number_si_not_analyzable_python_packages", "SI not analyzable Python package.", []
 )
-
+graphdb_total_number_cve = Gauge("thoth_graphdb_total_number_cve", "Number of CVE in Thoth database.", [])
 
 # SolverRun
 graphdb_total_number_solvers = Gauge(
