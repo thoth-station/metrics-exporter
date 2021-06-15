@@ -83,3 +83,11 @@ class SecurityMetrics(MetricsBase):
         )
         metrics.graphdb_total_number_si_not_analyzable_python_packages.set(count_si_not_analyzable)
         _LOGGER.debug("graphdb_total_number_si_not_analyzable_python_packages=%r", count_si_not_analyzable)
+
+    @classmethod
+    @register_metric_job
+    def get_cve_count(cls) -> None:
+        """Get number of CVE in thoth database."""
+        count_cve = cls.graph().get_python_cve_records_count()
+        metrics.graphdb_total_number_cve.set(count_cve)
+        _LOGGER.debug("graphdb_total_number_cve=%r", count_cve)
