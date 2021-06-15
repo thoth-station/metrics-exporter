@@ -669,3 +669,11 @@
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.15.0 (2021-06-15T14:07:48)
+### Features
+* Make pre-commit happy
+* Update base image
+* Add CVE metric
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
