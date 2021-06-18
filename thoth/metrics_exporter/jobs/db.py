@@ -18,9 +18,6 @@
 """Knowledge graph metrics."""
 
 import logging
-import os
-
-from datetime import datetime, timedelta
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -33,8 +30,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
-
-    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
@@ -59,62 +54,6 @@ class DBMetrics(MetricsBase):
             metrics.graphdb_alembic_table_check.set(1)
         else:
             metrics.graphdb_alembic_table_check.set(0)
-
-    @classmethod
-    @register_metric_job
-    def get_bloat_data(cls) -> None:
-        """Get bloat data from database."""
-        if cls._SCRAPE_COUNT != 0:
-            metric_name = "thoth_graphdb_last_evaluation_bloat_data"
-            metric = Configuration.PROM.get_current_metric_value(
-                metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
-            )
-
-            if not metric:
-                _LOGGER.warning("No metrics identified from Prometheus for %r", metric_name)
-                return
-
-            last_prometheus_scrape = datetime.fromtimestamp(float(metric[0]["value"][0]))
-            last_evaluation = datetime.fromtimestamp(float(metric[0]["value"][1]))
-
-            if (
-                not (last_prometheus_scrape - last_evaluation).total_seconds()
-                > timedelta(days=cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS).total_seconds()
-            ):
-                return
-
-        bloat_data = cls.graph().get_bloat_data()
-
-        if bloat_data:
-            for table_data in bloat_data:
-                metrics.graphdb_pct_bloat_data_table.labels(table_data["tablename"]).set(table_data["pct_bloat"])
-                _LOGGER.debug(
-                    "thoth_graphdb_pct_bloat_data_table(%r)=%r", table_data["tablename"], table_data["pct_bloat"]
-                )
-
-                metrics.graphdb_mb_bloat_data_table.labels(table_data["tablename"]).set(table_data["mb_bloat"])
-                _LOGGER.debug("thoth_graphdb_mb_bloat_data_table(%r)=%r", table_data["tablename"], 0)
-        else:
-            metrics.graphdb_pct_bloat_data_table.labels("No table pct").set(0)
-            _LOGGER.debug("thoth_graphdb_pct_bloat_data_table is empty")
-
-            metrics.graphdb_mb_bloat_data_table.labels("No table mb").set(0)
-            _LOGGER.debug("thoth_graphdb_mb_bloat_data_table is empty")
-
-        metrics.graphdb_last_evaluation_bloat_data.set(datetime.utcnow().timestamp())
-        _LOGGER.debug("thoth_graphdb_last_evaluation_bloat_data=%r", datetime.utcnow().timestamp())
-
-        cls._SCRAPE_COUNT += 1
-        _LOGGER.info("Next bloat data evaluation in %r days", cls._BLOAT_DATA_SCRAPE_INTERVAL_DAYS)
-
-    @classmethod
-    @register_metric_job
-    def set_is_corrupted_metric(cls):
-        """Set metric for indicating whether database corruption has been **detected**."""
-        if cls.graph().is_database_corrupted():
-            metrics.graphdb_is_corrupted.set(1)
-        else:
-            metrics.graphdb_is_corrupted.set(0)
 
     @classmethod
     @register_metric_job
