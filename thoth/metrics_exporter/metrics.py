@@ -67,19 +67,9 @@ graphdb_performance_table_total_records = Gauge(
     [],
 )
 
-graphdb_pct_bloat_data_table = Gauge(
-    "thoth_graphdb_pct_bloat_data_table", "Bloat data (pct_bloat) per table in Thoth Knowledge Graph.", ["table_name"]
-)
-
-graphdb_mb_bloat_data_table = Gauge(
-    "thoth_graphdb_mb_bloat_data_table", "Bloat data (mb_bloat) per table in Thoth Knowledge Graph.", ["table_name"]
-)
-
 graphdb_last_evaluation_bloat_data = Gauge("thoth_graphdb_last_evaluation_bloat_data", "Connection error status.", [])
 
 graphdb_connection_error_status = Gauge("thoth_graphdb_connection_issues", "Connection error status.", [])
-
-graphdb_is_corrupted = Gauge("thoth_graphdb_is_corrupted", "amcheck has detected corruption.", [])
 
 database_schema_revision_script = Gauge(
     "thoth_database_schema_revision_script",
