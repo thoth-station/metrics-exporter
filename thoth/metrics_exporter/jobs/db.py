@@ -18,9 +18,6 @@
 """Knowledge graph metrics."""
 
 import logging
-import os
-
-from datetime import datetime, timedelta
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -33,8 +30,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class DBMetrics(MetricsBase):
     """Class to evaluate Metrics for Thoth Database."""
-
-    _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
 
     _SCRAPE_COUNT = 0
     _BLOAT_DATA_SCRAPE_INTERVAL_DAYS = 7
