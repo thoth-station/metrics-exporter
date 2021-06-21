@@ -677,3 +677,14 @@
 * Add CVE metric
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.16.0 (2021-06-21T09:20:20)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Remove long running metric gathering
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Update feature_request.md
+* Update bug_report.md
+* :arrow_up: updated labels of issue templates
+### Improvements
+* make pre-commit happy
