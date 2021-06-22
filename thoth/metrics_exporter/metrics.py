@@ -55,6 +55,9 @@ ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Conne
 # Kafka metrics
 kafka_connection_error_status = Gauge("thoth_kafka_connection_issues", "Kafka Connection error status.", [])
 
+# Openshift metrics
+openshift_connection_error_status = Gauge("thoth_openshift_connection_issues", "Openshift Connection error status.", [])
+
 # PyPI Database
 pypi_stats = Gauge("thoth_pypi_stats", "Statistics collected from PyPI.", ["stats_type"])
 
