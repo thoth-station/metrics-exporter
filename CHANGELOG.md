@@ -688,3 +688,10 @@
 * :arrow_up: updated labels of issue templates
 ### Improvements
 * make pre-commit happy
+
+## Release 0.16.1 (2021-06-22T20:24:04)
+### Features
+* missin definition of metric
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
