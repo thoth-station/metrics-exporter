@@ -695,3 +695,8 @@
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.16.2 (2021-06-30T15:38:01)
+### Features
+* Add missing labels
+* :arrow_up: Automatic update of dependencies by Kebechet
