@@ -22,7 +22,7 @@ import logging
 import thoth.metrics_exporter.metrics as metrics
 
 from thoth.storages.graph.enums import SoftwareStackTypeEnum
-from thoth.storages.graph.enums import ThothAdviserIntegrationEnum
+from thoth.common.enums import ThothAdviserIntegrationEnum
 
 from .base import register_metric_job
 from .base import MetricsBase
