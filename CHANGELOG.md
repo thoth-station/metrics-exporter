@@ -700,3 +700,8 @@
 ### Features
 * Add missing labels
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.16.3 (2021-07-02T07:58:45)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Use common enums
