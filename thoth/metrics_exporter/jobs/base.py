@@ -17,7 +17,6 @@
 
 """A base class for implementing metrics classes."""
 
-
 import ast
 import logging
 from typing import Callable, List, Any
@@ -26,8 +25,9 @@ import inspect
 import textwrap
 
 import thoth.metrics_exporter.metrics as metrics
-from thoth.common import OpenShift
+from thoth.metrics_exporter.configuration import Configuration
 
+from thoth.common import OpenShift
 from thoth.storages import GraphDatabase
 
 _LOGGER = logging.getLogger(__name__)
@@ -95,7 +95,14 @@ class MetricsBase(metaclass=_MetricsType):
             else:
                 metrics.graphdb_connection_error_status.set(0)
 
-        return cls._GRAPH
+        is_schema_up2date = int(cls._GRAPH.is_schema_up2date())
+
+        if is_schema_up2date:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(0)
+            return cls._GRAPH
+        else:
+            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(1)
+            raise Exception("Raise a flag if the schema is not up2date, so we don't rely on metrics")
 
     @classmethod
     def openshift(cls):

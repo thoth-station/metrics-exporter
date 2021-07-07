@@ -80,17 +80,6 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def check_is_schema_up2date(cls) -> None:
-        """Check if the schema running on metrics-exporter is same as the one present in database."""
-        is_schema_up2date = int(cls.graph().is_schema_up2date())
-
-        if is_schema_up2date:
-            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(0)
-        else:
-            metrics.graph_db_component_revision_check.labels("metrics-exporter", Configuration.DEPLOYMENT_NAME).set(1)
-
-    @classmethod
-    @register_metric_job
     def check_is_schema_up2date_for_components(cls) -> None:
         """Check if schema is up to date for all components."""
         try:
