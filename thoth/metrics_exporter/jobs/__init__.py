@@ -23,6 +23,7 @@ from .ceph import CephMetrics
 from .db import DBMetrics
 from .inspection import InspectionMetrics
 from .kafka import KafkaMetrics
+from .kebechet import KebechetMetrics
 from .pi import PIMetrics
 from .pypi import PyPIMetrics
 from .python import PythonPackagesMetrics
@@ -30,7 +31,6 @@ from .security import SecurityMetrics
 from .software_environment import SoftwareEnvironmentMetrics
 from .solver import SolverMetrics
 from .user import UserInformationMetrics
-from .kebechet import KebechetMetrics
 from .base import REGISTERED_JOBS
 
 __all__ = [
@@ -39,6 +39,7 @@ __all__ = [
     "DBMetrics",
     "InspectionMetrics",
     "KafkaMetrics",
+    "KebechetMetrics",
     "PIMetrics",
     "PyPIMetrics",
     "PythonPackagesMetrics",
@@ -46,6 +47,5 @@ __all__ = [
     "SoftwareEnvironmentMetrics",
     "SolverMetrics",
     "UserInformationMetrics",
-    "KebechetMetrics",
     "REGISTERED_JOBS",
 ]

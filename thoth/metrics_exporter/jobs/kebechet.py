@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-metrics
-# Copyright(C) 2020 Sai Sankar Gochhayat
+# Copyright(C) 2020, 2021 Sai Sankar Gochhayat, Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import logging
 
 from .base import register_metric_job
 from .base import MetricsBase
+from thoth.storages.graph.enums import KebechetManagerEnum
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -38,3 +39,16 @@ class KebechetMetrics(MetricsBase):
         count = cls.graph().get_active_kebechet_github_installations_repos_count_all()
         metrics.kebechet_total_active_repo_count.set(count)
         _LOGGER.debug("kebechet_total_active_repo_count=%r", count)
+
+    @classmethod
+    @register_metric_job
+    def get_active_kebechet_users_per_manager_count(cls) -> None:
+        """Get number of Kebechet users per manager."""
+        for kebechet_manager in KebechetManagerEnum._member_names_:
+
+            count = cls.graph().get_kebechet_github_installations_active_managers_count_all(
+                kebechet_manager=kebechet_manager, distinct=True
+            )
+
+            metrics.kebechet_total_active_users_per_manager_count.labels(kebechet_manager).set(count)
+            _LOGGER.debug("kebechet_total_active_users_per_manager_count(%r)=%r", kebechet_manager, count)
