@@ -705,3 +705,14 @@
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet
 * Use common enums
+
+## Release 0.17.0 (2021-07-13T09:30:21)
+### Features
+* Introduce metric on number of users of kebechet per manager
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Delete CODEOWNERS
+* Do not set metrics unless schema is up 2 date
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
