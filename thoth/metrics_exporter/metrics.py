@@ -236,3 +236,9 @@ graphdb_unsolved_python_package_versions_change = Counter(
 kebechet_total_active_repo_count = Gauge(
     "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
 )
+
+kebechet_total_active_users_per_manager_count = Gauge(
+    "thoth_kebechet_total_active_users_per_manager_count",
+    "Count of number of active users per Kebechet manager.",
+    ["manager"],
+)
