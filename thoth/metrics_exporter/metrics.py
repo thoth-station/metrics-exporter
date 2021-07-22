@@ -242,3 +242,8 @@ kebechet_total_active_users_per_manager_count = Gauge(
     "Count of number of active users per Kebechet manager.",
     ["manager"],
 )
+
+kebechet_current_rate_limit = Gauge(
+    "thoth_kebechet_current_rate_limit",
+    "Kebechet remaining rate limit.",
+)

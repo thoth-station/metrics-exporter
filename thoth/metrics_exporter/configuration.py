@@ -46,3 +46,6 @@ class Configuration:
     CEPH_BUCKET = os.environ["THOTH_CEPH_BUCKET"]
 
     DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
+
+    # Kebechet
+    GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
