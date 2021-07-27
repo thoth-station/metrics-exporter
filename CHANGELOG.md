@@ -716,3 +716,8 @@
 * Do not set metrics unless schema is up 2 date
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.18.0 (2021-07-27T13:29:06)
+### Features
+* Add kebechet rate limit
+* Add pygithub
