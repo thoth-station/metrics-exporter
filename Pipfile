@@ -17,6 +17,7 @@ requests = "*"
 beautifulsoup4 = "*"
 thoth-python = "*"
 thoth-messaging = "*"
+pygithub = "*"
 
 [dev-packages]
 pytest = "*"

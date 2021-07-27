@@ -20,8 +20,11 @@
 
 import logging
 
+from github import Github
+
 from .base import register_metric_job
 from .base import MetricsBase
+from ..configuration import Configuration
 from thoth.storages.graph.enums import KebechetManagerEnum
 
 import thoth.metrics_exporter.metrics as metrics
@@ -52,3 +55,14 @@ class KebechetMetrics(MetricsBase):
 
             metrics.kebechet_total_active_users_per_manager_count.labels(kebechet_manager).set(count)
             _LOGGER.debug("kebechet_total_active_users_per_manager_count(%r)=%r", kebechet_manager, count)
+
+    @classmethod
+    @register_metric_job
+    def get_kebechet_current_rate_limit(cls) -> None:
+        """Get Kebechet current rate limit."""
+        github = Github(Configuration.GITHUB_ACCESS_TOKEN)
+        gh_rate_limit = github.get_rate_limit()
+
+        remaining = gh_rate_limit.core.remaining
+        metrics.kebechet_current_rate_limit.set(remaining)
+        _LOGGER.debug("kebechet_current_rate_limit=%r", remaining)
