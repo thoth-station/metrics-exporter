@@ -721,3 +721,7 @@
 ### Features
 * Add kebechet rate limit
 * Add pygithub
+
+## Release 0.18.1 (2021-07-30T10:04:45)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
