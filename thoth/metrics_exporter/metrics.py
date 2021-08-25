@@ -49,6 +49,9 @@ workflow_task_status = Gauge(
     ["label_selector", "task", "task_status", "namespace"],
 )
 
+# User API
+user_api_status = Gauge("thoth_user_api_connection_issues", "User API Connection error status.", [])
+
 # Ceph metrics
 ceph_connection_error_status = Gauge("thoth_ceph_connection_issues", "Ceph Connection error status.", [])
 

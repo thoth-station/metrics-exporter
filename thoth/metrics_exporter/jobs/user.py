@@ -18,6 +18,7 @@
 """Metrics related to users of Thoth."""
 
 import logging
+import requests
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -51,4 +52,20 @@ class UserInformationMetrics(MetricsBase):
         metrics.graphdb_total_user_run_software_environment.set(thoth_graphdb_total_user_run_software_environment)
         _LOGGER.debug(
             "graphdb_total_unique_user_run_software_environment=%r", thoth_graphdb_total_user_run_software_environment
+        )
+
+    @classmethod
+    @register_metric_job
+    def get_user_api_status(cls) -> None:
+        """Get the total number of users unique software environment for run in Thoth Knowledge Graph."""
+        url = 'https://khemenu.thoth-station.ninja/'
+        is_up = requests.get(url).status_code == 200
+        if is_up:
+            user_api_status = 1
+        else:
+            user_api_status = 0
+        
+        metrics.user_api_status.set(user_api_status)
+        _LOGGER.debug(
+            "thoth_user_api_status=%r", user_api_status
         )
