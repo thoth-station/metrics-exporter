@@ -1,4 +1,10 @@
 
+## Release 0.18.2 (2021-09-14T20:56:22)
+### Features
+* Add harshad as a maintainer
+* Update of the dependencies
+* :arrow_up: Automatic update of dependencies by Kebechet
+
 ## Release 0.8.1 (2020-04-28T19:41:57)
 * fixed the module name
 * added a service_version so that we can have Kebechet bound versions, but also have an extended version to include dependencies version
