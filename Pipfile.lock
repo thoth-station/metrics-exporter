@@ -151,19 +151,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:3a270f002818703d5f2eef5296c2fd8b44ef21a3f3290a716ec2202da8dd464e",
-                "sha256:8bc3211a7d7767c2c72ae9b226edb5eec5bb96989c83696832b8a5c35feb356a"
+                "sha256:3d8b1c76a2d40775b3a8a5c457293741641bf3b6b7150e3ad351e584bb50786e",
+                "sha256:f7e8ce6155a4d4fc23796cb58ea4d28dd4bbb61198a0da8ff2efcbee395c453c"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.18.44"
+            "version": "==1.18.46"
         },
         "botocore": {
             "hashes": [
-                "sha256:2e134c9f799015e448086ed2b809fe50cc776f6600f093d1a44772288e61260f",
-                "sha256:c7640cb49c0e009bea4ad767715acbe0d305b7007235f52422bf31b5d23be8f1"
+                "sha256:58622d4d84adcbc352d82ab8a7ec512c7af862bcffd3b93225b416a87f46a6a2",
+                "sha256:a5df461647d1080185e91c3078ab570cc6fc346df05b9decac9fca68c149b7b8"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.21.44"
+            "version": "==1.21.46"
         },
         "cachetools": {
             "hashes": [
@@ -1065,11 +1065,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:ebe99144fa9618d4b0e7617e7929b75acd905d258c3c779edcd34c0adfffe26c",
-                "sha256:f33d34c886d0ba24c75ea8885a8b3a172358853c7cbde05979fc99c29ef7bc52"
+                "sha256:4297555ddc37c7136740e6b547b7d68f5bca0b4832f94ac097e5d531a4c77528",
+                "sha256:ea04bc3be6eb082f34ff3f8f6380ea9c691766592298f3f975a435dafac6bf6a"
             ],
             "index": "pypi",
-            "version": "==1.3.1"
+            "version": "==1.4.1"
         },
         "six": {
             "hashes": [
@@ -1170,11 +1170,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:9f440ad4c733f4bb19972650bc2db4727557a7af55676d8ddf64eec726466490",
-                "sha256:f54cfac2568d3377ab9ccb1e95226fe4b2d3bd98702bcd64c5f4769cf0a5b6d0"
+                "sha256:c10f436fa21e8b95cb6d32352b6e9e1c62e6160b2ca8ffa0dab1bc2dbcd77a06",
+                "sha256:dccfba8034cb07947c2f7e591a0ae1793e849d548a968614d972663868ed328e"
             ],
             "index": "pypi",
-            "version": "==0.56.0"
+            "version": "==0.57.0"
         },
         "toml": {
             "hashes": [
@@ -1202,18 +1202,17 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4",
-                "sha256:f57b4c16c62fa2760b7e3d97c35b255512fb6b59a259730f36ba32ce9f8e342f"
+                "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece",
+                "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
-            "version": "==1.26.6"
+            "version": "==1.26.7"
         },
         "voluptuous": {
             "hashes": [
-                "sha256:663572419281ddfaf4b4197fd4942d181630120fb39b333e3adad70aeb56444b",
-                "sha256:8ace33fcf9e6b1f59406bfaf6b8ec7bcc44266a9f29080b4deb4fe6ff2492386"
+                "sha256:4db1ac5079db9249820d49c891cb4660a6f8cae350491210abce741fabf56513"
             ],
-            "version": "==0.12.1"
+            "version": "==0.12.2"
         },
         "websocket-client": {
             "hashes": [
@@ -1382,10 +1381,10 @@
         },
         "distlib": {
             "hashes": [
-                "sha256:106fef6dc37dd8c0e2c0a60d3fca3e77460a48907f335fa28420463a6f799736",
-                "sha256:23e223426b28491b1ced97dc3bbe183027419dfc7982b4fa2f05d5f3ff10711c"
+                "sha256:c8b54e8454e5bf6237cc84c20e8264c3e991e824ef27e8f1e81049867d861e31",
+                "sha256:d982d0751ff6eaaab5e2ec8e691d949ee80eddf01a62eaa96ddb11531fe16b05"
             ],
-            "version": "==0.3.2"
+            "version": "==0.3.3"
         },
         "filelock": {
             "hashes": [
