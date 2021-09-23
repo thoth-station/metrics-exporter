@@ -1,4 +1,8 @@
 
+## Release 0.18.3 (2021-09-23T08:26:55)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.18.2 (2021-09-14T20:56:22)
 ### Features
 * Add harshad as a maintainer
