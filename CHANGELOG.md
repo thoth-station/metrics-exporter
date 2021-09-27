@@ -1,4 +1,10 @@
 
+## Release 0.18.4 (2021-09-27T20:55:28)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.18.3 (2021-09-23T08:26:55)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
