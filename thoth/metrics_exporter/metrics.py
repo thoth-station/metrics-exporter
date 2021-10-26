@@ -182,6 +182,7 @@ graphdb_total_number_si_not_analyzable_python_packages = Gauge(
     "thoth_graphdb_total_number_si_not_analyzable_python_packages", "SI not analyzable Python package.", []
 )
 graphdb_total_number_cve = Gauge("thoth_graphdb_total_number_cve", "Number of CVE in Thoth database.", [])
+graphdb_cve_update_days = Gauge("thoth_graphdb_cve_update_days", "days since last cve-update was done", [])
 
 # SolverRun
 graphdb_total_number_solvers = Gauge(
