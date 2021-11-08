@@ -19,8 +19,11 @@
 
 import logging
 import os
-from datetime import datetime
+import datetime
 
+import requests
+import yaml
+from thoth.common import parse_datetime
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
@@ -34,6 +37,11 @@ class SecurityMetrics(MetricsBase):
     """Class to evaluate Metrics for Security."""
 
     _METRICS_EXPORTER_INSTANCE = os.environ["METRICS_EXPORTER_INFRA_PROMETHEUS_INSTANCE"]
+    _QUAY_SECURITY_TIMESTAMP_PRESCRIPTION_URL = os.getenv(
+        "THOTH_METRICS_EXPORTER_QUAY_SECURITY_TIMESTAMP_PRESCRIPTION_URL",
+        "https://raw.githubusercontent.com/thoth-station/prescriptions/master/"
+        "prescriptions/_containers/quay_security.yaml",
+    )
 
     @classmethod
     @register_metric_job
@@ -102,6 +110,29 @@ class SecurityMetrics(MetricsBase):
             _LOGGER.error("No CVE timestamp set in the database")
             return
 
-        days = (datetime.utcnow() - cve_timestamp).days
+        days = (datetime.datetime.utcnow() - cve_timestamp).days
         metrics.graphdb_cve_update_days.set(days)
         _LOGGER.debug("graphdb_cve_update_days=%r", days)
+
+    @classmethod
+    @register_metric_job
+    def get_quay_security_days(cls) -> None:
+        """Compute number of days since the last Quay security update."""
+        response = requests.get(cls._QUAY_SECURITY_TIMESTAMP_PRESCRIPTION_URL)
+        if response.status_code != 200:
+            _LOGGER.error(
+                "Failed to download prescription to obtain Quay security timestamp (HTTP status %r): %r",
+                response.status_code,
+                response.text,
+            )
+            return
+
+        msg = yaml.safe_load(response.text)
+        # Take the last word and discard single quotes.
+        quay_security_timestamp = msg["units"]["boots"][0]["run"]["stack_info"][0]["message"].rsplit(maxsplit=1)[-1][
+            1:-1
+        ]
+
+        days = (datetime.datetime.now(datetime.timezone.utc) - parse_datetime(quay_security_timestamp)).days
+        metrics.prescription_quay_security_update_days.set(days)
+        _LOGGER.debug("prescription_quay_security_update_days=%r", days)

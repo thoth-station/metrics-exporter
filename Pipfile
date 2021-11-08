@@ -18,6 +18,7 @@ beautifulsoup4 = "*"
 thoth-python = "*"
 thoth-messaging = "*"
 pygithub = "*"
+pyyaml = "*"
 
 [dev-packages]
 pytest = "*"
