@@ -1,4 +1,9 @@
 
+## Release 0.19.0 (2021-11-08T13:46:21)
+* Expose metrics related to the last Quay security update
+* Introduce a metric for number of days since the last CVE update
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.18.4 (2021-09-27T20:55:28)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
