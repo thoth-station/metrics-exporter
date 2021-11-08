@@ -19,6 +19,7 @@
 
 import logging
 import os
+from datetime import datetime
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -91,3 +92,16 @@ class SecurityMetrics(MetricsBase):
         count_cve = cls.graph().get_python_cve_records_count()
         metrics.graphdb_total_number_cve.set(count_cve)
         _LOGGER.debug("graphdb_total_number_cve=%r", count_cve)
+
+    @classmethod
+    @register_metric_job
+    def get_cve_update_days(cls) -> None:
+        """Compute number of days since the last CVE update was done."""
+        cve_timestamp = cls.graph().get_cve_timestamp()
+        if cve_timestamp is None:
+            _LOGGER.error("No CVE timestamp set in the database")
+            return
+
+        days = (datetime.utcnow() - cve_timestamp).days
+        metrics.graphdb_cve_update_days.set(days)
+        _LOGGER.debug("graphdb_cve_update_days=%r", days)
