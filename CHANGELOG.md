@@ -1,4 +1,12 @@
 
+## Release 0.19.1 (2021-12-24T15:47:37)
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Update pyproject.toml to use Python 3.8
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.19.0 (2021-11-08T13:46:21)
 * Expose metrics related to the last Quay security update
 * Introduce a metric for number of days since the last CVE update
