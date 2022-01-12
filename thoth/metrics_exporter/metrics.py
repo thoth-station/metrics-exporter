@@ -238,7 +238,7 @@ graphdb_unsolved_python_package_versions_change = Counter(
 
 # Kebechet Metrics
 kebechet_total_active_repo_count = Gauge(
-    "thoth_kebechet_total_active_repo_count", "Count of number of repo's supported by Kebechet.", []
+    "thoth_kebechet_total_active_repo_count", "Count of number of repositories supported by Kebechet.", []
 )
 
 kebechet_total_active_users_per_manager_count = Gauge(
@@ -250,4 +250,8 @@ kebechet_total_active_users_per_manager_count = Gauge(
 kebechet_current_rate_limit = Gauge(
     "thoth_kebechet_current_rate_limit",
     "Kebechet remaining rate limit.",
+)
+
+kebechet_maintained_software_stacks_count = Gauge(
+    "thoth_kebechet_maintained_software_stacks_count", "Count of number of software stacks maintained by Kebechet.", []
 )

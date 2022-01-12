@@ -66,3 +66,11 @@ class KebechetMetrics(MetricsBase):
         remaining = gh_rate_limit.core.remaining
         metrics.kebechet_current_rate_limit.set(remaining)
         _LOGGER.debug("kebechet_current_rate_limit=%r", remaining)
+
+    @classmethod
+    @register_metric_job
+    def get_kebechet_maintained_software_stacks_count(cls) -> None:
+        """Get number of software stacks maintained by Kebechet."""
+        count = cls.graph().get_kebechet_github_installations_software_stack_count_all(is_active=True)
+        metrics.kebechet_maintained_software_stacks_count.set(count)
+        _LOGGER.debug("kebechet_maintained_software_stacks_count=%r", count)
