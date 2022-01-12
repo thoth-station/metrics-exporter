@@ -253,5 +253,5 @@ kebechet_current_rate_limit = Gauge(
 )
 
 kebechet_maintained_software_stacks_count = Gauge(
-    "thoth_kebechet_maintained_software_stacks_count", "Count of number of software stacks maintained by Kebechet.", []
+    "thoth_kebechet_maintained_software_stacks_count", "Count the number of software stacks maintained by Kebechet.", []
 )
