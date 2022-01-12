@@ -1,4 +1,9 @@
 
+## Release 0.20.0 (2022-01-12T11:59:31)
+* Update thoth/metrics_exporter/metrics.py
+* introduce metrics for software stacks maintained by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.19.1 (2021-12-24T15:47:37)
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
