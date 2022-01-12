@@ -3,7 +3,7 @@
 Welcome to Thoth's metrics-exporter documentation
 
 .. image:: https://img.shields.io/github/v/tag/thoth-station/metrics-exporter?style=plastic
-  :target: https://github.com/thoth-station/metrics-exporter/releases
+  :target: https://github.com/thoth-station/metrics-exporter/tags
   :alt: GitHub tag (latest by date)
 
 .. image:: https://quay.io/repository/thoth-station/metrics-exporter/status
