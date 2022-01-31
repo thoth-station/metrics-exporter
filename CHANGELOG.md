@@ -1,4 +1,19 @@
 
+## Release 0.20.1 (2022-01-31T21:40:02)
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Remove development dependencies
+* Remove unused .thothTemplate.yaml
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Enable TLS verification
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Remove unused playbooks
+* change README format
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Update README.md
+* Add container info in README
+
 ## Release 0.20.0 (2022-01-12T11:59:31)
 * Update thoth/metrics_exporter/metrics.py
 * introduce metrics for software stacks maintained by Kebechet
