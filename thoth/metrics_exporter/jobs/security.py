@@ -54,8 +54,9 @@ class SecurityMetrics(MetricsBase):
 
         metric_name = "thoth_graphdb_total_number_si_unanalyzed_python_packages"
         metric = Configuration.PROM.get_current_metric_value(
-            metric_name=metric_name, label_config={"instance": cls._METRICS_EXPORTER_INSTANCE}
+            metric_name=metric_name, label_config={'field': cls._METRICS_EXPORTER_INSTANCE}
         )
+        print(metric)
         if metric:
             python_package_versions_metric = float(metric[0]["value"][1])
 
