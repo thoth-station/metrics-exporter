@@ -1,4 +1,11 @@
 
+## Release 0.20.2 (2022-02-02T09:07:19)
+* Fix typo
+* remove print added for debug
+* Fix label for retrieving metrics
+* Small README fixes
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.20.1 (2022-01-31T21:40:02)
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
