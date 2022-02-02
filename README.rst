@@ -37,9 +37,9 @@ Conventions
 
 For any binary metrics the convention used is:
 
-- `0` all good
+- ``0`` all good
 
-- `1` alarm is required
+- ``1`` alarm is required
 
 Copyright
 =========
