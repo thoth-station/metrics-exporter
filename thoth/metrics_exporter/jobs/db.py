@@ -19,6 +19,7 @@
 
 import logging
 import time
+from typing import Optional
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -127,7 +128,11 @@ class DBMetrics(MetricsBase):
 
     @classmethod
     @register_metric_job
-    def set_last_solver_datetime(cls) -> None:
+    def set_last_solver_datetime(
+        cls, os_name: Optional[str] = None, os_version: Optional[str] = None, python_version: Optional[str] = None
+    ) -> None:
         """Get datetime of the last solver synced in the database."""
-        last_solver_datetime = cls.graph().get_last_solver_datetime()
+        last_solver_datetime = cls.graph().get_last_solver_datetime(
+            os_name=os_name, os_version=os_version, python_version=python_version
+        )
         metrics.graphdb_last_solver_datetime.set(time.mktime(last_solver_datetime.timetuple()))
