@@ -18,6 +18,7 @@
 """Knowledge graph metrics."""
 
 import logging
+import time
 
 import thoth.metrics_exporter.metrics as metrics
 
@@ -123,3 +124,10 @@ class DBMetrics(MetricsBase):
             else:
                 # component is using same revision head as in the database
                 metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(0)
+
+    @classmethod
+    @register_metric_job
+    def set_last_image_datetime(cls) -> None:
+        """Get datetime of the last container image synced in the database."""
+        last_image_datetime = cls.graph().get_last_image_datetime()
+        metrics.graphdb_last_image_datetime.set(time.mktime(last_image_datetime.timetuple()))
