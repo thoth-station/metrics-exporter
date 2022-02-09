@@ -18,7 +18,6 @@
 """Knowledge graph metrics."""
 
 import logging
-import time
 from typing import Optional
 
 import thoth.metrics_exporter.metrics as metrics
@@ -26,6 +25,7 @@ import thoth.metrics_exporter.metrics as metrics
 from .base import register_metric_job
 from .base import MetricsBase
 from ..configuration import Configuration
+from thoth.common import format_datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -135,4 +135,4 @@ class DBMetrics(MetricsBase):
         last_solver_datetime = cls.graph().get_last_solver_datetime(
             os_name=os_name, os_version=os_version, python_version=python_version
         )
-        metrics.graphdb_last_solver_datetime.set(time.mktime(last_solver_datetime.timetuple()))
+        metrics.graphdb_last_solver_datetime.set(format_datetime(last_solver_datetime))
