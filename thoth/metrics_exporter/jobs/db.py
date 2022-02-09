@@ -18,13 +18,13 @@
 """Knowledge graph metrics."""
 
 import logging
-import time
 
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
 from ..configuration import Configuration
+from thoth.common import format_datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -130,4 +130,4 @@ class DBMetrics(MetricsBase):
     def set_last_image_datetime(cls) -> None:
         """Get datetime of the last container image synced in the database."""
         last_image_datetime = cls.graph().get_last_image_datetime()
-        metrics.graphdb_last_image_datetime.set(time.mktime(last_image_datetime.timetuple()))
+        metrics.graphdb_last_image_datetime.set(format_datetime(last_image_datetime))
