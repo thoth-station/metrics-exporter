@@ -102,6 +102,12 @@ graphdb_last_solver_datetime = Gauge(
     "thoth_graphdb_last_solver_datetime", "Datetime of the last solver synced in the database.", ["datetime"]
 )
 
+graphdb_last_analysis_datetime = Gauge(
+    "thoth_graphdb_last_analysis_datetime",
+    "Datetime of the last container image analysis synced in the database.",
+    ["datetime"],
+)
+
 # CONTENT METRICS
 
 # Python Packages
