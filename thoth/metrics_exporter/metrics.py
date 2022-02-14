@@ -98,8 +98,8 @@ graphdb_alembic_version_rows = Gauge(
 
 graphdb_alembic_table_check = Gauge("thoth_graphdb_alembic_table_check", "alembic version table rows check.", [])
 
-graphdb_last_image_datetime = Gauge(
-    "thoth_graphdb_last_image_datetime", "Datetime of the last container image analysis synced in the database.", []
+graphdb_last_analysis_datetime = Gauge(
+    "thoth_graphdb_last_analysis_datetime", "Datetime of the last container image analysis synced in the database.", []
 )
 
 # CONTENT METRICS
