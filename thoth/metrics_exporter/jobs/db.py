@@ -130,4 +130,4 @@ class DBMetrics(MetricsBase):
     def set_last_analysis_datetime(cls) -> None:
         """Get datetime of the last container image synced in the database."""
         last_analysis_datetime = cls.graph().get_last_analysis_datetime()
-        metrics.graphdb_last_analysis_datetime.set(format_datetime(last_analysis_datetime))
+        metrics.graphdb_last_analysis_datetime.labels(format_datetime(last_analysis_datetime)).inc()
