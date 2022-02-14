@@ -25,7 +25,7 @@ import thoth.metrics_exporter.metrics as metrics
 from .base import register_metric_job
 from .base import MetricsBase
 from ..configuration import Configuration
-from thoth.common import format_datetime
+from thoth.common.helpers import format_datetime
 
 _LOGGER = logging.getLogger(__name__)
 
