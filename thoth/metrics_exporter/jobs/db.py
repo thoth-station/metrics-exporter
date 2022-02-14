@@ -18,12 +18,14 @@
 """Knowledge graph metrics."""
 
 import logging
+from typing import Optional
 
 import thoth.metrics_exporter.metrics as metrics
 
 from .base import register_metric_job
 from .base import MetricsBase
 from ..configuration import Configuration
+from thoth.common.helpers import format_datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,3 +125,14 @@ class DBMetrics(MetricsBase):
             else:
                 # component is using same revision head as in the database
                 metrics.graph_db_component_revision_check.labels(component_name, Configuration.DEPLOYMENT_NAME).set(0)
+
+    @classmethod
+    @register_metric_job
+    def set_last_solver_datetime(
+        cls, os_name: Optional[str] = None, os_version: Optional[str] = None, python_version: Optional[str] = None
+    ) -> None:
+        """Get datetime of the last solver synced in the database."""
+        last_solver_datetime = cls.graph().get_last_solver_datetime(
+            os_name=os_name, os_version=os_version, python_version=python_version
+        )
+        metrics.graphdb_last_solver_datetime.labels(format_datetime(last_solver_datetime)).set(1)
