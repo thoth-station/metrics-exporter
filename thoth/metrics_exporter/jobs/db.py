@@ -135,4 +135,4 @@ class DBMetrics(MetricsBase):
         last_solver_datetime = cls.graph().get_last_solver_datetime(
             os_name=os_name, os_version=os_version, python_version=python_version
         )
-        metrics.graphdb_last_solver_datetime.labels(format_datetime(last_solver_datetime)).inc()
+        metrics.graphdb_last_solver_datetime.labels(format_datetime(last_solver_datetime)).set(1)
