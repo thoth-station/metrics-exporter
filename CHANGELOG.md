@@ -1,4 +1,18 @@
 
+## Release 0.21.0 (2022-02-15T12:32:24)
+* Add myself to maintainers
+* Update PR template
+* Register metric for datetime of last container image analysis synced in the database
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Explicitly set metric to 1
+* Fix format_datetime import
+* Add datetime label to graphdb_last_solver_datetime
+* Parse last solver datetime as string
+* Add filtering paramaters to registered metric
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Register metric to get datetime of last solver synced in database
+
 ## Release 0.20.2 (2022-02-02T09:07:19)
 * Fix typo
 * remove print added for debug
