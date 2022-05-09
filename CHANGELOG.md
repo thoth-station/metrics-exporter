@@ -1,4 +1,10 @@
 
+## Release 0.21.1 (2022-05-09T19:38:38)
+* a541b16 :ship: Bump up base image initialized in CI.
+* b1af91c :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* ce52b1a :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 41db897 Update GitHub templates and pre-commit plugin versions
+
 ## Release 0.21.0 (2022-02-15T12:32:24)
 * Add myself to maintainers
 * Update PR template
