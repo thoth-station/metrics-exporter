@@ -1,11 +1,16 @@
 # See the OWNERS docs at https://go.k8s.io/owners
 
 approvers:
-  - fridex
-  - pacospace
+  - harshad16
+  - kpostoffice
   - sesheta
   - sefkhet-abwy[bot]
+
+emeritus_approvers:
+  - fridex
+  - pacospace
+
 reviewers:
   - kpostoffice
   - harshad16
-  - saisankargochhayat
+  - vannten
