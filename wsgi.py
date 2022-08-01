@@ -23,7 +23,6 @@ import os
 import logging
 import time
 import threading
-from typing import Optional
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from flask_cors import CORS
@@ -53,7 +52,7 @@ _INITIALIZED_LOCK = threading.RLock()
 _EXECUTED = dict.fromkeys((f"{class_name}.{method_name}" for class_name, method_name in REGISTERED_JOBS), 0)
 
 
-def func_wrapper(class_name: str, method_name: str, last_schedule: Optional[int] = None) -> None:
+def func_wrapper(class_name: str, method_name: str, last_schedule: float = None) -> None:
     """Count how many jobs were run and notes down some metrics statistics.
 
     Make sure you do not run metrics-exporter with preload set (gunicorn configuration),
