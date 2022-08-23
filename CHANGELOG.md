@@ -1,4 +1,18 @@
 
+## Release 0.21.2 (2022-08-23T02:58:46)
+* 9d5ee23 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment (#866)
+* bded859 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 895c3ee :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 8132cbf :recycle: HouseKeeping: Updated pre-commit and thoth.yaml
+* 9ce2204 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 6c96ead :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 5ce3250 Update OWNERS
+* f85dbd9 :ship: Bump up base image initialized in CI.
+* b1def77 Fix .pre-commit-config.yaml
+* 9e096bb :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 18464bb :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 4aa4da7 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.21.1 (2022-05-09T19:38:38)
 * a541b16 :ship: Bump up base image initialized in CI.
 * b1af91c :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
