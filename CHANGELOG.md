@@ -1,4 +1,10 @@
 
+## Release 0.21.3 (2022-09-21T19:46:46)
+* c6607b7 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 940062b :ship: Bump up base image initialized in CI.
+* f200f43 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* f05ad74 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.21.2 (2022-08-23T02:58:46)
 * 9d5ee23 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment (#866)
 * bded859 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
