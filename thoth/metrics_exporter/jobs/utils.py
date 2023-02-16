@@ -29,7 +29,6 @@ def get_namespace_object_labels_map(namespace_objects: Dict[str, Any]) -> Dict[s
     """Retrieve namespace/objects map that shall be monitored by metrics-exporter."""
     namespace_objects_map: Dict[str, Any] = {}
     for environment_variable, objects_labels in namespace_objects.items():
-
         namespace_objects_map = _retrieve_namespace_object_labels(
             environment_variable=environment_variable,
             objects_labels=objects_labels,

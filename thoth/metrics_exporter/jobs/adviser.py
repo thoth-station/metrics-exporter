@@ -49,14 +49,11 @@ class AdviserMetrics(MetricsBase):
         """Get the total number of Adviser Runs per Thoth Integration provided."""
         adviser_count_per_source_type = cls.graph().get_adviser_run_count_per_source_type()
         for thoth_integration in ThothAdviserIntegrationEnum._member_names_:  # type: ignore
-
             if thoth_integration in adviser_count_per_source_type:
-
                 counts = adviser_count_per_source_type[thoth_integration]
                 metrics.graphdb_adviser_count_per_source_type.labels(thoth_integration).set(counts)
                 _LOGGER.debug("graphdb_adviser_count_per_source_type(%r)=%r", thoth_integration, counts)
             else:
-
                 metrics.graphdb_adviser_count_per_source_type.labels(thoth_integration).set(0)
                 _LOGGER.debug("graphdb_adviser_count_per_source_type(%r)=%r", thoth_integration, 0)
 
@@ -66,13 +63,10 @@ class AdviserMetrics(MetricsBase):
         """Get unique number of users per Thoth Integration provided."""
         users_count_per_source_type = cls.graph().get_origin_count_per_source_type(distinct=True)
         for thoth_integration in ThothAdviserIntegrationEnum._member_names_:  # type: ignore
-
             if thoth_integration in users_count_per_source_type:
-
                 counts = users_count_per_source_type[thoth_integration]
                 metrics.graphdb_users_count_per_source_type.labels(thoth_integration).set(counts)
                 _LOGGER.debug("graphdb_users_count_per_source_type(%r)=%r", thoth_integration, counts)
             else:
-
                 metrics.graphdb_users_count_per_source_type.labels(thoth_integration).set(0)
                 _LOGGER.debug("graphdb_users_count_per_source_type(%r)=%r", thoth_integration, 0)

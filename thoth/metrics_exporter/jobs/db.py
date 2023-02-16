@@ -98,7 +98,6 @@ class DBMetrics(MetricsBase):
             metrics.graph_db_component_revision_check.labels("no-component", Configuration.DEPLOYMENT_NAME).set(2)
 
         for metric in metrics_retrieved:
-
             component_name = metric["metric"]["component"]
 
             if "env" not in metric["metric"]:

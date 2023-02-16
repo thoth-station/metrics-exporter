@@ -48,7 +48,6 @@ class KebechetMetrics(MetricsBase):
     def get_active_kebechet_users_per_manager_count(cls) -> None:
         """Get number of Kebechet users per manager."""
         for kebechet_manager in KebechetManagerEnum._member_names_:
-
             count = cls.graph().get_kebechet_github_installations_active_managers_count_all(
                 kebechet_manager=kebechet_manager, distinct=True
             )
